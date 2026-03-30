@@ -2,7 +2,7 @@
 
 > An audio-first English vocabulary app for young non-English speaking children. No reading required — just images, sound, and voice.
 
-![version](https://img.shields.io/badge/version-1.3.0-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue) ![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Android-orange)
+![version](https://img.shields.io/badge/version-1.4.0-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue) ![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Android-orange)
 
 ---
 
@@ -65,6 +65,13 @@
 ---
 
 ## 📋 Changelog
+
+### v1.4.0 — 2026-03-30
+- **Navigation arrows:** ◀ ▶ buttons let the child skip forward or go back to any word freely
+- **Duck/Bee/short word fix:** added alias table for known speech recognizer mishearings (duck→doc/dak/dark, bee→be/b, egg→eg, etc.) + token-level matching now catches "a duck", "the bee"
+- **Wrong answer simplified:** 1st fail = slow replay, 2nd fail = syllable breakdown — mic always re-enables after each, child never gets stuck
+- **Tablet landscape layout:** in landscape mode on wide screens, 🔊 speaker pinned to far left edge, 🎤 mic pinned to far right edge — reachable by small thumbs without stretching
+- **Menu landscape:** category grid switches to 4 columns in landscape
 
 ### v1.3.0 — 2026-03-30
 - **Skip on 2nd fail:** after 2 wrong attempts the app plays syllable breakdown then automatically moves on — no more getting stuck on one word
