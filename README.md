@@ -2,7 +2,7 @@
 
 > An audio-first English vocabulary app for young non-English speaking children. No reading required — just images, sound, and voice.
 
-![version](https://img.shields.io/badge/version-1.2.0-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue) ![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Android-orange)
+![version](https://img.shields.io/badge/version-1.3.0-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue) ![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Android-orange)
 
 ---
 
@@ -65,6 +65,12 @@
 ---
 
 ## 📋 Changelog
+
+### v1.3.0 — 2026-03-30
+- **Skip on 2nd fail:** after 2 wrong attempts the app plays syllable breakdown then automatically moves on — no more getting stuck on one word
+- **Retry round preserved:** skipped words still come back at the end of the deck
+- **Button layout:** 🔊 speaker moved to bottom-left (left thumb), 🎤 mic moved to bottom-right (right thumb)
+- **Larger buttons:** both buttons increased in size for easier tapping by small fingers
 
 ### v1.2.0 — 2026-03-30
 - **Retry round:** after completing the deck, all words the child failed to pronounce come back in a dedicated second round ("Let's try the tricky ones!")

@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="description" content="English vocabulary flashcards for kids — audio, voice recognition, syllable breakdown">
 <meta name="theme-color" content="#FF6B6B">
-<title>English Flashcards 4 Kids v1.2.0</title>
-<meta name="version" content="1.2.0">
+<title>English Flashcards 4 Kids v1.3.0</title>
+<meta name="version" content="1.3.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <style>
@@ -76,14 +76,14 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 /* ── CONTROLS ── */
 #controls{width:100%;display:flex;flex-direction:column;align-items:center;gap:10px;}
 #status-text{font-family:'Fredoka One',cursive;font-size:18px;color:#aaa;text-align:center;text-transform:uppercase;min-height:26px;transition:color .2s;}
-#btn-row{display:flex;align-items:center;justify-content:center;gap:24px;}
+#btn-row{display:flex;align-items:center;justify-content:space-between;width:100%;padding:0 12px;}
 
 #btn-listen{width:80px;height:80px;border-radius:50%;border:none;font-size:38px;cursor:pointer;background:#FFA94D;color:#fff;box-shadow:0 5px 18px rgba(255,169,77,.45);transition:transform .15s,background .2s,box-shadow .2s;}
 #btn-listen:hover{transform:scale(1.06);}
 #btn-listen:active{transform:scale(.88);}
 #btn-listen.speaking{background:#339AF0;box-shadow:0 5px 18px rgba(51,154,240,.45);}
 
-#btn-mic{width:106px;height:106px;border-radius:50%;border:none;font-size:52px;cursor:pointer;background:#FF6B6B;color:#fff;box-shadow:0 6px 24px rgba(255,107,107,.45);transition:transform .15s,background .2s,box-shadow .2s,opacity .2s;}
+#btn-mic{width:112px;height:112px;border-radius:50%;border:none;font-size:54px;cursor:pointer;background:#FF6B6B;color:#fff;box-shadow:0 6px 24px rgba(255,107,107,.45);transition:transform .15s,background .2s,box-shadow .2s,opacity .2s;}
 #btn-mic:hover:not(:disabled){transform:scale(1.05);}
 #btn-mic:active:not(:disabled){transform:scale(.88);}
 #btn-mic.listening{background:#339AF0;box-shadow:0 6px 24px rgba(51,154,240,.45);animation:pulse .9s ease-out infinite;}
@@ -438,30 +438,25 @@ function onWrong(n){
   enableMic(false);
 
   if(n===1){
-    /* First wrong: repeat word slower */
-    setStatus('LISTEN CAREFULLY! 👂');
+    /* First wrong: play word slowly, child gets one more try */
+    setStatus('LISTEN CAREFULLY!');
     showFeedback('👂','LISTEN AGAIN!','#FFA94D');
     setTimeout(()=>{
       hideFeedback();
       speak(item.w, 0.6, 1.1, ()=>{ enableMic(true); setStatus('TRY AGAIN! 🎤'); });
     }, 750);
 
-  } else if(n===2){
-    /* Second wrong: syllable breakdown, one more chance */
-    setStatus("LET'S SAY IT PART BY PART...");
-    showFeedback('🔤','SAY EACH PART!','#CC5DE8');
+  } else {
+    /* Second wrong: add to retry pile, play syllables, then auto-advance */
+    if(!retryPile.find(x=>x.w===item.w)) retryPile.push(item);
+    setStatus("LET'S HEAR IT SLOWLY...");
+    showFeedback('🔄',"WE'LL COME BACK TO THIS!",'#CC5DE8');
     setTimeout(()=>{
       hideFeedback();
       speakSyllables(item.s, ()=>{
-        speak(item.w, 0.65, 1.1, ()=>{ enableMic(true); setStatus('NOW YOU SAY IT! 🎤'); });
+        speak(item.w, 0.65, 1.1, ()=>{ idx++; showCard(); });
       });
-    }, 750);
-
-  } else {
-    /* Third wrong: skip, add to retry pile, move on */
-    if(!retryPile.find(x=>x.w===item.w)) retryPile.push(item);
-    showFeedback('\u23ED\uFE0F',"WE'LL TRY AGAIN LATER!",'#888');
-    setTimeout(()=>{ hideFeedback(); idx++; showCard(); }, 1800);
+    }, 700);
   }
 }
 
