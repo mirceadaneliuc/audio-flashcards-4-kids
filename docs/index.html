@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="description" content="English vocabulary flashcards for kids — audio, voice recognition, syllable breakdown">
+<meta name="theme-color" content="#FF6B6B">
+<title>English Flashcards 4 Kids</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden;}
+
+/* ── SPLASH ── */
+#splash{position:fixed;inset:0;background:linear-gradient(160deg,#FF6B6B 0%,#FF8E53 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:999;cursor:pointer;user-select:none;}
+.sp-emoji{font-size:100px;animation:bob 1.1s ease-in-out infinite alternate;}
+.sp-title{font-family:'Fredoka One',cursive;font-size:36px;color:#fff;text-align:center;line-height:1.2;}
+.sp-title span{font-size:48px;display:block;}
+.sp-sub{font-family:'Fredoka One',cursive;font-size:22px;color:rgba(255,255,255,.85);text-align:center;padding:0 24px;animation:blink 1.4s ease-in-out infinite;}
+@keyframes bob{from{transform:translateY(0) scale(1)}to{transform:translateY(-16px) scale(1.05)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.5}}
+
+/* ── TOP BAR ── */
+#topbar{width:100%;max-width:640px;display:flex;align-items:center;justify-content:space-between;padding:14px 18px 6px;}
+#logo{font-family:'Fredoka One',cursive;font-size:18px;color:#FF6B6B;line-height:1.2;}
+#logo span{font-size:22px;display:block;}
+#stars-box{display:flex;align-items:center;gap:6px;background:#fff;border-radius:50px;padding:7px 16px;font-weight:900;font-size:20px;box-shadow:0 2px 10px rgba(0,0,0,.1);}
+
+/* ── MENU ── */
+#menu-screen{width:100%;max-width:640px;display:flex;flex-direction:column;padding:8px 14px 16px;gap:10px;}
+#menu-title{font-family:'Fredoka One',cursive;font-size:26px;text-align:center;color:#aaa;padding:4px 0;}
+#menu-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+.cat-card{border:none;border-radius:22px;padding:14px 12px 12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;box-shadow:0 4px 18px rgba(0,0,0,.15);transition:transform .15s,box-shadow .15s;color:#fff;font-family:'Fredoka One',cursive;}
+.cat-card:hover{transform:scale(1.03);box-shadow:0 6px 24px rgba(0,0,0,.2);}
+.cat-card:active{transform:scale(.94);}
+.cc-icons{display:flex;gap:4px;font-size:38px;line-height:1;}
+.cc-title{font-size:21px;letter-spacing:.3px;}
+
+/* ── GAME ── */
+#game-screen{width:100%;max-width:640px;display:none;flex-direction:column;align-items:center;padding:6px 14px 14px;gap:8px;}
+#btn-back{align-self:flex-start;background:none;border:none;font-size:34px;cursor:pointer;padding:2px 6px;border-radius:12px;transition:background .15s;}
+#btn-back:hover{background:rgba(0,0,0,.07);}
+#prog-wrap{width:100%;height:12px;background:#e8e8e8;border-radius:8px;overflow:hidden;}
+#prog-bar{height:100%;border-radius:8px;transition:width .5s ease;width:0%;}
+
+/* ── CARD ── */
+#main-card{width:100%;min-height:285px;border-radius:28px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:18px;box-shadow:0 8px 32px rgba(0,0,0,.12);background:#fff;position:relative;overflow:hidden;border-top:8px solid #FF6B6B;transition:border-top-color .3s;}
+#main-emoji{font-size:118px;line-height:1;transition:transform .3s cubic-bezier(.34,1.56,.64,1);}
+#main-word{font-family:'Fredoka One',cursive;font-size:46px;text-transform:uppercase;text-align:center;transition:color .3s;}
+
+/* syllables */
+#syl-row{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;min-height:42px;align-items:center;}
+.syl{font-family:'Fredoka One',cursive;font-size:26px;padding:4px 12px;border-radius:10px;background:#f1f3f5;color:#bbb;transition:background .15s,color .15s,transform .2s,box-shadow .2s;}
+.syl.lit{background:#FFA94D;color:#fff;transform:scale(1.22);box-shadow:0 4px 12px rgba(255,169,77,.4);}
+
+/* wave */
+#wave{display:flex;align-items:flex-end;gap:4px;height:26px;opacity:0;transition:opacity .25s;}
+#wave.on{opacity:1;}
+.wb{width:5px;border-radius:3px;animation:wv .75s ease-in-out infinite;}
+.wb:nth-child(1){height:10px;animation-delay:0s}
+.wb:nth-child(2){height:20px;animation-delay:.12s}
+.wb:nth-child(3){height:26px;animation-delay:.24s}
+.wb:nth-child(4){height:18px;animation-delay:.36s}
+.wb:nth-child(5){height:10px;animation-delay:.48s}
+@keyframes wv{0%,100%{transform:scaleY(.4)}50%{transform:scaleY(1)}}
+
+/* feedback overlay */
+#feedback{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;border-radius:28px;pointer-events:none;opacity:0;transition:opacity .25s;}
+#feedback.show{opacity:1;pointer-events:all;}
+#fb-emoji{font-size:82px;animation:fb-pop .3s cubic-bezier(.34,1.56,.64,1);}
+#fb-text{font-family:'Fredoka One',cursive;font-size:34px;color:#fff;text-align:center;}
+@keyframes fb-pop{from{transform:scale(.5)}to{transform:scale(1)}}
+
+/* ── CONTROLS ── */
+#controls{width:100%;display:flex;flex-direction:column;align-items:center;gap:10px;}
+#status-text{font-family:'Fredoka One',cursive;font-size:18px;color:#aaa;text-align:center;text-transform:uppercase;min-height:26px;transition:color .2s;}
+#btn-row{display:flex;align-items:center;justify-content:center;gap:24px;}
+
+#btn-listen{width:80px;height:80px;border-radius:50%;border:none;font-size:38px;cursor:pointer;background:#FFA94D;color:#fff;box-shadow:0 5px 18px rgba(255,169,77,.45);transition:transform .15s,background .2s,box-shadow .2s;}
+#btn-listen:hover{transform:scale(1.06);}
+#btn-listen:active{transform:scale(.88);}
+#btn-listen.speaking{background:#339AF0;box-shadow:0 5px 18px rgba(51,154,240,.45);}
+
+#btn-mic{width:106px;height:106px;border-radius:50%;border:none;font-size:52px;cursor:pointer;background:#FF6B6B;color:#fff;box-shadow:0 6px 24px rgba(255,107,107,.45);transition:transform .15s,background .2s,box-shadow .2s,opacity .2s;}
+#btn-mic:hover:not(:disabled){transform:scale(1.05);}
+#btn-mic:active:not(:disabled){transform:scale(.88);}
+#btn-mic.listening{background:#339AF0;box-shadow:0 6px 24px rgba(51,154,240,.45);animation:pulse .9s ease-out infinite;}
+#btn-mic.success{background:#51CF66;box-shadow:0 6px 24px rgba(81,207,102,.45);}
+#btn-mic:disabled{opacity:.32;cursor:not-allowed;animation:none !important;}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(51,154,240,.7)}70%{box-shadow:0 0 0 28px rgba(51,154,240,0)}100%{box-shadow:0 0 0 0 rgba(51,154,240,0)}}
+
+/* attempt dots */
+#attempt-dots{display:flex;gap:8px;min-height:16px;align-items:center;}
+.adot{width:12px;height:12px;border-radius:50%;background:#FF6B6B;opacity:.25;transition:opacity .2s;}
+.adot.used{opacity:1;}
+
+/* confetti */
+.cf{position:fixed;width:12px;height:12px;pointer-events:none;z-index:200;animation:cff 1.5s ease-in forwards;}
+@keyframes cff{from{transform:translateY(-40px) rotate(0);opacity:1}to{transform:translateY(105vh) rotate(760deg);opacity:0}}
+
+/* streak */
+#streak{position:fixed;top:68px;right:14px;background:#FFA94D;color:#fff;font-family:'Fredoka One',cursive;font-size:21px;border-radius:50px;padding:8px 18px;box-shadow:0 4px 18px rgba(255,169,77,.55);transform:scale(0) translateX(40px);transition:transform .4s cubic-bezier(.4,0,.2,1);z-index:50;}
+#streak.on{transform:scale(1) translateX(0);}
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="sp-emoji">🌍</div>
+  <div class="sp-title"><span>ENGLISH</span>FLASHCARDS 4 KIDS</div>
+  <div class="sp-sub">👆 TAP TO START!</div>
+</div>
+
+<!-- TOP BAR -->
+<div id="topbar">
+  <div id="logo"><span>ENGLISH</span>FLASHCARDS 4 KIDS</div>
+  <div id="stars-box">⭐ <span id="stars">0</span></div>
+</div>
+
+<!-- MENU -->
+<div id="menu-screen">
+  <div id="menu-title">PICK A CATEGORY!</div>
+  <div id="menu-grid"></div>
+</div>
+
+<!-- GAME -->
+<div id="game-screen">
+  <button id="btn-back">⬅️</button>
+  <div id="prog-wrap"><div id="prog-bar"></div></div>
+  <div id="main-card">
+    <div id="main-emoji">🐶</div>
+    <div id="main-word">DOG</div>
+    <div id="syl-row"></div>
+    <div id="wave">
+      <div class="wb"></div><div class="wb"></div><div class="wb"></div>
+      <div class="wb"></div><div class="wb"></div>
+    </div>
+    <div id="feedback"><div id="fb-emoji"></div><div id="fb-text"></div></div>
+  </div>
+  <div id="controls">
+    <div id="status-text">LISTEN, THEN SAY THE WORD!</div>
+    <div id="btn-row">
+      <button id="btn-listen" title="Hear the word">🔊</button>
+      <button id="btn-mic" disabled title="Say the word">🎤</button>
+    </div>
+    <div id="attempt-dots">
+      <div class="adot" id="dot0"></div>
+      <div class="adot" id="dot1"></div>
+      <div class="adot" id="dot2"></div>
+    </div>
+  </div>
+</div>
+
+<div id="streak">🔥 <span id="streak-n">3</span> IN A ROW!</div>
+
+<script>
+/* ══════════════════════════════════════
+   DATA
+══════════════════════════════════════ */
+const CATS = {
+  animals:{label:"ANIMALS",color:"#FF6B6B",preview:["🐶","🐱","🦁"],words:[
+    {w:"dog",e:"🐶",s:["DOG"]},{w:"cat",e:"🐱",s:["CAT"]},{w:"lion",e:"🦁",s:["LI","ON"]},
+    {w:"bird",e:"🐦",s:["BIRD"]},{w:"fish",e:"🐟",s:["FISH"]},{w:"rabbit",e:"🐰",s:["RAB","BIT"]},
+    {w:"elephant",e:"🐘",s:["EL","E","PHANT"]},{w:"monkey",e:"🐒",s:["MON","KEY"]},
+    {w:"frog",e:"🐸",s:["FROG"]},{w:"horse",e:"🐴",s:["HORSE"]},{w:"duck",e:"🦆",s:["DUCK"]},
+    {w:"sheep",e:"🐑",s:["SHEEP"]},{w:"pig",e:"🐷",s:["PIG"]},{w:"cow",e:"🐄",s:["COW"]},{w:"bee",e:"🐝",s:["BEE"]},
+  ]},
+  food:{label:"FOOD",color:"#FFA94D",preview:["🍎","🍕","🍦"],words:[
+    {w:"apple",e:"🍎",s:["AP","PLE"]},{w:"pizza",e:"🍕",s:["PIZ","ZA"]},{w:"ice cream",e:"🍦",s:["ICE","CREAM"]},
+    {w:"banana",e:"🍌",s:["BA","NA","NA"]},{w:"cake",e:"🎂",s:["CAKE"]},{w:"cookie",e:"🍪",s:["COO","KIE"]},
+    {w:"bread",e:"🍞",s:["BREAD"]},{w:"milk",e:"🥛",s:["MILK"]},{w:"egg",e:"🥚",s:["EGG"]},
+    {w:"cheese",e:"🧀",s:["CHEESE"]},{w:"orange",e:"🍊",s:["OR","ANGE"]},{w:"carrot",e:"🥕",s:["CAR","ROT"]},
+  ]},
+  colors:{label:"COLORS",color:"#CC5DE8",preview:["🟥","🟦","🟨"],words:[
+    {w:"red",e:"🟥",s:["RED"]},{w:"blue",e:"🟦",s:["BLUE"]},{w:"yellow",e:"🟨",s:["YEL","LOW"]},
+    {w:"green",e:"🟩",s:["GREEN"]},{w:"orange",e:"🟧",s:["OR","ANGE"]},{w:"purple",e:"🟪",s:["PUR","PLE"]},
+    {w:"pink",e:"🩷",s:["PINK"]},{w:"white",e:"⬜",s:["WHITE"]},{w:"black",e:"⬛",s:["BLACK"]},{w:"brown",e:"🟫",s:["BROWN"]},
+  ]},
+  numbers:{label:"NUMBERS",color:"#339AF0",preview:["1️⃣","2️⃣","3️⃣"],words:[
+    {w:"one",e:"1️⃣",s:["ONE"]},{w:"two",e:"2️⃣",s:["TWO"]},{w:"three",e:"3️⃣",s:["THREE"]},
+    {w:"four",e:"4️⃣",s:["FOUR"]},{w:"five",e:"5️⃣",s:["FIVE"]},{w:"six",e:"6️⃣",s:["SIX"]},
+    {w:"seven",e:"7️⃣",s:["SEV","EN"]},{w:"eight",e:"8️⃣",s:["EIGHT"]},{w:"nine",e:"9️⃣",s:["NINE"]},{w:"ten",e:"🔟",s:["TEN"]},
+  ]},
+  body:{label:"BODY",color:"#51CF66",preview:["👁️","👂","✋"],words:[
+    {w:"eye",e:"👁️",s:["EYE"]},{w:"ear",e:"👂",s:["EAR"]},{w:"nose",e:"👃",s:["NOSE"]},
+    {w:"mouth",e:"👄",s:["MOUTH"]},{w:"hand",e:"✋",s:["HAND"]},{w:"foot",e:"🦶",s:["FOOT"]},
+    {w:"heart",e:"❤️",s:["HEART"]},{w:"arm",e:"💪",s:["ARM"]},{w:"leg",e:"🦵",s:["LEG"]},{w:"hair",e:"💇",s:["HAIR"]},
+  ]},
+  home:{label:"HOME",color:"#F06595",preview:["🏠","🛏️","📚"],words:[
+    {w:"house",e:"🏠",s:["HOUSE"]},{w:"door",e:"🚪",s:["DOOR"]},{w:"bed",e:"🛏️",s:["BED"]},
+    {w:"book",e:"📚",s:["BOOK"]},{w:"chair",e:"🪑",s:["CHAIR"]},{w:"lamp",e:"💡",s:["LAMP"]},
+    {w:"clock",e:"🕐",s:["CLOCK"]},{w:"key",e:"🔑",s:["KEY"]},{w:"cup",e:"☕",s:["CUP"]},{w:"phone",e:"📱",s:["PHONE"]},
+  ]},
+  nature:{label:"NATURE",color:"#20C997",preview:["☀️","🌳","❄️"],words:[
+    {w:"sun",e:"☀️",s:["SUN"]},{w:"moon",e:"🌙",s:["MOON"]},{w:"tree",e:"🌳",s:["TREE"]},
+    {w:"snow",e:"❄️",s:["SNOW"]},{w:"rain",e:"🌧️",s:["RAIN"]},{w:"star",e:"⭐",s:["STAR"]},
+    {w:"flower",e:"🌸",s:["FLOW","ER"]},{w:"cloud",e:"☁️",s:["CLOUD"]},{w:"fire",e:"🔥",s:["FIRE"]},{w:"leaf",e:"🍃",s:["LEAF"]},
+  ]},
+  clothes:{label:"CLOTHES",color:"#845EF7",preview:["👕","👟","🎩"],words:[
+    {w:"shirt",e:"👕",s:["SHIRT"]},{w:"shoes",e:"👟",s:["SHOES"]},{w:"hat",e:"🎩",s:["HAT"]},
+    {w:"pants",e:"👖",s:["PANTS"]},{w:"socks",e:"🧦",s:["SOCKS"]},{w:"dress",e:"👗",s:["DRESS"]},
+    {w:"jacket",e:"🧥",s:["JACK","ET"]},{w:"gloves",e:"🧤",s:["GLOVES"]},{w:"scarf",e:"🧣",s:["SCARF"]},
+  ]},
+};
+
+/* ══════════════════════════════════════
+   STATE
+══════════════════════════════════════ */
+let cat=null, deck=[], idx=0, stars=0, streak=0, streakTimer=null;
+let listening=false, busy=false, attempts=0;
+const synth = window.speechSynthesis;
+let voices = [];
+
+/* load voices async */
+function loadVoices(){ voices = synth.getVoices(); }
+loadVoices();
+if(synth.onvoiceschanged !== undefined) synth.onvoiceschanged = loadVoices;
+function pickVoice(){
+  return voices.find(v=>v.lang==='en-US' && v.localService)
+      || voices.find(v=>v.lang.startsWith('en') && v.localService)
+      || voices.find(v=>v.lang==='en-US')
+      || voices.find(v=>v.lang.startsWith('en'))
+      || null;
+}
+
+/* ══════════════════════════════════════
+   SPLASH — unlocks AudioContext + pre-warms mic
+══════════════════════════════════════ */
+document.getElementById('splash').addEventListener('click', function(){
+  /* unlock TTS AudioContext with a real user gesture */
+  synth.cancel();
+  const u = new SpeechSynthesisUtterance('.');
+  u.volume=0.001; u.rate=10; synth.speak(u);
+
+  /* pre-warm mic permission so it's granted before first game */
+  if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia){
+    navigator.mediaDevices.getUserMedia({audio:true, video:false})
+      .then(s => s.getTracks().forEach(t => t.stop()))
+      .catch(e => console.warn('mic prewarm:', e));
+  }
+  this.style.display = 'none';
+  buildMenu();
+}, {once:true});
+
+/* ══════════════════════════════════════
+   TTS
+══════════════════════════════════════ */
+function speak(text, rate, pitch, onDone){
+  synth.cancel();
+  setTimeout(()=>{
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang='en-US'; u.rate=rate||0.88; u.pitch=pitch||1.1; u.volume=1.0;
+    const v = pickVoice(); if(v) u.voice=v;
+    const wave = document.getElementById('wave');
+    const bl   = document.getElementById('btn-listen');
+    u.onstart = ()=>{ wave.classList.add('on'); bl.classList.add('speaking'); };
+    u.onend   = ()=>{ wave.classList.remove('on'); bl.classList.remove('speaking'); if(onDone) onDone(); };
+    u.onerror = e=>{ wave.classList.remove('on'); bl.classList.remove('speaking'); console.warn('TTS:',e.error); if(onDone) onDone(); };
+    synth.speak(u);
+  }, 55);
+}
+
+function speakSyllables(syls, done){
+  synth.cancel();
+  let i=0;
+  const wave = document.getElementById('wave');
+  function next(){
+    if(i>=syls.length){ renderSyls(syls,-1); setTimeout(done,380); return; }
+    renderSyls(syls,i);
+    setTimeout(()=>{
+      const u=new SpeechSynthesisUtterance(syls[i]);
+      u.lang='en-US'; u.rate=0.52; u.pitch=1.2; u.volume=1.0;
+      const v=pickVoice(); if(v) u.voice=v;
+      u.onstart=()=>wave.classList.add('on');
+      u.onend=()=>{ wave.classList.remove('on'); i++; setTimeout(next,400); };
+      u.onerror=()=>{ wave.classList.remove('on'); i++; setTimeout(next,400); };
+      synth.speak(u);
+    }, 55);
+  }
+  next();
+}
+
+/* ══════════════════════════════════════
+   SPEECH RECOGNITION
+══════════════════════════════════════ */
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let recog = null;
+
+function startListening(){
+  if(listening||busy) return;
+  if(!SR){ setStatus('SPEECH RECOGNITION NOT AVAILABLE IN THIS BROWSER'); return; }
+  synth.cancel();
+  recog = new SR();
+  recog.lang='en-US'; recog.continuous=false; recog.interimResults=false; recog.maxAlternatives=6;
+  recog.onresult = e=>{
+    listening=false; setMicState('idle');
+    const alts=[...e.results[0]].map(a=>a.transcript.trim().toLowerCase());
+    evaluate(alts);
+  };
+  recog.onerror = e=>{
+    listening=false; setMicState('idle');
+    console.warn('SR error:', e.error);
+    if(e.error==='not-allowed')  setStatus('🔒 PLEASE ALLOW THE MICROPHONE');
+    else if(e.error==='no-speech') setStatus("I DIDN'T HEAR YOU — TRY AGAIN! 🎤");
+    else if(e.error==='network')   setStatus('NEED INTERNET FOR VOICE — TRY AGAIN');
+    else setStatus('TRY AGAIN! 🎤');
+  };
+  recog.onend = ()=>{ listening=false; };
+  try{
+    recog.start();
+    listening=true; setMicState('listening'); setStatus('LISTENING... 👂');
+  } catch(e){ listening=false; console.warn(e); }
+}
+
+function stopListening(){
+  if(recog){ try{ recog.abort(); }catch(e){} recog=null; }
+  listening=false;
+}
+
+/* ══════════════════════════════════════
+   FUZZY MATCH
+══════════════════════════════════════ */
+function lev(a,b){
+  const m=a.length,n=b.length;
+  const dp=Array.from({length:m+1},(_,i)=>Array.from({length:n+1},(_,j)=>i?j?0:i:j));
+  for(let i=1;i<=m;i++) for(let j=1;j<=n;j++)
+    dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
+  return dp[m][n];
+}
+function sim(a,b){
+  a=a.toLowerCase().trim(); b=b.toLowerCase().trim();
+  if(a===b) return 1;
+  const L=Math.max(a.length,b.length);
+  return L ? 1-lev(a,b)/L : 1;
+}
+function evaluate(alts){
+  if(busy) return;
+  const target=deck[idx].w.toLowerCase();
+  const best=alts.reduce((acc,a)=>Math.max(acc,sim(target,a)),0);
+  console.log('heard:',alts,'| target:',target,'| score:',best.toFixed(2));
+  best>=0.75 ? onCorrect() : (attempts++, onWrong(attempts));
+}
+
+/* ══════════════════════════════════════
+   MENU
+══════════════════════════════════════ */
+function buildMenu(){
+  const grid=document.getElementById('menu-grid');
+  grid.innerHTML='';
+  Object.entries(CATS).forEach(([key,c])=>{
+    const btn=document.createElement('button');
+    btn.className='cat-card'; btn.style.background=c.color;
+    btn.innerHTML=`<div class="cc-icons">${c.preview.join('')}</div><div class="cc-title">${c.label}</div>`;
+    btn.onclick=()=>startGame(key);
+    grid.appendChild(btn);
+  });
+}
+
+/* ══════════════════════════════════════
+   GAME
+══════════════════════════════════════ */
+function shuffle(a){ const b=[...a]; for(let i=b.length-1;i>0;i--){const j=0|Math.random()*(i+1);[b[i],b[j]]=[b[j],b[i]];} return b; }
+
+function startGame(key){
+  cat=key; deck=shuffle(CATS[key].words); idx=0; attempts=0; busy=false;
+  document.getElementById('menu-screen').style.display='none';
+  document.getElementById('game-screen').style.display='flex';
+  const color=CATS[key].color;
+  document.getElementById('main-card').style.borderTopColor=color;
+  document.getElementById('prog-bar').style.background=color;
+  document.getElementById('main-word').style.color=color;
+  document.querySelectorAll('.wb').forEach(b=>b.style.background=color);
+  showCard();
+}
+
+function showCard(){
+  if(idx>=deck.length){ finishGame(); return; }
+  stopListening(); hideFeedback(); attempts=0; busy=false;
+  updateAttemptDots(0);
+  const item=deck[idx];
+  document.getElementById('main-emoji').textContent=item.e;
+  document.getElementById('main-emoji').style.transform='scale(1)';
+  document.getElementById('main-word').textContent=item.w.toUpperCase();
+  renderSyls(item.s,-1);
+  updateProg();
+  setMicState('idle');
+  enableMic(false);
+  setStatus('LISTEN FIRST! 🔊');
+  setTimeout(()=>speak(item.w,0.88,1.1,()=>{ enableMic(true); setStatus('NOW SAY THE WORD! 🎤'); }),500);
+}
+
+function renderSyls(syls,lit){
+  const row=document.getElementById('syl-row');
+  if(syls.length<=1){ row.innerHTML=''; return; }
+  row.innerHTML=syls.map((s,i)=>`<span class="syl${i===lit?' lit':''}">${s}</span>`).join('');
+}
+function updateProg(){ document.getElementById('prog-bar').style.width=(deck.length?idx/deck.length*100:0)+'%'; }
+function enableMic(on){ document.getElementById('btn-mic').disabled=!on; }
+function updateAttemptDots(n){
+  for(let i=0;i<3;i++) document.getElementById('dot'+i).classList.toggle('used', i<n);
+}
+
+/* ══════════════════════════════════════
+   CORRECT
+══════════════════════════════════════ */
+function onCorrect(){
+  if(busy) return; busy=true;
+  streak++; stars+=10;
+  document.getElementById('stars').textContent=stars;
+  setMicState('success'); setStatus('🎉 GREAT JOB!');
+  showFeedback('✅','AMAZING! 🎉','#51CF66');
+  confetti(); showStreak();
+  const em=document.getElementById('main-emoji');
+  em.style.transform='scale(1.4)';
+  setTimeout(()=>em.style.transform='scale(1)',350);
+  setTimeout(()=>{ hideFeedback(); idx++; showCard(); },2000);
+}
+
+/* ══════════════════════════════════════
+   WRONG
+══════════════════════════════════════ */
+function onWrong(n){
+  streak=0; document.getElementById('streak').classList.remove('on');
+  updateAttemptDots(n);
+  const item=deck[idx];
+  enableMic(false);
+
+  if(n===1){
+    /* First wrong: repeat word slower */
+    setStatus('LISTEN CAREFULLY! 👂');
+    showFeedback('👂','LISTEN AGAIN!','#FFA94D');
+    setTimeout(()=>{
+      hideFeedback();
+      speak(item.w, 0.6, 1.1, ()=>{ enableMic(true); setStatus('TRY AGAIN! 🎤'); });
+    }, 750);
+
+  } else {
+    /* Second+ wrong: syllable breakdown */
+    setStatus("LET'S SAY IT PART BY PART...");
+    showFeedback('🔤','SAY EACH PART!','#CC5DE8');
+    setTimeout(()=>{
+      hideFeedback();
+      speakSyllables(item.s, ()=>{
+        speak(item.w, 0.65, 1.1, ()=>{ enableMic(true); setStatus('NOW YOU SAY IT! 🎤'); });
+      });
+    }, 750);
+  }
+}
+
+/* ══════════════════════════════════════
+   FINISH
+══════════════════════════════════════ */
+function finishGame(){
+  showFeedback('🏆','YOU DID IT! 🎉','#FFA94D');
+  confetti(); confetti();
+  setTimeout(()=>{ hideFeedback(); goMenu(); },3000);
+}
+
+/* ══════════════════════════════════════
+   UI HELPERS
+══════════════════════════════════════ */
+function setStatus(t){ document.getElementById('status-text').textContent=t; }
+
+function setMicState(s){
+  const b=document.getElementById('btn-mic');
+  b.classList.remove('listening','success');
+  if(s==='listening'){ b.classList.add('listening'); b.textContent='👂'; }
+  else if(s==='success'){ b.classList.add('success'); b.textContent='✅'; }
+  else{ b.textContent='🎤'; }
+}
+
+function showFeedback(emoji,text,color){
+  document.getElementById('fb-emoji').textContent=emoji;
+  document.getElementById('fb-text').textContent=text;
+  const fb=document.getElementById('feedback');
+  fb.style.background=color+'EE'; fb.classList.add('show');
+}
+function hideFeedback(){ document.getElementById('feedback').classList.remove('show'); }
+
+function showStreak(){
+  if(streak<3) return;
+  const el=document.getElementById('streak');
+  document.getElementById('streak-n').textContent=streak;
+  el.classList.add('on'); clearTimeout(streakTimer);
+  streakTimer=setTimeout(()=>el.classList.remove('on'),2600);
+}
+
+function confetti(){
+  const cols=['#FF6B6B','#FFA94D','#CC5DE8','#339AF0','#51CF66','#F06595','#20C997','#845EF7'];
+  const shapes=['50%','2px','4px'];
+  for(let i=0;i<32;i++) setTimeout(()=>{
+    const el=document.createElement('div'); el.className='cf';
+    el.style.cssText=`left:${Math.random()*100}vw;top:-20px;width:${8+Math.random()*10}px;height:${8+Math.random()*10}px;background:${cols[0|Math.random()*cols.length]};border-radius:${shapes[0|Math.random()*shapes.length]};animation-duration:${1.1+Math.random()*.9}s`;
+    document.body.appendChild(el); setTimeout(()=>el.remove(),2300);
+  },i*42);
+}
+
+function goMenu(){
+  stopListening(); synth.cancel(); busy=false; hideFeedback();
+  document.getElementById('game-screen').style.display='none';
+  document.getElementById('menu-screen').style.display='flex';
+}
+
+/* ══════════════════════════════════════
+   BUTTON EVENTS
+══════════════════════════════════════ */
+document.getElementById('btn-listen').addEventListener('click',()=>{
+  if(!deck.length) return;
+  enableMic(false);
+  speak(deck[idx].w,0.88,1.1,()=>{ enableMic(true); setStatus('NOW SAY THE WORD! 🎤'); });
+});
+document.getElementById('btn-mic').addEventListener('click',()=>{
+  if(listening){ stopListening(); return; }
+  startListening();
+});
+document.getElementById('btn-back').addEventListener('click',()=>{ synth.cancel(); goMenu(); });
+
+/* keyboard shortcuts for desktop testing */
+document.addEventListener('keydown',e=>{
+  if(document.getElementById('game-screen').style.display==='none') return;
+  if(e.key===' '){ e.preventDefault(); listening?stopListening():startListening(); }
+  if(e.key==='r'||e.key==='R'){ enableMic(false); speak(deck[idx].w,0.88,1.1,()=>enableMic(true)); }
+});
+</script>
+</body>
+</html>
