@@ -370,21 +370,25 @@ function stopListening(){
 
 /* FUZZY MATCH + ALIASES */
 const ALIASES={
-  duck:['doc','dak','dark','dug','dack','dock'],
-  bee:['be','b','sea','see','me','thee'],
-  cow:['caw','col','how'],
-  pig:['big','pick','peg'],
-  egg:['eg','eck','ek'],
-  ear:['here','year','fear'],
-  eye:['i','ai','aye'],
-  one:['wan','won','un'],
-  two:['to','too','tu'],
-  four:['for','fore'],
-  six:['sex','sicks'],
-  eight:['ate','ait'],
-  sheep:['ship','cheap'],
-  leaf:['leave','lief'],
-  frog:['fog','frock'],
+  duck:['doc','dak','dark','dug','dack','dock','luck','tuck','muck','duc','duk','the duck','a duck'],
+  bee:['be','b','the','see','sea','me','thee','fee','key','tea','free','v','z','bea','bi','by','bees','a bee','the bee'],
+  cow:['caw','col','how','wow','ko','co','cou','cows'],
+  pig:['big','pick','peg','pit','bit','dig','wig','fig'],
+  egg:['eg','eck','ek','ugh','ed','eggs'],
+  ear:['here','year','fear','beer','dear','near','tear'],
+  eye:['i','ai','aye','hi','my','by','die','lie','pie','tie'],
+  one:['wan','won','un','an','own'],
+  two:['to','too','tu','do','who','shoe'],
+  four:['for','fore','fur','far'],
+  six:['sex','sicks','sick','sticks'],
+  eight:['ate','ait','hate','gate','fate','late','rate'],
+  sheep:['ship','cheap','chip','sleep','keep','deep','seep'],
+  leaf:['leave','lief','left','reef','beef'],
+  frog:['fog','frock','drug','frag','log','prog'],
+  bird:['heard','word','bud','bid','bed','bad'],
+  fish:['dish','wish','fist','miss','this'],
+  cat:['hat','bat','rat','mat','fat','sat','cut','kit'],
+  dog:['log','bog','jog','fog','dock','dot','god'],
 };
 function lev(a,b){
   const m=a.length,n=b.length;
@@ -402,19 +406,34 @@ function evaluate(alts){
   if(busy)return;
   const target=deck[idx].w.toLowerCase();
   let best=0;
+
   alts.forEach(h=>{
+    // full phrase
     best=Math.max(best,sim(target,h));
+    // each token (catches "a duck", "the bee", "I see")
     h.split(/\s+/).forEach(t=>{best=Math.max(best,sim(target,t));});
+    // strip leading articles ("a ", "the ", "an ")
+    const stripped=h.replace(/^(a |an |the )/,'').trim();
+    best=Math.max(best,sim(target,stripped));
   });
+
+  // alias check — known mishearings
   if(best<0.75){
     const al=ALIASES[target]||[];
     alts.forEach(h=>{
-      if(al.includes(h.trim()))best=1;
+      const ht=h.trim();
+      if(al.includes(ht))best=1;
+      // also check first letter match for single-letter returns like "B" for bee
+      if(target.length<=4 && ht.length===1 && ht===target[0])best=0.9;
       h.split(/\s+/).forEach(t=>{if(al.includes(t))best=1;});
     });
   }
-  console.log('heard:',alts,'target:',target,'score:',best.toFixed(2));
-  best>=0.75?onCorrect():(attempts++,onWrong(attempts));
+
+  // lower threshold for very short words (3 chars or less like bee, cow, pig, egg)
+  const threshold = target.replace(/\s/g,'').length <= 3 ? 0.6 : 0.75;
+
+  console.log('heard:',alts,'| target:',target,'| score:',best.toFixed(2),'| threshold:',threshold);
+  best>=threshold?onCorrect():(attempts++,onWrong(attempts));
 }
 
 /* MENU */

@@ -2,7 +2,7 @@
 
 > An audio-first English vocabulary app for young non-English speaking children. No reading required — just images, sound, and voice.
 
-![version](https://img.shields.io/badge/version-1.4.0-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue) ![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Android-orange)
+![version](https://img.shields.io/badge/version-1.5.0-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue) ![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Android-orange)
 
 ---
 
@@ -65,6 +65,12 @@
 ---
 
 ## 📋 Changelog
+
+### v1.5.0 — 2026-03-30
+- **Layout rebuilt:** 🔊 always fixed to left screen edge, 🎤 always fixed to right screen edge — works in portrait and landscape with no media queries
+- **◀ ▶ arrows** moved inside the card itself — always visible regardless of orientation
+- **Duck/Bee recognition massively expanded:** alias table now covers 10+ mishearings per word; article stripping catches "a duck", "the bee"; first-letter match for single-char returns like "B"
+- **Lower threshold for short words:** 3-letter words (bee, cow, pig, egg) use 60% match instead of 75%
 
 ### v1.4.0 — 2026-03-30
 - **Navigation arrows:** ◀ ▶ buttons let the child skip forward or go back to any word freely
