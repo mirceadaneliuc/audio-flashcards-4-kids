@@ -210,6 +210,7 @@ const CATS = {
 ══════════════════════════════════════ */
 let cat=null, deck=[], idx=0, stars=0, streak=0, streakTimer=null;
 let listening=false, busy=false, attempts=0;
+let retryPile=[], isRetryRound=false;
 const synth = window.speechSynthesis;
 let voices = [];
 
@@ -338,7 +339,14 @@ function sim(a,b){
 function evaluate(alts){
   if(busy) return;
   const target=deck[idx].w.toLowerCase();
-  const best=alts.reduce((acc,a)=>Math.max(acc,sim(target,a)),0);
+  let best=alts.reduce((acc,a)=>Math.max(acc,sim(target,a)),0);
+  /* Short words like "bee","cat","pig" — also check each individual
+     heard word so "the bee" or "a bee" still counts as correct */
+  if(best<0.75 && target.length<=4){
+    alts.forEach(a=>{
+      a.split(/\s+/).forEach(w=>{ best=Math.max(best,sim(target,w)); });
+    });
+  }
   console.log('heard:',alts,'| target:',target,'| score:',best.toFixed(2));
   best>=0.75 ? onCorrect() : (attempts++, onWrong(attempts));
 }
@@ -364,7 +372,7 @@ function buildMenu(){
 function shuffle(a){ const b=[...a]; for(let i=b.length-1;i>0;i--){const j=0|Math.random()*(i+1);[b[i],b[j]]=[b[j],b[i]];} return b; }
 
 function startGame(key){
-  cat=key; deck=shuffle(CATS[key].words); idx=0; attempts=0; busy=false;
+  cat=key; deck=shuffle(CATS[key].words); idx=0; attempts=0; busy=false; retryPile=[]; isRetryRound=false;
   document.getElementById('menu-screen').style.display='none';
   document.getElementById('game-screen').style.display='flex';
   const color=CATS[key].color;
@@ -388,7 +396,8 @@ function showCard(){
   setMicState('idle');
   enableMic(false);
   setStatus('LISTEN FIRST! 🔊');
-  setTimeout(()=>speak(item.w,0.88,1.1,()=>{ enableMic(true); setStatus('NOW SAY THE WORD! 🎤'); }),500);
+  const prompt = isRetryRound ? "LET'S TRY AGAIN! 🎤" : 'NOW SAY THE WORD! 🎤';
+  setTimeout(()=>speak(item.w,0.88,1.1,()=>{ enableMic(true); setStatus(prompt); }),500);
 }
 
 function renderSyls(syls,lit){
@@ -436,8 +445,8 @@ function onWrong(n){
       speak(item.w, 0.6, 1.1, ()=>{ enableMic(true); setStatus('TRY AGAIN! 🎤'); });
     }, 750);
 
-  } else {
-    /* Second+ wrong: syllable breakdown */
+  } else if(n===2){
+    /* Second wrong: syllable breakdown, one more chance */
     setStatus("LET'S SAY IT PART BY PART...");
     showFeedback('🔤','SAY EACH PART!','#CC5DE8');
     setTimeout(()=>{
@@ -446,6 +455,12 @@ function onWrong(n){
         speak(item.w, 0.65, 1.1, ()=>{ enableMic(true); setStatus('NOW YOU SAY IT! 🎤'); });
       });
     }, 750);
+
+  } else {
+    /* Third wrong: skip, add to retry pile, move on */
+    if(!retryPile.find(x=>x.w===item.w)) retryPile.push(item);
+    showFeedback('\u23ED\uFE0F',"WE'LL TRY AGAIN LATER!",'#888');
+    setTimeout(()=>{ hideFeedback(); idx++; showCard(); }, 1800);
   }
 }
 
@@ -453,9 +468,20 @@ function onWrong(n){
    FINISH
 ══════════════════════════════════════ */
 function finishGame(){
-  showFeedback('🏆','YOU DID IT! 🎉','#FFA94D');
-  confetti(); confetti();
-  setTimeout(()=>{ hideFeedback(); goMenu(); },3000);
+  if(retryPile.length>0 && !isRetryRound){
+    /* Start retry round */
+    isRetryRound=true;
+    deck=retryPile.slice(); retryPile=[]; idx=0; attempts=0; busy=false;
+    showFeedback('🔁',"LET'S TRY THE TRICKY ONES!",'#CC5DE8');
+    confetti();
+    setTimeout(()=>{ hideFeedback(); showCard(); },2200);
+  } else {
+    /* Truly done */
+    showFeedback('🏆','YOU DID IT! 🎉','#FFA94D');
+    confetti(); confetti();
+    isRetryRound=false;
+    setTimeout(()=>{ hideFeedback(); goMenu(); },3000);
+  }
 }
 
 /* ══════════════════════════════════════
