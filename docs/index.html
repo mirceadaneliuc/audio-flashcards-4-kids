@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="description" content="English vocabulary flashcards for kids — audio, voice recognition, syllable breakdown">
 <meta name="theme-color" content="#FF6B6B">
-<title>English Flashcards 4 Kids v1.4.0</title>
-<meta name="version" content="1.4.0">
+<title>English Flashcards 4 Kids v1.5.0</title>
+<meta name="version" content="1.5.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <style>
@@ -19,17 +19,17 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 .sp-title{font-family:'Fredoka One',cursive;font-size:36px;color:#fff;text-align:center;line-height:1.2;}
 .sp-title span{font-size:48px;display:block;}
 .sp-sub{font-family:'Fredoka One',cursive;font-size:22px;color:rgba(255,255,255,.85);text-align:center;padding:0 24px;animation:blink 1.4s ease-in-out infinite;}
-@keyframes bob{from{transform:translateY(0) scale(1)}to{transform:translateY(-16px) scale(1.05)}}
+@keyframes bob{from{transform:translateY(0)}to{transform:translateY(-16px)}}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.5}}
 
 /* ── TOP BAR ── */
-#topbar{width:100%;max-width:700px;display:flex;align-items:center;justify-content:space-between;padding:12px 18px 4px;}
+#topbar{width:100%;max-width:600px;display:flex;align-items:center;justify-content:space-between;padding:12px 18px 4px;}
 #logo{font-family:'Fredoka One',cursive;font-size:17px;color:#FF6B6B;line-height:1.2;}
 #logo span{font-size:21px;display:block;}
 #stars-box{display:flex;align-items:center;gap:6px;background:#fff;border-radius:50px;padding:6px 14px;font-weight:900;font-size:19px;box-shadow:0 2px 10px rgba(0,0,0,.1);}
 
 /* ── MENU ── */
-#menu-screen{width:100%;max-width:700px;display:flex;flex-direction:column;padding:6px 14px 14px;gap:10px;}
+#menu-screen{width:100%;max-width:600px;display:flex;flex-direction:column;padding:6px 14px 14px;gap:10px;}
 #menu-title{font-family:'Fredoka One',cursive;font-size:26px;text-align:center;color:#aaa;padding:4px 0;}
 #menu-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
 .cat-card{border:none;border-radius:22px;padding:14px 12px 12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;box-shadow:0 4px 18px rgba(0,0,0,.15);transition:transform .15s;color:#fff;font-family:'Fredoka One',cursive;}
@@ -38,146 +38,142 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 .cc-title{font-size:21px;}
 
 /* ── GAME SCREEN ── */
-#game-screen{width:100%;max-width:700px;display:none;flex-direction:column;align-items:center;padding:4px 14px 12px;gap:8px;}
+/* Left and right padding = 90px to keep content clear of the fixed edge buttons */
+#game-screen{
+  width:100%;
+  max-width:100%;
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  padding:4px 100px 12px;
+  gap:8px;
+  min-height:100dvh;
+}
 
 /* top row: back + progress */
 #top-row{width:100%;display:flex;align-items:center;gap:10px;}
-#btn-back{background:none;border:none;font-size:32px;cursor:pointer;padding:2px 6px;border-radius:12px;flex-shrink:0;}
+#btn-back{background:none;border:none;font-size:28px;cursor:pointer;padding:2px 4px;border-radius:10px;flex-shrink:0;}
 #prog-wrap{flex:1;height:12px;background:#e8e8e8;border-radius:8px;overflow:hidden;}
 #prog-bar{height:100%;border-radius:8px;transition:width .5s ease;width:0%;}
 
-/* ── CARD ── */
-#main-card{width:100%;min-height:240px;border-radius:28px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:16px 18px;box-shadow:0 8px 32px rgba(0,0,0,.12);background:#fff;position:relative;overflow:hidden;border-top:8px solid #FF6B6B;transition:border-top-color .3s;}
+/* ── CARD — arrows live inside here ── */
+#main-card{
+  width:100%;
+  max-width:500px;
+  min-height:260px;
+  border-radius:28px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  padding:16px 60px;   /* horizontal padding keeps content away from arrow buttons */
+  box-shadow:0 8px 32px rgba(0,0,0,.12);
+  background:#fff;
+  position:relative;
+  overflow:hidden;
+  border-top:8px solid #FF6B6B;
+  transition:border-top-color .3s;
+}
+
+/* ◀ ▶ arrows inside card, vertically centred */
+.btn-arrow{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  width:48px;height:48px;
+  border-radius:50%;border:none;
+  font-size:20px;cursor:pointer;
+  background:rgba(0,0,0,.07);
+  color:#888;
+  transition:background .15s,transform .15s;
+  display:flex;align-items:center;justify-content:center;
+}
+.btn-arrow:active{background:rgba(0,0,0,.18);transform:translateY(-50%) scale(.88);}
+#btn-prev{left:8px;}
+#btn-next{right:8px;}
+
 #main-emoji{font-size:110px;line-height:1;transition:transform .3s cubic-bezier(.34,1.56,.64,1);}
 #main-word{font-family:'Fredoka One',cursive;font-size:44px;text-transform:uppercase;text-align:center;transition:color .3s;}
-#syl-row{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;min-height:38px;align-items:center;}
-.syl{font-family:'Fredoka One',cursive;font-size:24px;padding:3px 10px;border-radius:10px;background:#f1f3f5;color:#bbb;transition:background .15s,transform .2s;}
-.syl.lit{background:#FFA94D;color:#fff;transform:scale(1.2);}
-#wave{display:flex;align-items:flex-end;gap:4px;height:24px;opacity:0;transition:opacity .25s;}
+#syl-row{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;min-height:36px;align-items:center;}
+.syl{font-family:'Fredoka One',cursive;font-size:23px;padding:3px 9px;border-radius:10px;background:#f1f3f5;color:#bbb;transition:background .15s,transform .2s;}
+.syl.lit{background:#FFA94D;color:#fff;transform:scale(1.18);}
+
+/* wave */
+#wave{display:flex;align-items:flex-end;gap:4px;height:22px;opacity:0;transition:opacity .25s;}
 #wave.on{opacity:1;}
 .wb{width:5px;border-radius:3px;animation:wv .75s ease-in-out infinite;}
-.wb:nth-child(1){height:9px;animation-delay:0s}
-.wb:nth-child(2){height:18px;animation-delay:.12s}
-.wb:nth-child(3){height:24px;animation-delay:.24s}
-.wb:nth-child(4){height:16px;animation-delay:.36s}
-.wb:nth-child(5){height:9px;animation-delay:.48s}
+.wb:nth-child(1){height:8px;animation-delay:0s}
+.wb:nth-child(2){height:16px;animation-delay:.12s}
+.wb:nth-child(3){height:22px;animation-delay:.24s}
+.wb:nth-child(4){height:14px;animation-delay:.36s}
+.wb:nth-child(5){height:8px;animation-delay:.48s}
 @keyframes wv{0%,100%{transform:scaleY(.4)}50%{transform:scaleY(1)}}
+
+/* feedback overlay */
 #feedback{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border-radius:28px;pointer-events:none;opacity:0;transition:opacity .25s;}
 #feedback.show{opacity:1;}
-#fb-emoji{font-size:76px;}
-#fb-text{font-family:'Fredoka One',cursive;font-size:32px;color:#fff;text-align:center;}
+#fb-emoji{font-size:70px;}
+#fb-text{font-family:'Fredoka One',cursive;font-size:28px;color:#fff;text-align:center;padding:0 12px;}
 
-/* ── CONTROLS (portrait) ── */
-#controls{width:100%;display:flex;flex-direction:column;align-items:center;gap:10px;}
-#status-text{font-family:'Fredoka One',cursive;font-size:17px;color:#aaa;text-align:center;text-transform:uppercase;min-height:24px;}
+/* ── STATUS ── */
+#status-text{font-family:'Fredoka One',cursive;font-size:17px;color:#aaa;text-align:center;text-transform:uppercase;min-height:24px;width:100%;max-width:500px;}
 
-/* button row: ◀  🔊  🎤  ▶ */
-#btn-row{display:flex;align-items:center;justify-content:space-between;width:100%;padding:0 8px;}
-
-/* NAV arrows */
-.btn-nav{width:62px;height:62px;border-radius:50%;border:none;font-size:24px;cursor:pointer;background:#f0f0f0;color:#888;box-shadow:0 3px 10px rgba(0,0,0,.1);transition:transform .15s,background .15s;flex-shrink:0;}
-.btn-nav:active{transform:scale(.88);}
-
-/* LISTEN button */
-#btn-listen{width:86px;height:86px;border-radius:50%;border:none;font-size:40px;cursor:pointer;background:#FFA94D;color:#fff;box-shadow:0 5px 18px rgba(255,169,77,.45);transition:transform .15s,background .2s;flex-shrink:0;}
-#btn-listen:active{transform:scale(.88);}
+/* ════════════════════════════════════
+   HEAR (🔊) and SPEAK (🎤) buttons
+   Always fixed to screen edges.
+   Works in portrait AND landscape — no media queries needed.
+════════════════════════════════════ */
+#btn-listen{
+  position:fixed;
+  left:0;
+  top:50%;
+  transform:translateY(-50%);
+  width:86px;height:86px;
+  border-radius:0 50px 50px 0;   /* flat on left, rounded on right */
+  border:none;font-size:38px;
+  cursor:pointer;
+  background:#FFA94D;color:#fff;
+  box-shadow:4px 0 20px rgba(255,169,77,.5);
+  transition:background .2s,transform .15s;
+  z-index:100;
+  display:flex;align-items:center;justify-content:center;
+}
+#btn-listen:active{transform:translateY(-50%) scale(.9);}
 #btn-listen.speaking{background:#339AF0;}
 
-/* MIC button */
-#btn-mic{width:108px;height:108px;border-radius:50%;border:none;font-size:52px;cursor:pointer;background:#FF6B6B;color:#fff;box-shadow:0 6px 24px rgba(255,107,107,.45);transition:transform .15s,background .2s,opacity .2s;flex-shrink:0;}
-#btn-mic:active:not(:disabled){transform:scale(.88);}
+#btn-mic{
+  position:fixed;
+  right:0;
+  top:50%;
+  transform:translateY(-50%);
+  width:92px;height:92px;
+  border-radius:50px 0 0 50px;   /* rounded on left, flat on right */
+  border:none;font-size:44px;
+  cursor:pointer;
+  background:#FF6B6B;color:#fff;
+  box-shadow:-4px 0 20px rgba(255,107,107,.5);
+  transition:background .2s,transform .15s,opacity .2s;
+  z-index:100;
+  display:flex;align-items:center;justify-content:center;
+}
+#btn-mic:active:not(:disabled){transform:translateY(-50%) scale(.9);}
 #btn-mic.listening{background:#339AF0;animation:pulse .9s ease-out infinite;}
 #btn-mic.success{background:#51CF66;}
-#btn-mic:disabled{opacity:.3;cursor:not-allowed;animation:none !important;}
-@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(51,154,240,.7)}70%{box-shadow:0 0 0 28px rgba(51,154,240,0)}100%{box-shadow:0 0 0 0 rgba(51,154,240,0)}}
+#btn-mic:disabled{opacity:.28;cursor:not-allowed;animation:none !important;}
+@keyframes pulse{
+  0%{box-shadow:-4px 0 20px rgba(51,154,240,.8),0 0 0 0 rgba(51,154,240,.6)}
+  70%{box-shadow:-4px 0 20px rgba(51,154,240,.4),0 0 0 22px rgba(51,154,240,0)}
+  100%{box-shadow:-4px 0 20px rgba(51,154,240,.8),0 0 0 0 rgba(51,154,240,0)}
+}
 
 /* confetti */
 .cf{position:fixed;width:12px;height:12px;pointer-events:none;z-index:200;animation:cff 1.5s ease-in forwards;}
 @keyframes cff{from{transform:translateY(-40px) rotate(0);opacity:1}to{transform:translateY(105vh) rotate(760deg);opacity:0}}
 
 /* streak */
-#streak{position:fixed;top:60px;right:14px;background:#FFA94D;color:#fff;font-family:'Fredoka One',cursive;font-size:20px;border-radius:50px;padding:8px 16px;box-shadow:0 4px 18px rgba(255,169,77,.5);transform:scale(0) translateX(40px);transition:transform .4s cubic-bezier(.4,0,.2,1);z-index:50;}
-#streak.on{transform:scale(1) translateX(0);}
-
-/* ═══════════════════════════════════════════
-   TABLET LANDSCAPE  (width >= 700px + landscape)
-   Card centred, listen pinned left, mic pinned right,
-   small nav arrows just inside the big buttons.
-   The #controls strip stays visible but the big
-   buttons are moved via fixed positioning.
-═══════════════════════════════════════════ */
-@media (min-width:700px) and (orientation:landscape){
-  #menu-grid{grid-template-columns:repeat(4,1fr);}
-  #game-screen{max-width:100%;padding:4px 0 12px;}
-  #top-row{padding:0 20px;}
-  #main-card{max-width:460px;align-self:center;}
-
-  /* hide the in-flow controls strip — buttons become fixed */
-  #controls{visibility:hidden;height:0;overflow:hidden;margin:0;padding:0;}
-
-  /* LISTEN — fixed far left, vertically centred */
-  #btn-listen{
-    position:fixed !important;
-    left:12px !important;
-    top:50% !important;
-    transform:translateY(-50%) !important;
-    width:110px !important;
-    height:110px !important;
-    font-size:50px !important;
-    z-index:20;
-  }
-  #btn-listen.speaking{
-    background:#339AF0 !important;
-    transform:translateY(-50%) !important;
-  }
-
-  /* MIC — fixed far right, vertically centred */
-  #btn-mic{
-    position:fixed !important;
-    right:12px !important;
-    top:50% !important;
-    transform:translateY(-50%) !important;
-    width:126px !important;
-    height:126px !important;
-    font-size:58px !important;
-    z-index:20;
-  }
-  #btn-mic.listening{
-    background:#339AF0 !important;
-    animation:pulse .9s ease-out infinite !important;
-    transform:translateY(-50%) !important;
-  }
-  #btn-mic.success{ background:#51CF66 !important; }
-  #btn-mic:disabled{ opacity:.3 !important; animation:none !important; }
-
-  /* NAV arrows — fixed, just inside the big buttons */
-  #btn-prev{
-    position:fixed !important;
-    left:140px !important;
-    top:50% !important;
-    transform:translateY(-50%) !important;
-    z-index:20;
-    width:58px !important;
-    height:58px !important;
-  }
-  #btn-next{
-    position:fixed !important;
-    right:150px !important;
-    top:50% !important;
-    transform:translateY(-50%) !important;
-    z-index:20;
-    width:58px !important;
-    height:58px !important;
-  }
-
-  /* status text below card in landscape */
-  #status-text{
-    visibility:visible !important;
-    height:auto !important;
-    font-size:19px;
-    margin-top:10px;
-  }
-}
+#streak{position:fixed;top:56px;right:100px;background:#FFA94D;color:#fff;font-family:'Fredoka One',cursive;font-size:18px;border-radius:50px;padding:6px 14px;box-shadow:0 4px 16px rgba(255,169,77,.5);transform:scale(0);transition:transform .4s cubic-bezier(.4,0,.2,1);z-index:50;}
+#streak.on{transform:scale(1);}
 </style>
 </head>
 <body>
@@ -189,7 +185,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
   <div class="sp-sub">👆 TAP TO START!</div>
 </div>
 
-<!-- TOP BAR -->
+<!-- TOP BAR (only shown on menu) -->
 <div id="topbar">
   <div id="logo"><span>ENGLISH</span>FLASHCARDS 4 KIDS</div>
   <div id="stars-box">⭐ <span id="stars">0</span></div>
@@ -201,14 +197,19 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
   <div id="menu-grid"></div>
 </div>
 
-<!-- GAME -->
+<!-- GAME — edge buttons are OUTSIDE this div, fixed to viewport -->
 <div id="game-screen">
   <div id="top-row">
     <button id="btn-back">⬅️</button>
     <div id="prog-wrap"><div id="prog-bar"></div></div>
+    <div id="stars-box-game" style="display:flex;align-items:center;gap:5px;background:#fff;border-radius:50px;padding:5px 12px;font-weight:900;font-size:17px;box-shadow:0 2px 8px rgba(0,0,0,.1);flex-shrink:0;">⭐ <span id="stars-game">0</span></div>
   </div>
 
   <div id="main-card">
+    <!-- arrows inside the card -->
+    <button class="btn-arrow" id="btn-prev">◀</button>
+    <button class="btn-arrow" id="btn-next">▶</button>
+
     <div id="main-emoji">🐶</div>
     <div id="main-word">DOG</div>
     <div id="syl-row"></div>
@@ -219,22 +220,16 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
     <div id="feedback"><div id="fb-emoji"></div><div id="fb-text"></div></div>
   </div>
 
-  <!-- always-present controls strip -->
-  <div id="controls">
-    <div id="status-text">LISTEN FIRST! 🔊</div>
-    <div id="btn-row">
-      <button class="btn-nav" id="btn-prev">◀</button>
-      <button id="btn-listen">🔊</button>
-      <button id="btn-mic" disabled>🎤</button>
-      <button class="btn-nav" id="btn-next">▶</button>
-    </div>
-  </div>
+  <div id="status-text">LISTEN FIRST! 🔊</div>
 </div>
+
+<!-- FIXED EDGE BUTTONS — always visible regardless of orientation -->
+<button id="btn-listen">🔊</button>
+<button id="btn-mic" disabled>🎤</button>
 
 <div id="streak">🔥 <span id="streak-n">3</span> IN A ROW!</div>
 
 <script>
-/* ══════ DATA ══════ */
 const CATS={
   animals:{label:"ANIMALS",color:"#FF6B6B",preview:["🐶","🐱","🦁"],words:[
     {w:"dog",e:"🐶",s:["DOG"]},{w:"cat",e:"🐱",s:["CAT"]},{w:"lion",e:"🦁",s:["LI","ON"]},
@@ -281,7 +276,6 @@ const CATS={
   ]},
 };
 
-/* ══════ STATE ══════ */
 let cat=null,deck=[],idx=0,stars=0,streak=0,streakTimer=null;
 let listening=false,busy=false,attempts=0;
 const synth=window.speechSynthesis;
@@ -296,7 +290,7 @@ function pickVoice(){
       ||voices.find(v=>v.lang.startsWith('en'))||null;
 }
 
-/* ══════ SPLASH ══════ */
+/* SPLASH */
 document.getElementById('splash').addEventListener('click',function(){
   synth.cancel();
   const u=new SpeechSynthesisUtterance('.');
@@ -308,7 +302,7 @@ document.getElementById('splash').addEventListener('click',function(){
   buildMenu();
 },{once:true});
 
-/* ══════ TTS ══════ */
+/* TTS */
 function speak(text,rate,pitch,onDone){
   synth.cancel();
   setTimeout(()=>{
@@ -344,10 +338,9 @@ function speakSyllables(syls,done){
   next();
 }
 
-/* ══════ SPEECH RECOGNITION ══════ */
+/* SPEECH RECOGNITION */
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 let recog=null;
-
 function startListening(){
   if(listening||busy)return;
   if(!SR){setStatus('SPEECH RECOGNITION NOT AVAILABLE');return;}
@@ -356,8 +349,7 @@ function startListening(){
   recog.lang='en-US';recog.continuous=false;recog.interimResults=false;recog.maxAlternatives=6;
   recog.onresult=e=>{
     listening=false;setMicState('idle');
-    const alts=[...e.results[0]].map(a=>a.transcript.trim().toLowerCase());
-    evaluate(alts);
+    evaluate([...e.results[0]].map(a=>a.transcript.trim().toLowerCase()));
   };
   recog.onerror=e=>{
     listening=false;setMicState('idle');
@@ -371,22 +363,20 @@ function startListening(){
   try{recog.start();listening=true;setMicState('listening');setStatus('LISTENING...');}
   catch(e){listening=false;}
 }
-
 function stopListening(){
   if(recog){try{recog.abort();}catch(e){}recog=null;}
   listening=false;
 }
 
-/* ══════ FUZZY MATCH + ALIASES ══════ */
+/* FUZZY MATCH + ALIASES */
 const ALIASES={
   duck:['doc','dak','dark','dug','dack','dock'],
   bee:['be','b','sea','see','me','thee'],
-  bear:['bare','beer'],
-  ear:['here','year','fear'],
-  eye:['i','ai','aye'],
   cow:['caw','col','how'],
   pig:['big','pick','peg'],
   egg:['eg','eck','ek'],
+  ear:['here','year','fear'],
+  eye:['i','ai','aye'],
   one:['wan','won','un'],
   two:['to','too','tu'],
   four:['for','fore'],
@@ -396,7 +386,6 @@ const ALIASES={
   leaf:['leave','lief'],
   frog:['fog','frock'],
 };
-
 function lev(a,b){
   const m=a.length,n=b.length;
   const dp=Array.from({length:m+1},(_,i)=>Array.from({length:n+1},(_,j)=>i?j?0:i:j));
@@ -407,31 +396,28 @@ function lev(a,b){
 function sim(a,b){
   a=a.toLowerCase().trim();b=b.toLowerCase().trim();
   if(a===b)return 1;
-  const L=Math.max(a.length,b.length);
-  return L?1-lev(a,b)/L:1;
+  const L=Math.max(a.length,b.length);return L?1-lev(a,b)/L:1;
 }
-
 function evaluate(alts){
   if(busy)return;
   const target=deck[idx].w.toLowerCase();
   let best=0;
-  alts.forEach(heard=>{
-    best=Math.max(best,sim(target,heard));
-    heard.split(/\s+/).forEach(tok=>{best=Math.max(best,sim(target,tok));});
+  alts.forEach(h=>{
+    best=Math.max(best,sim(target,h));
+    h.split(/\s+/).forEach(t=>{best=Math.max(best,sim(target,t));});
   });
   if(best<0.75){
-    const aliases=ALIASES[target]||[];
-    alts.forEach(heard=>{
-      const tokens=heard.split(/\s+/);
-      if(aliases.includes(heard.trim()))best=1;
-      tokens.forEach(tok=>{if(aliases.includes(tok))best=1;});
+    const al=ALIASES[target]||[];
+    alts.forEach(h=>{
+      if(al.includes(h.trim()))best=1;
+      h.split(/\s+/).forEach(t=>{if(al.includes(t))best=1;});
     });
   }
-  console.log('heard:',alts,'| target:',target,'| score:',best.toFixed(2));
+  console.log('heard:',alts,'target:',target,'score:',best.toFixed(2));
   best>=0.75?onCorrect():(attempts++,onWrong(attempts));
 }
 
-/* ══════ MENU ══════ */
+/* MENU */
 function buildMenu(){
   const grid=document.getElementById('menu-grid');
   grid.innerHTML='';
@@ -444,11 +430,12 @@ function buildMenu(){
   });
 }
 
-/* ══════ GAME ══════ */
+/* GAME */
 function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=0|Math.random()*(i+1);[b[i],b[j]]=[b[j],b[i]];}return b;}
 
 function startGame(key){
   cat=key;deck=shuffle(CATS[key].words);idx=0;attempts=0;busy=false;
+  document.getElementById('topbar').style.display='none';
   document.getElementById('menu-screen').style.display='none';
   document.getElementById('game-screen').style.display='flex';
   const color=CATS[key].color;
@@ -467,40 +454,32 @@ function showCard(){
   document.getElementById('main-word').textContent=item.w.toUpperCase();
   renderSyls(item.s,-1);
   updateProg();
-  setMicState('idle');
-  enableMic(false);
+  setMicState('idle');enableMic(false);
   setStatus('LISTEN FIRST! 🔊');
   setTimeout(()=>speak(item.w,0.88,1.1,()=>{enableMic(true);setStatus('NOW SAY THE WORD! 🎤');}),500);
 }
 
-function navPrev(){
-  if(busy)return;
-  synth.cancel();stopListening();
-  idx=(idx-1+deck.length)%deck.length;
-  showCard();
-}
-function navNext(){
-  if(busy)return;
-  synth.cancel();stopListening();
-  idx=(idx+1)%deck.length;
-  showCard();
-}
+function navPrev(){if(busy)return;synth.cancel();stopListening();idx=(idx-1+deck.length)%deck.length;showCard();}
+function navNext(){if(busy)return;synth.cancel();stopListening();idx=(idx+1)%deck.length;showCard();}
 
 function renderSyls(syls,lit){
   const row=document.getElementById('syl-row');
   if(syls.length<=1){row.innerHTML='';return;}
   row.innerHTML=syls.map((s,i)=>`<span class="syl${i===lit?' lit':''}">${s}</span>`).join('');
 }
-function updateProg(){document.getElementById('prog-bar').style.width=(deck.length?(idx+1)/deck.length*100:0)+'%';}
+function updateProg(){
+  document.getElementById('prog-bar').style.width=(deck.length?(idx+1)/deck.length*100:0)+'%';
+}
 function enableMic(on){document.getElementById('btn-mic').disabled=!on;}
 
-/* ══════ CORRECT ══════ */
+/* CORRECT */
 function onCorrect(){
   if(busy)return;busy=true;
   streak++;stars+=10;
   document.getElementById('stars').textContent=stars;
-  setMicState('success');setStatus('GREAT JOB!');
-  showFeedback('✅','AMAZING! 🎉','#51CF66');
+  document.getElementById('stars-game').textContent=stars;
+  setMicState('success');setStatus('GREAT JOB! 🎉');
+  showFeedback('✅','AMAZING!','#51CF66');
   confetti();showStreak();
   const em=document.getElementById('main-emoji');
   em.style.transform='scale(1.4)';
@@ -508,7 +487,7 @@ function onCorrect(){
   setTimeout(()=>{hideFeedback();idx++;if(idx>=deck.length)finishGame();else showCard();},1900);
 }
 
-/* ══════ WRONG — 1st fail: slow repeat; 2nd+ fail: syllables; always re-enable mic ══════ */
+/* WRONG */
 function onWrong(n){
   streak=0;document.getElementById('streak').classList.remove('on');
   const item=deck[idx];
@@ -516,30 +495,25 @@ function onWrong(n){
   if(n===1){
     setStatus('LISTEN CAREFULLY!');
     showFeedback('👂','LISTEN AGAIN!','#FFA94D');
-    setTimeout(()=>{
-      hideFeedback();
-      speak(item.w,0.6,1.1,()=>{enableMic(true);setStatus('TRY AGAIN! 🎤');});
-    },700);
+    setTimeout(()=>{hideFeedback();speak(item.w,0.6,1.1,()=>{enableMic(true);setStatus('TRY AGAIN! 🎤');});},700);
   } else {
     setStatus('LISTEN TO EACH PART!');
     showFeedback('🔤','SAY EACH PART!','#CC5DE8');
     setTimeout(()=>{
       hideFeedback();
-      speakSyllables(item.s,()=>{
-        speak(item.w,0.65,1.1,()=>{enableMic(true);setStatus('TRY AGAIN! 🎤');});
-      });
+      speakSyllables(item.s,()=>{speak(item.w,0.65,1.1,()=>{enableMic(true);setStatus('TRY AGAIN! 🎤');});});
     },700);
   }
 }
 
-/* ══════ FINISH ══════ */
+/* FINISH */
 function finishGame(){
   showFeedback('🏆','YOU DID IT! 🎉','#FFA94D');
   confetti();confetti();
   setTimeout(()=>{hideFeedback();goMenu();},3000);
 }
 
-/* ══════ UI HELPERS ══════ */
+/* UI HELPERS */
 function setStatus(t){document.getElementById('status-text').textContent=t;}
 function setMicState(s){
   const b=document.getElementById('btn-mic');
@@ -573,10 +547,11 @@ function confetti(){
 function goMenu(){
   stopListening();synth.cancel();busy=false;hideFeedback();
   document.getElementById('game-screen').style.display='none';
+  document.getElementById('topbar').style.display='flex';
   document.getElementById('menu-screen').style.display='flex';
 }
 
-/* ══════ EVENTS ══════ */
+/* EVENTS */
 document.getElementById('btn-listen').addEventListener('click',()=>{
   if(!deck.length)return;
   enableMic(false);
@@ -589,7 +564,6 @@ document.getElementById('btn-mic').addEventListener('click',()=>{
 document.getElementById('btn-back').addEventListener('click',()=>{synth.cancel();goMenu();});
 document.getElementById('btn-prev').addEventListener('click',navPrev);
 document.getElementById('btn-next').addEventListener('click',navNext);
-
 document.addEventListener('keydown',e=>{
   if(document.getElementById('game-screen').style.display==='none')return;
   if(e.key===' '){e.preventDefault();listening?stopListening():startListening();}
