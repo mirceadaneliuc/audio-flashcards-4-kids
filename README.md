@@ -2,7 +2,7 @@
 
 > An audio-first English vocabulary app for young non-English speaking children. No reading required — just images, sound, and voice.
 
-![version](https://img.shields.io/badge/version-1.9.0-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue) ![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Android-orange)
+![version](https://img.shields.io/badge/version-2.0.0-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue) ![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Android-orange)
 
 ---
 
@@ -65,6 +65,12 @@
 ---
 
 ## 📋 Changelog
+
+### v2.0.0 — 2026-03-31
+- **Fixed infinite loop:** auto-mic only fires on first card presentation, not after wrong answers — child must tap mic to retry
+- **Auto-mic delay: 800ms → 500ms**
+- **Digit recognition for numbers:** Chrome returns "8", "8 8", "10" etc. instead of words — now converts digits to words before matching (8→eight, 10→ten, 2→two etc.)
+- **DIGIT_WORDS map:** pre-evaluation digit→word conversion catches all numeric speech recognizer outputs
 
 ### v1.9.0 — 2026-03-31
 - **Auto-mic:** microphone starts automatically 0.8s after the word finishes playing — child just listens then speaks without tapping

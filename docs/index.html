@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="description" content="English vocabulary flashcards for kids — audio, voice recognition, syllable breakdown">
 <meta name="theme-color" content="#FF6B6B">
-<title>English Flashcards 4 Kids v1.9.0</title>
-<meta name="version" content="1.9.0">
+<title>English Flashcards 4 Kids v2.0.0</title>
+<meta name="version" content="2.0.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <style>
@@ -204,7 +204,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 
 <!-- TOP BAR (only shown on menu) -->
 <div id="topbar">
-  <div id="logo"><span>ENGLISH v1.9.0</span>FLASHCARDS 4 KIDS</div>
+  <div id="logo"><span>ENGLISH v2.0.0</span>FLASHCARDS 4 KIDS</div>
   <div id="stars-box">⭐ <span id="stars">0</span></div>
 </div>
 
@@ -471,16 +471,16 @@ const ALIASES={
   black:['slack','track','crack','back','hack','jack','lack','pack','rack','sack'],
   white:['wight','quite','kite','bite','fight','light','might','night','right','sight'],
   brown:['crown','drown','frown','gown','town','down','clown'],
-  one:  ['wan','won','un','an','own','on','gun','nun','run','sun','ton','bun','fun','done','none','son'],
-  two:  ['to','too','tu','do','who','shoe','through','threw','blew','blue','chew','clue','crew','dew','flew'],
-  three:['tree','free','see','flee','glee','knee','me','pee','tee','we','fee','tea','spree'],
-  four: ['for','fore','fur','far','floor','more','bore','core','door','gore','poor','score','shore','store'],
-  five: ['hive','live','dive','jive','drive','strive','thrive'],
-  six:  ['sex','sicks','sick','sticks','fix','mix','nix','ticks','picks','kicks'],
-  seven:['heaven','leaven','devon','eleven','kevin'],
-  eight:['ate','ait','hate','gate','fate','late','rate','wait','bait','date','mate','plate','state'],
-  nine: ['wine','pine','line','mine','fine','dine','vine','brine','shine','spine','twine','whine'],
-  ten:  ['tin','tan','hen','den','men','pen','then','when','zen','bin','din','fin','gin','pin','sin','win'],
+  one:  ['wan','won','un','an','own','on','gun','nun','run','sun','ton','bun','fun','done','none','son','1','once'],
+  two:  ['to','too','tu','do','who','shoe','through','threw','blew','blue','chew','clue','crew','dew','flew','2','twice'],
+  three:['tree','free','see','flee','glee','knee','me','pee','tee','we','fee','tea','spree','3','free!'],
+  four: ['for','fore','fur','far','floor','more','bore','core','door','gore','poor','score','shore','store','4','fore!'],
+  five: ['hive','live','dive','jive','drive','strive','thrive','5','fine','fife'],
+  six:  ['sex','sicks','sick','sticks','fix','mix','nix','ticks','picks','kicks','6','sax','seeks'],
+  seven:['heaven','leaven','devon','eleven','kevin','7','severn','levin'],
+  eight:['ate','ait','hate','gate','fate','late','rate','wait','bait','date','mate','plate','state','8','8 8','88','eighty'],
+  nine: ['wine','pine','line','mine','fine','dine','vine','brine','shine','spine','twine','whine','9','nein','nye'],
+  ten:  ['tin','tan','hen','den','men','pen','then','when','zen','bin','din','fin','gin','pin','sin','win','10','ten!'],
   arm:  ['are','bar','car','far','jar','tar','star','charm','farm','harm','art','ark','arc','hard'],
   foot: ['food','full','fool','pool','cool','tool','book','cook','hook','look','rook','took','wood','good'],
   ear:  ['here','year','fear','beer','dear','near','tear','we are','were','wear','air','are'],
@@ -526,10 +526,19 @@ function sim(a,b){
   const L=Math.max(a.length,b.length);return L?1-lev(a,b)/L:1;
 }
 
+const DIGIT_WORDS={'1':'one','2':'two','3':'three','4':'four','5':'five',
+  '6':'six','7':'seven','8':'eight','9':'nine','10':'ten',
+  '8 8':'eight','88':'eight'};
+
 function evaluate(alts){
   if(busy)return;
   const target=deck[idx].w.toLowerCase();
   let best=0;
+  // convert any digit results to word equivalents first
+  alts=alts.map(a=>{
+    const trimmed=a.trim();
+    return DIGIT_WORDS[trimmed]||a;
+  });
 
   alts.forEach(h=>{
     best=Math.max(best,sim(target,h));
@@ -600,7 +609,7 @@ function showCard(){
     enableMic(true);
     setStatus('NOW SAY THE WORD! 🎤');
     // short pause then auto-start mic
-    setTimeout(()=>{ if(!listening&&!busy) startListening(); }, 800);
+    setTimeout(()=>{ if(!listening&&!busy) startListening(); }, 500);
   }),500);
 }
 
@@ -640,21 +649,13 @@ function onWrong(n){
   if(n===1){
     setStatus('LISTEN CAREFULLY!');
     showFeedback('👂','LISTEN AGAIN!','#FFA94D');
-    setTimeout(()=>{hideFeedback();speak(item.w,0.6,1.1,()=>{
-      enableMic(true);setStatus('TRY AGAIN! 🎤');
-      setTimeout(()=>{ if(!listening&&!busy) startListening(); }, 800);
-    });},700);
+    setTimeout(()=>{hideFeedback();speak(item.w,0.6,1.1,()=>{enableMic(true);setStatus('TRY AGAIN! 🎤');});},700);
   } else {
     setStatus('LISTEN TO EACH PART!');
     showFeedback('🔤','SAY EACH PART!','#CC5DE8');
     setTimeout(()=>{
       hideFeedback();
-      speakSyllables(item.s,()=>{
-        speak(item.w,0.65,1.1,()=>{
-          enableMic(true);setStatus('TRY AGAIN! 🎤');
-          setTimeout(()=>{ if(!listening&&!busy) startListening(); }, 800);
-        });
-      });
+      speakSyllables(item.s,()=>{speak(item.w,0.65,1.1,()=>{enableMic(true);setStatus('TRY AGAIN! 🎤');});});
     },700);
   }
 }
