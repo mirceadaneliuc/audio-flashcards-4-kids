@@ -174,6 +174,23 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 /* streak */
 #streak{position:fixed;top:56px;right:100px;background:#FFA94D;color:#fff;font-family:'Fredoka One',cursive;font-size:18px;border-radius:50px;padding:6px 14px;box-shadow:0 4px 16px rgba(255,169,77,.5);transform:scale(0);transition:transform .4s cubic-bezier(.4,0,.2,1);z-index:50;}
 #streak.on{transform:scale(1);}
+
+/* ── DEBUG PANEL ── */
+#debug-panel{
+  position:fixed;bottom:0;left:0;right:0;
+  background:rgba(0,0,0,.82);color:#0f0;
+  font-family:monospace;font-size:13px;
+  padding:8px 12px;z-index:999;
+  display:none;
+  max-height:140px;overflow-y:auto;
+}
+#debug-panel.on{display:block;}
+#debug-toggle{
+  position:fixed;bottom:4px;left:50%;transform:translateX(-50%);
+  background:rgba(0,0,0,.5);color:#fff;
+  border:none;border-radius:20px;padding:4px 14px;
+  font-size:11px;cursor:pointer;z-index:1000;
+}
 </style>
 </head>
 <body>
@@ -349,17 +366,34 @@ function startListening(){
   recog.lang='en-US';recog.continuous=false;recog.interimResults=false;recog.maxAlternatives=6;
   recog.onresult=e=>{
     listening=false;setMicState('idle');
-    evaluate([...e.results[0]].map(a=>a.transcript.trim().toLowerCase()));
+    const alts=[...e.results[0]].map(a=>a.transcript.trim().toLowerCase());
+    console.log('RAW RESULT:',alts,'isFinal:',e.results[0].isFinal);
+    if(alts.length===0||alts.every(a=>a==='')){
+      console.log('EMPTY RESULT — treating as no-speech');
+      setStatus("DIDN'T HEAR YOU — TRY AGAIN!");
+      enableMic(true);
+      return;
+    }
+    evaluate(alts);
+  };
+  recog.onnomatch=e=>{
+    listening=false;setMicState('idle');
+    console.log('NO MATCH event fired');
+    setStatus("DIDN'T HEAR YOU — TRY AGAIN!");
+    enableMic(true);
   };
   recog.onerror=e=>{
     listening=false;setMicState('idle');
+    console.log('ERROR:',e.error);
     if(e.error==='not-allowed')setStatus('PLEASE ALLOW THE MICROPHONE');
-    else if(e.error==='no-speech')setStatus("DIDN'T HEAR YOU — TRY AGAIN!");
+    else if(e.error==='no-speech'){setStatus("DIDN'T HEAR YOU — TRY AGAIN!");enableMic(true);}
     else if(e.error==='network')setStatus('NEED INTERNET FOR VOICE');
-    else setStatus('TRY AGAIN!');
-    enableMic(true);
+    else{setStatus('TRY AGAIN!');enableMic(true);}
   };
-  recog.onend=()=>{listening=false;};
+  recog.onend=e=>{
+    console.log('RECOGNITION ENDED, listening was:',listening);
+    if(listening){listening=false;setMicState('idle');enableMic(true);}
+  };
   try{recog.start();listening=true;setMicState('listening');setStatus('LISTENING...');}
   catch(e){listening=false;}
 }
@@ -499,6 +533,9 @@ function evaluate(alts){
   const threshold = charLen<=4 ? 0.55 : charLen<=6 ? 0.68 : 0.75;
 
   console.log('heard:',alts,'| target:',target,'| score:',best.toFixed(2),'| threshold:',threshold);
+  // show in on-screen debug panel
+  const dp=document.getElementById('debug-panel');
+  dp.innerHTML='<b>HEARD:</b> '+alts.join(' / ')+'<br><b>TARGET:</b> '+target+'<br><b>SCORE:</b> '+best.toFixed(2)+' (need '+threshold+')<br><b>RESULT:</b> '+(best>=threshold?'✅ PASS':'❌ FAIL')+'<hr>'+dp.innerHTML;
   best>=threshold?onCorrect():(attempts++,onWrong(attempts));
 }
 
@@ -657,5 +694,7 @@ document.addEventListener('keydown',e=>{
   if(e.key==='r'||e.key==='R'){enableMic(false);speak(deck[idx].w,0.88,1.1,()=>enableMic(true));}
 });
 </script>
+<div id="debug-panel"></div>
+<button id="debug-toggle" onclick="document.getElementById('debug-panel').classList.toggle('on')">🔍 DEBUG</button>
 </body>
 </html>
