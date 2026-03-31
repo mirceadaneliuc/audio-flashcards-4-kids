@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="description" content="English vocabulary flashcards for kids — audio, voice recognition, syllable breakdown">
 <meta name="theme-color" content="#FF6B6B">
-<title>English Flashcards 4 Kids v2.4.0</title>
-<meta name="version" content="2.4.0">
+<title>English Flashcards 4 Kids v2.6.0</title>
+<meta name="version" content="2.6.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <style>
@@ -204,7 +204,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 
 <!-- TOP BAR (only shown on menu) -->
 <div id="topbar">
-  <div id="logo"><span>ENGLISH v2.4.0</span>FLASHCARDS 4 KIDS</div>
+  <div id="logo"><span>ENGLISH v2.6.0</span>FLASHCARDS 4 KIDS</div>
   <div id="stars-box">⭐ <span id="stars">0</span></div>
 </div>
 
@@ -379,8 +379,13 @@ function startListening(){
   function finish(alts){
     if(done)return; done=true;
     listening=false; setMicState('idle');
-    if(alts&&alts.length>0) evaluate(alts);
-    else{ attempts++; onWrong(attempts); }
+    if(alts&&alts.length>0){
+      evaluate(alts);
+    } else {
+      // No speech detected at all — don't penalise, just re-enable mic silently
+      setStatus('TAP 🎤 AND SAY THE WORD!');
+      enableMic(true);
+    }
   }
 
   recog.onresult=e=>{
@@ -629,20 +634,41 @@ function onCorrect(){
 
 /* WRONG */
 function onWrong(n){
-  streak=0;document.getElementById('streak').classList.remove('on');
+  streak=0; document.getElementById('streak').classList.remove('on');
   const item=deck[idx];
   enableMic(false);
+  console.log('onWrong attempt:',n,'word:',item.w);
+
   if(n===1){
     setStatus('LISTEN CAREFULLY!');
     showFeedback('👂','LISTEN AGAIN!','#FFA94D');
-    setTimeout(()=>{hideFeedback();speak(item.w,0.6,1.1,()=>{enableMic(true);setStatus('TRY AGAIN! 🎤');});},700);
-  } else {
+    setTimeout(()=>{
+      hideFeedback();
+      speak(item.w,0.6,1.1,()=>{ enableMic(true); setStatus('TRY AGAIN! 🎤'); });
+    },700);
+
+  } else if(n===2){
     setStatus('LISTEN TO EACH PART!');
     showFeedback('🔤','SAY EACH PART!','#CC5DE8');
     setTimeout(()=>{
       hideFeedback();
-      speakSyllables(item.s,()=>{speak(item.w,0.65,1.1,()=>{enableMic(true);setStatus('TRY AGAIN! 🎤');});});
+      speakSyllables(item.s,()=>{
+        speak(item.w,0.65,1.1,()=>{ enableMic(true); setStatus('TRY AGAIN! 🎤'); });
+      });
     },700);
+
+  } else {
+    // 3rd fail: push word to back of deck and move on
+    console.log('3 fails, moving to back:',item.w);
+    deck.push(item);
+    showFeedback('⏭️','GOOD TRY! NEXT ONE!','#888');
+    setTimeout(()=>{
+      hideFeedback();
+      busy=false;
+      idx++;
+      if(idx>=deck.length) finishGame();
+      else showCard();
+    },1800);
   }
 }
 
