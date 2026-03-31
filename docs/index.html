@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="description" content="English vocabulary flashcards for kids — audio, voice recognition, syllable breakdown">
 <meta name="theme-color" content="#FF6B6B">
-<title>English Flashcards 4 Kids v1.5.0</title>
-<meta name="version" content="1.5.0">
+<title>English Flashcards 4 Kids v1.7.0</title>
+<meta name="version" content="1.7.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <style>
@@ -433,85 +433,69 @@ function stopListening(){
 }
 
 /* FUZZY MATCH + ALIASES */
-/* Every single-syllable word gets an exhaustive alias list covering
-   common speech recognizer mishearings, homophones, and phonetic variants.
-   Short words (<=4 chars) also get a lower match threshold (0.6 vs 0.75). */
 const ALIASES={
-  // ANIMALS
   bee:  ['be','b','v','z','the','see','sea','me','thee','fee','key','tea','free','bea','bi','by','bees','pea','we','he','she'],
-  duck: ['doc','dak','dark','dug','dack','dock','luck','tuck','muck','duc','duk','bug','hug','jug','mug','rug','tug','dug','cluck'],
-  cow:  ['caw','col','how','wow','ko','co','cou','cows','cob','cod','cop','cot','cog'],
-  pig:  ['big','pick','peg','pit','bit','dig','wig','fig','jig','rig','twig','beg','pigs'],
-  egg:  ['eg','eck','ek','ugh','ed','eggs','epic','deck','beck','neck','peck','wreck','leg','beg','get','jet'],
-  frog: ['fog','frock','drug','frag','log','prog','blog','clog','slog','trog'],
-  bird: ['heard','word','bud','bid','bed','bad','beard','birds','blurred','stirred'],
-  fish: ['dish','wish','fist','miss','this','fizz','phish','swish'],
-  cat:  ['hat','bat','rat','mat','fat','sat','cut','kit','cats','cap','cab','can','cad','cam'],
-  dog:  ['log','bog','jog','fog','dock','dot','god','blog','dogs','hog','cog','tog'],
-  bee:  ['be','b','v','see','sea','me'],
-  horse:['hoarse','hawse','force','morse','worse','source','coarse'],
-  sheep:['ship','cheap','chip','sleep','keep','deep','seep','heap','reap','leap'],
-  frog: ['fog','frock','drug','frag','log'],
-  // FOOD
+  duck: ['doc','dak','dark','dug','dack','dock','luck','tuck','muck','duc','duk','bug','hug','cluck'],
+  cow:  ['caw','col','how','wow','ko','co','cou','cows','cob','cod'],
+  pig:  ['big','pick','peg','pit','bit','dig','wig','fig','jig','pigs'],
+  egg:  ['eg','eck','ek','ugh','ed','eggs','deck','beck','neck','peck','wreck','leg','beg','get','jet'],
+  frog: ['fog','frock','drug','frag','log','prog','blog','clog'],
+  bird: ['heard','word','bud','bid','bed','bad','beard','birds'],
+  fish: ['dish','wish','fist','miss','this','fizz','swish'],
+  cat:  ['hat','bat','rat','mat','fat','sat','cut','kit','cats','cap'],
+  dog:  ['log','bog','jog','fog','dock','dot','god','blog','dogs','hog'],
+  horse:['hoarse','hawse','force','morse','worse','coarse'],
+  sheep:['ship','cheap','chip','sleep','keep','deep','seep','heap'],
   bread:['bred','brad','braid','thread','dread','tread','spread'],
   milk: ['silk','bilk','will','meal','mill','hill','fill','kill'],
-  cake: ['lake','take','bake','fake','make','rake','wake','quake','shake','flake'],
-  // COLORS
-  red:  ['read','bed','fed','led','said','dead','head','bread','wed','shed','sled','thread'],
-  blue: ['blew','flew','clue','glue','true','brew','crew','drew','grew','knew','new','stew','threw','too','to','two','boo','dew','few','hue','mew','pew','sue','yew'],
-  green:['greed','grain','grin','queen','keen','seen','teen','lean','mean','clean','screen'],
-  pink: ['think','drink','sink','link','rink','wink','blink','brink','shrink','stink'],
-  black:['slack','track','crack','back','hack','jack','lack','pack','rack','sack','tack','whack'],
-  white:['wight','quite','kite','bite','cite','fight','height','kite','light','might','night','right','sight','tight','write'],
-  brown:['crown','drown','frown','gown','town','down','clown','noun','renown'],
-  // NUMBERS
-  one:  ['wan','won','un','an','in','own','on','gun','nun','run','sun','ton','bun','fun','pun','done','none','son','ton'],
-  two:  ['to','too','tu','do','who','shoe','through','threw','blew','blue','chew','clue','crew','dew','flew','glue','grew','knew','new','pew','screw','slew','stew'],
-  three:['tree','free','see','flee','glee','he','knee','me','pee','tee','we','be','fee','plea','tea','spree'],
-  four: ['for','fore','fur','far','floor','more','bore','core','door','gore','lore','ore','poor','roar','score','shore','snore','sore','store','swore','tore','wore','yore'],
-  five: ['hive','live','dive','jive','drive','strive','thrive','alive','arrive','derive'],
-  six:  ['sex','sicks','sick','sticks','fix','mix','nix','ticks','picks','kicks','licks','wicks'],
-  seven:['heaven','leaven','devon','eleven','kevin','levin','stephen'],
-  eight:['ate','ait','hate','gate','fate','late','rate','wait','bait','date','fate','gait','late','mate','plate','rate','sate','skate','slate','state','trait'],
-  nine: ['wine','pine','line','mine','fine','dine','vine','brine','shine','spine','swine','twine','whine'],
-  ten:  ['tin','tan','hen','den','men','pen','then','when','zen','bin','din','fin','gin','kin','pin','sin','win'],
-  // BODY
-  arm:  ['are','bar','car','far','jar','tar','star','charm','farm','harm','alarm','art','ark','arc','arch','hard'],
-  foot: ['food','full','fool','pool','cool','tool','book','cook','hook','look','rook','took','wood','good','hood','stood','would','could'],
-  ear:  ['here','year','fear','beer','dear','near','tear','we are','were','wear','air','are','err','her','sir','stir'],
-  eye:  ['i','ai','aye','hi','my','by','die','lie','pie','tie','buy','cry','dry','fly','fry','guy','pry','rye','shy','sky','sly','spy','try','why'],
-  leg:  ['lake','peg','beg','beak','leak','lick','lid','lip','lit','look','loop'],
-  hair: ['hare','here','hear','heir','air','bare','care','dare','fair','fare','glare','pair','pare','rare','share','spare','square','stare','there','ware','wear','where'],
-  hand: ['and','band','land','sand','bland','brand','grand','planned','scanned','stand','strand'],
-  nose: ['knows','rows','bows','close','chose','flows','froze','goes','grows','hose','pose','rose','those','toes'],
-  mouth:['south','youth','booth','tooth','truth','ruth','smooth'],
-  heart:['hard','art','cart','dart','fart','mart','part','smart','start','tart'],
-  // HOME
-  bed:  ['bad','bid','bud','dead','fed','head','led','read','red','said','shed','wed','bread','dread','fled','sled','spread','thread','tread'],
-  key:  ['see','fee','free','be','me','tea','tree','we','he','she','pea','bee','glee','lee','plea'],
-  cup:  ['cap','cop','cub','cut','pup','pub','rub','hub','tub','sub','bud','bun','bus','but','dug','fun','gun','gum','gut','hug','jug','lug','mug','mud','nut','rug','run','sun','tug'],
-  book: ['hook','cook','look','rook','took','brook','crook','shook','foot','good','hood','stood','wood'],
-  door: ['more','bore','core','floor','for','fore','four','gore','lore','ore','poor','roar','score','shore','snore','sore','store','swore','tore','wore'],
-  lamp: ['camp','damp','ramp','stamp','tramp','clamp','cramp','clap','map','cap','rap','tap','nap'],
-  bed:  ['bad','bid','bud','dead','fed','head','led','red'],
-  clock:['block','dock','flock','knock','lock','mock','rock','shock','sock','stock','tok','walk','talk'],
-  // NATURE
-  sun:  ['son','some','sum','bun','done','fun','gun','hun','nun','one','pun','run','ton','won','come','from','none'],
-  moon: ['moan','mon','moo','noon','boon','boo','boom','coon','doom','goon','loom','room','soon','tomb','womb','zoom','move','prove'],
-  rain: ['lane','main','brain','chain','drain','gain','grain','lane','main','pain','plain','plane','reign','sane','slain','spain','stain','strain','train','vain','vane'],
-  snow: ['so','no','go','low','bow','crow','dough','flow','glow','grow','know','mow','owe','row','sew','show','slow','stow','throw','toe','tow'],
-  star: ['are','bar','car','far','jar','tar','scar','bizarre','bazaar'],
-  fire: ['hire','sire','tire','wire','dire','mire','admire','desire','entire','expire','inspire','require'],
-  leaf: ['leave','lief','left','reef','beef','thief','live','loaf','loathe'],
-  cloud:['proud','loud','crowd','allowed','bowed','browed','cowed','endowed','plowed','shroud','vowed'],
-  tree: ['three','free','see','flee','glee','he','knee','me','pee','tee','we','be','fee','plea','tea'],
-  // CLOTHES
-  hat:  ['bat','cat','fat','mat','pat','rat','sat','vat','chat','flat','gnat','that','spat'],
-  shirt:['short','skirt','hurt','dirt','alert','assert','bert','cert','convert','dessert','divert','expert','flirt','inert','insert','invert','revert'],
-  dress:['stress','press','less','mess','bless','chess','cress','guess','yes'],
-  scarf:['sharp','chart','scar','star','scarce','score'],
-  hat:  ['bat','cat','fat','mat','rat'],
-  leg:  ['peg','beg','keg','reg','wedge'],
+  cake: ['lake','take','bake','fake','make','rake','wake','quake'],
+  red:  ['read','bed','fed','led','said','dead','head','wed','shed','sled'],
+  blue: ['blew','flew','clue','glue','true','brew','crew','drew','grew','knew','new','boo','dew','few'],
+  green:['greed','grain','grin','queen','keen','seen','teen','lean','mean','clean'],
+  pink: ['think','drink','sink','link','rink','wink','blink','brink'],
+  black:['slack','track','crack','back','hack','jack','lack','pack','rack','sack'],
+  white:['wight','quite','kite','bite','fight','light','might','night','right','sight'],
+  brown:['crown','drown','frown','gown','town','down','clown'],
+  one:  ['wan','won','un','an','own','on','gun','nun','run','sun','ton','bun','fun','done','none','son'],
+  two:  ['to','too','tu','do','who','shoe','through','threw','blew','blue','chew','clue','crew','dew','flew'],
+  three:['tree','free','see','flee','glee','knee','me','pee','tee','we','fee','tea','spree'],
+  four: ['for','fore','fur','far','floor','more','bore','core','door','gore','poor','score','shore','store'],
+  five: ['hive','live','dive','jive','drive','strive','thrive'],
+  six:  ['sex','sicks','sick','sticks','fix','mix','nix','ticks','picks','kicks'],
+  seven:['heaven','leaven','devon','eleven','kevin'],
+  eight:['ate','ait','hate','gate','fate','late','rate','wait','bait','date','mate','plate','state'],
+  nine: ['wine','pine','line','mine','fine','dine','vine','brine','shine','spine','twine','whine'],
+  ten:  ['tin','tan','hen','den','men','pen','then','when','zen','bin','din','fin','gin','pin','sin','win'],
+  arm:  ['are','bar','car','far','jar','tar','star','charm','farm','harm','art','ark','arc','hard'],
+  foot: ['food','full','fool','pool','cool','tool','book','cook','hook','look','rook','took','wood','good'],
+  ear:  ['here','year','fear','beer','dear','near','tear','we are','were','wear','air','are'],
+  eye:  ['i','ai','aye','hi','my','by','die','lie','pie','tie','buy','cry','dry','fly','fry','guy','rye'],
+  leg:  ['peg','beg','keg','reg','lake','lick','lid','lip'],
+  hair: ['hare','here','hear','heir','air','bare','care','dare','fair','fare','pair','share','spare','stare'],
+  hand: ['and','band','land','sand','bland','brand','grand','stand'],
+  nose: ['knows','rows','bows','close','chose','flows','goes','grows','hose','pose','rose','those'],
+  mouth:['south','youth','booth','tooth','truth','smooth'],
+  heart:['hard','art','cart','dart','mart','part','smart','start','tart'],
+  bed:  ['bad','bid','bud','dead','fed','head','led','read','red','said','shed','wed'],
+  key:  ['see','fee','free','be','me','tea','tree','we','he','she','pea','glee'],
+  cup:  ['cap','cop','cub','cut','pup','pub','rub','hub','tub','sub','bud','bun'],
+  book: ['hook','cook','look','rook','took','brook','crook','shook','foot','good','hood'],
+  door: ['more','bore','core','floor','for','four','gore','poor','score','shore','store'],
+  lamp: ['camp','damp','ramp','stamp','tramp','clamp','clap','map','cap','rap'],
+  clock:['block','dock','flock','knock','lock','mock','rock','shock','sock','stock'],
+  sun:  ['son','some','sum','bun','done','fun','gun','nun','one','pun','run','ton','won'],
+  moon: ['moan','mon','moo','noon','boon','boom','doom','goon','loom','room','soon','zoom'],
+  rain: ['lane','main','brain','chain','drain','gain','grain','pain','plain','plane','stain','train'],
+  snow: ['so','no','go','low','bow','crow','flow','glow','grow','know','mow','row','show','slow'],
+  star: ['are','bar','car','far','jar','tar','scar'],
+  fire: ['hire','sire','tire','wire','dire','mire'],
+  leaf: ['leave','lief','left','reef','beef','thief','loaf'],
+  cloud:['proud','loud','crowd','allowed','shroud'],
+  tree: ['three','free','see','flee','glee','knee','me','tee','we','fee','tea'],
+  hat:  ['bat','cat','fat','mat','pat','rat','sat','vat','chat','flat','that'],
+  shirt:['short','skirt','hurt','dirt','flirt'],
+  dress:['stress','press','less','mess','bless','chess','guess'],
+  scarf:['sharp','chart','scar','star','scarce'],
 };
 
 function lev(a,b){
@@ -533,39 +517,28 @@ function evaluate(alts){
   let best=0;
 
   alts.forEach(h=>{
-    // full phrase match
     best=Math.max(best,sim(target,h));
-    // token by token (catches "a duck", "the bee")
     h.split(/\s+/).forEach(t=>{best=Math.max(best,sim(target,t));});
-    // strip leading article
     const stripped=h.replace(/^(a |an |the )/i,'').trim();
     best=Math.max(best,sim(target,stripped));
   });
 
-  // alias check
   if(best<0.8){
     const al=ALIASES[target]||[];
     alts.forEach(h=>{
       const ht=h.trim();
       if(al.includes(ht))best=1;
-      // single letter returned (e.g. "B" for bee)
-      if(ht.length===1 && ht.toLowerCase()===target[0])best=0.85;
+      if(ht.length===1&&ht.toLowerCase()===target[0])best=0.85;
       h.split(/\s+/).forEach(t=>{if(al.includes(t))best=1;});
-      // stripped alias check
       const stripped=h.replace(/^(a |an |the )/i,'').trim();
       if(al.includes(stripped))best=1;
     });
   }
 
-  // threshold: single-syllable short words are harder to recognise accurately
-  // words with 4 or fewer letters get 0.55 threshold, others 0.75
   const charLen=target.replace(/\s/g,'').length;
-  const threshold = charLen<=4 ? 0.55 : charLen<=6 ? 0.68 : 0.75;
+  const threshold=charLen<=4?0.55:charLen<=6?0.68:0.75;
 
   console.log('heard:',alts,'| target:',target,'| score:',best.toFixed(2),'| threshold:',threshold);
-  // show in on-screen debug panel
-  const dp=document.getElementById('debug-panel');
-  dp.innerHTML='<b>HEARD:</b> '+alts.join(' / ')+'<br><b>TARGET:</b> '+target+'<br><b>SCORE:</b> '+best.toFixed(2)+' (need '+threshold+')<br><b>RESULT:</b> '+(best>=threshold?'✅ PASS':'❌ FAIL')+'<hr>'+dp.innerHTML;
   best>=threshold?onCorrect():(attempts++,onWrong(attempts));
 }
 
