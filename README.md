@@ -2,7 +2,7 @@
 
 > An audio-first English vocabulary app for young non-English speaking children. No reading required — just images, sound, and voice.
 
-![version](https://img.shields.io/badge/version-1.7.0-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue) ![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Android-orange)
+![version](https://img.shields.io/badge/version-1.9.0-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue) ![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Android-orange)
 
 ---
 
@@ -65,6 +65,14 @@
 ---
 
 ## 📋 Changelog
+
+### v1.9.0 — 2026-03-31
+- **Auto-mic:** microphone starts automatically 0.8s after the word finishes playing — child just listens then speaks without tapping
+- **Continuous mode for short words:** words with 5 or fewer characters use continuous recognition with a 4s window, giving Chrome much more time to capture short sounds like "one", "two", "six", "ten"
+- **bee → bear:** replaced bee (unrecognizable by Chrome SR — pure vowel with no consonant anchor) with bear 🐻
+
+### v1.8.0 — 2026-03-31
+- Replace bee with bear
 
 ### v1.7.0 — 2026-03-31
 - **Root cause fix for bee/short words:** Chrome fires `NO MATCH` instead of `onresult` for very short words — now captures interim transcripts before Chrome drops them, so "bee", "two", "egg" etc. are rescued from the interim buffer

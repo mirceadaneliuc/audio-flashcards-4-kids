@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="description" content="English vocabulary flashcards for kids — audio, voice recognition, syllable breakdown">
 <meta name="theme-color" content="#FF6B6B">
-<title>English Flashcards 4 Kids v1.8.0</title>
-<meta name="version" content="1.8.0">
+<title>English Flashcards 4 Kids v1.9.0</title>
+<meta name="version" content="1.9.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <style>
@@ -204,7 +204,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 
 <!-- TOP BAR (only shown on menu) -->
 <div id="topbar">
-  <div id="logo"><span>ENGLISH v1.8.0</span>FLASHCARDS 4 KIDS</div>
+  <div id="logo"><span>ENGLISH v1.9.0</span>FLASHCARDS 4 KIDS</div>
   <div id="stars-box">⭐ <span id="stars">0</span></div>
 </div>
 
@@ -363,7 +363,12 @@ function startListening(){
   if(!SR){setStatus('SPEECH RECOGNITION NOT AVAILABLE');return;}
   synth.cancel();
   recog=new SR();
-  recog.lang='en-US';recog.continuous=false;recog.interimResults=true;recog.maxAlternatives=6;
+  recog.lang='en-US';recog.maxAlternatives=6;
+  // For short words (<=5 chars) use continuous mode so Chrome keeps listening longer
+  const target=deck[idx]?deck[idx].w.toLowerCase():'';
+  const isShort=target.replace(/\s/g,'').length<=5;
+  recog.continuous=isShort;
+  recog.interimResults=true;
 
   let interimBest=''; // capture interim transcripts before final
 
@@ -424,7 +429,17 @@ function startListening(){
       interimBest='';
     }
   };
-  try{recog.start();listening=true;setMicState('listening');setStatus('LISTENING...');}
+  try{
+    recog.start();listening=true;setMicState('listening');setStatus('LISTENING...');
+    // auto-stop after 4s to prevent infinite listening
+    if(isShort){
+      setTimeout(()=>{
+        if(listening&&recog){
+          try{recog.stop();}catch(e){}
+        }
+      },4000);
+    }
+  }
   catch(e){listening=false;}
 }
 function stopListening(){
@@ -581,7 +596,12 @@ function showCard(){
   updateProg();
   setMicState('idle');enableMic(false);
   setStatus('LISTEN FIRST! 🔊');
-  setTimeout(()=>speak(item.w,0.88,1.1,()=>{enableMic(true);setStatus('NOW SAY THE WORD! 🎤');}),500);
+  setTimeout(()=>speak(item.w,0.88,1.1,()=>{
+    enableMic(true);
+    setStatus('NOW SAY THE WORD! 🎤');
+    // short pause then auto-start mic
+    setTimeout(()=>{ if(!listening&&!busy) startListening(); }, 800);
+  }),500);
 }
 
 function navPrev(){if(busy)return;synth.cancel();stopListening();idx=(idx-1+deck.length)%deck.length;showCard();}
@@ -620,13 +640,21 @@ function onWrong(n){
   if(n===1){
     setStatus('LISTEN CAREFULLY!');
     showFeedback('👂','LISTEN AGAIN!','#FFA94D');
-    setTimeout(()=>{hideFeedback();speak(item.w,0.6,1.1,()=>{enableMic(true);setStatus('TRY AGAIN! 🎤');});},700);
+    setTimeout(()=>{hideFeedback();speak(item.w,0.6,1.1,()=>{
+      enableMic(true);setStatus('TRY AGAIN! 🎤');
+      setTimeout(()=>{ if(!listening&&!busy) startListening(); }, 800);
+    });},700);
   } else {
     setStatus('LISTEN TO EACH PART!');
     showFeedback('🔤','SAY EACH PART!','#CC5DE8');
     setTimeout(()=>{
       hideFeedback();
-      speakSyllables(item.s,()=>{speak(item.w,0.65,1.1,()=>{enableMic(true);setStatus('TRY AGAIN! 🎤');});});
+      speakSyllables(item.s,()=>{
+        speak(item.w,0.65,1.1,()=>{
+          enableMic(true);setStatus('TRY AGAIN! 🎤');
+          setTimeout(()=>{ if(!listening&&!busy) startListening(); }, 800);
+        });
+      });
     },700);
   }
 }
