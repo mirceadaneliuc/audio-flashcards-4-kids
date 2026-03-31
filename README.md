@@ -2,7 +2,7 @@
 
 > An audio-first English vocabulary app for young non-English speaking children. No reading required — just images, sound, and voice.
 
-![version](https://img.shields.io/badge/version-2.3.0-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue) ![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Android-orange)
+![version](https://img.shields.io/badge/version-2.4.0-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue) ![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Android-orange)
 
 ---
 
@@ -65,6 +65,17 @@
 ---
 
 ## 📋 Changelog
+
+### v2.4.0 — 2026-03-31
+- **Scrapped retry system** — was causing multiple simultaneous sessions, random behaviour, stuck buttons
+- **Clean single-shot recognition** — one session per tap, 100ms startup gap, interim capture still active for short words
+- **Fixed stuck 🔊/🎤 button sounds** — stopListening now properly clears wave animation and speaking class
+- **onend fallback** — if Chrome ends session without result but has interim, uses interim; otherwise re-enables mic for manual retry
+
+### v2.4.0 — 2026-03-31
+- **Simplified recognition:** removed retry chain entirely — one clean session per tap, NO MATCH uses interim if available, otherwise calls onWrong()
+- **Fixed buttons stuck active:** added 5s safety timeout to remove .speaking class and wave animation in case Chrome never fires onend
+- **showCard always cancels TTS first** to prevent overlapping speech
 
 ### v2.3.0 — 2026-03-31
 - **Fixed double-press bug:** abort error from previous session no longer resets retry counter — 300ms gap between retries lets old session fully close
