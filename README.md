@@ -2,7 +2,7 @@
 
 > An audio-first English vocabulary app for young non-English speaking children. No reading required — just images, sound, and voice.
 
-![version](https://img.shields.io/badge/version-2.0.0-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue) ![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Android-orange)
+![version](https://img.shields.io/badge/version-2.2.0-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue) ![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Android-orange)
 
 ---
 
@@ -65,6 +65,15 @@
 ---
 
 ## 📋 Changelog
+
+### v2.2.0 — 2026-03-31
+- **Silent retry logic:** when Chrome returns NO MATCH or empty result, app automatically retries up to 3 times (200ms gap) before giving up — child says "nine" once and Chrome gets multiple chances to recognise it
+- **No visual change during retry** — mic stays blue, status stays "LISTENING..." so child doesn't know it's retrying
+
+### v2.1.0 — 2026-03-31
+- **Expanded digit map:** "11"→one, "3 3"→three, "nine nine"→nine, "serv en"→seven, and all double-digit patterns now mapped
+- **Disabled continuous mode:** was causing double captures ("nine nine", "3 3") and extra noise — back to single-shot with interim capture
+- **"serv en" recognized as seven:** 0.71 score passes the 0.68 threshold correctly
 
 ### v2.0.0 — 2026-03-31
 - **Fixed infinite loop:** auto-mic only fires on first card presentation, not after wrong answers — child must tap mic to retry

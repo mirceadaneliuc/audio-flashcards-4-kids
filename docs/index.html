@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="description" content="English vocabulary flashcards for kids — audio, voice recognition, syllable breakdown">
 <meta name="theme-color" content="#FF6B6B">
-<title>English Flashcards 4 Kids v2.0.0</title>
-<meta name="version" content="2.0.0">
+<title>English Flashcards 4 Kids v2.2.0</title>
+<meta name="version" content="2.2.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <style>
@@ -204,7 +204,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 
 <!-- TOP BAR (only shown on menu) -->
 <div id="topbar">
-  <div id="logo"><span>ENGLISH v2.0.0</span>FLASHCARDS 4 KIDS</div>
+  <div id="logo"><span>ENGLISH v2.2.0</span>FLASHCARDS 4 KIDS</div>
   <div id="stars-box">⭐ <span id="stars">0</span></div>
 </div>
 
@@ -294,7 +294,7 @@ const CATS={
 };
 
 let cat=null,deck=[],idx=0,stars=0,streak=0,streakTimer=null;
-let listening=false,busy=false,attempts=0;
+let listening=false,busy=false,attempts=0,autoRetries=0;
 const synth=window.speechSynthesis;
 let voices=[];
 function loadVoices(){voices=synth.getVoices();}
@@ -358,36 +358,32 @@ function speakSyllables(syls,done){
 /* SPEECH RECOGNITION */
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 let recog=null;
-function startListening(){
+function startListening(isRetry){
   if(listening||busy)return;
   if(!SR){setStatus('SPEECH RECOGNITION NOT AVAILABLE');return;}
-  synth.cancel();
+  if(!isRetry){ autoRetries=0; synth.cancel(); }
+
   recog=new SR();
   recog.lang='en-US';recog.maxAlternatives=6;
-  // For short words (<=5 chars) use continuous mode so Chrome keeps listening longer
-  const target=deck[idx]?deck[idx].w.toLowerCase():'';
-  const isShort=target.replace(/\s/g,'').length<=5;
-  recog.continuous=isShort;
+  recog.continuous=false;
   recog.interimResults=true;
-
-  let interimBest=''; // capture interim transcripts before final
+  let interimBest='';
 
   recog.onresult=e=>{
     const results=e.results[e.results.length-1];
     const alts=[...results].map(a=>a.transcript.trim().toLowerCase()).filter(a=>a!=='');
     console.log('RAW RESULT:',alts,'isFinal:',results.isFinal);
-
-    // always save interim — Chrome may not produce a final for short words
     if(alts.length>0) interimBest=alts[0];
-
     if(results.isFinal){
-      listening=false;setMicState('idle');
-      if(alts.length===0&&interimBest){
-        console.log('Final empty, using saved interim:',interimBest);
-        evaluate([interimBest]);
-      } else if(alts.length>0){
-        evaluate(alts);
+      listening=false; setMicState('idle');
+      if(alts.length>0){ autoRetries=0; evaluate(alts); }
+      else if(interimBest){ autoRetries=0; evaluate([interimBest]); }
+      else if(autoRetries<3){
+        autoRetries++;
+        console.log('Empty final, silent retry',autoRetries);
+        setTimeout(()=>startListening(true),200);
       } else {
+        autoRetries=0;
         setStatus("DIDN'T HEAR YOU — TRY AGAIN!");
         enableMic(true);
       }
@@ -395,53 +391,58 @@ function startListening(){
   };
 
   recog.onnomatch=e=>{
-    listening=false;setMicState('idle');
-    console.log('NO MATCH — interim was:',interimBest);
-    // if we captured any interim audio, use it
-    if(interimBest){
-      evaluate([interimBest]);
+    listening=false; setMicState('idle');
+    console.log('NO MATCH interim:',interimBest,'retries:',autoRetries);
+    if(interimBest){ autoRetries=0; evaluate([interimBest]); }
+    else if(autoRetries<3){
+      autoRetries++;
+      console.log('NO MATCH silent retry',autoRetries);
+      setTimeout(()=>startListening(true),200);
     } else {
-      attempts++;
-      onWrong(attempts);
+      autoRetries=0;
+      setStatus("DIDN'T HEAR YOU — TRY AGAIN!");
+      enableMic(true);
     }
-    interimBest='';
   };
 
   recog.onerror=e=>{
-    listening=false;setMicState('idle');
+    listening=false; setMicState('idle');
     console.log('ERROR:',e.error,'interim:',interimBest);
-    if(e.error==='not-allowed') setStatus('PLEASE ALLOW THE MICROPHONE');
-    else if(e.error==='no-speech'){
-      if(interimBest){ evaluate([interimBest]); }
-      else{ setStatus("DIDN'T HEAR YOU — TRY AGAIN!"); enableMic(true); }
+    if(e.error==='not-allowed'){ setStatus('PLEASE ALLOW THE MICROPHONE'); return; }
+    if(e.error==='network'){ setStatus('NEED INTERNET FOR VOICE'); return; }
+    if(e.error==='aborted'){ return; }
+    if(e.error==='no-speech'||e.error==='service-not-allowed'){
+      if(interimBest){ autoRetries=0; evaluate([interimBest]); }
+      else if(autoRetries<3){
+        autoRetries++;
+        console.log('no-speech silent retry',autoRetries);
+        setTimeout(()=>startListening(true),200);
+      } else {
+        autoRetries=0;
+        setStatus("DIDN'T HEAR YOU — TRY AGAIN!");
+        enableMic(true);
+      }
+    } else {
+      setStatus('TRY AGAIN!'); enableMic(true);
     }
-    else if(e.error==='network') setStatus('NEED INTERNET FOR VOICE');
-    else{ setStatus('TRY AGAIN!'); enableMic(true); }
-    interimBest='';
   };
 
   recog.onend=e=>{
-    console.log('RECOGNITION ENDED, listening:',listening,'interim:',interimBest);
     if(listening){
       listening=false; setMicState('idle');
-      if(interimBest){ evaluate([interimBest]); }
+      if(interimBest){ autoRetries=0; evaluate([interimBest]); }
       else{ enableMic(true); }
-      interimBest='';
     }
   };
+
   try{
-    recog.start();listening=true;setMicState('listening');setStatus('LISTENING...');
-    // auto-stop after 4s to prevent infinite listening
-    if(isShort){
-      setTimeout(()=>{
-        if(listening&&recog){
-          try{recog.stop();}catch(e){}
-        }
-      },4000);
-    }
+    recog.start();
+    listening=true;
+    if(!isRetry){ setMicState('listening'); setStatus('LISTENING...'); }
   }
-  catch(e){listening=false;}
+  catch(e){ listening=false; console.warn('start error:',e); }
 }
+
 function stopListening(){
   if(recog){try{recog.abort();}catch(e){}recog=null;}
   listening=false;
@@ -526,9 +527,18 @@ function sim(a,b){
   const L=Math.max(a.length,b.length);return L?1-lev(a,b)/L:1;
 }
 
-const DIGIT_WORDS={'1':'one','2':'two','3':'three','4':'four','5':'five',
-  '6':'six','7':'seven','8':'eight','9':'nine','10':'ten',
-  '8 8':'eight','88':'eight'};
+const DIGIT_WORDS={
+  '1':'one','one one':'one','1 1':'one','11':'one',
+  '2':'two','two two':'two','2 2':'two','22':'two',
+  '3':'three','three three':'three','3 3':'three','33':'three',
+  '4':'four','four four':'four','4 4':'four','44':'four',
+  '5':'five','five five':'five','5 5':'five','55':'five',
+  '6':'six','six six':'six','6 6':'six','66':'six',
+  '7':'seven','seven seven':'seven','7 7':'seven','77':'seven','serv en':'seven','serven':'seven',
+  '8':'eight','eight eight':'eight','8 8':'eight','88':'eight','eighty':'eight',
+  '9':'nine','nine nine':'nine','9 9':'nine','99':'nine',
+  '10':'ten','ten ten':'ten','10 10':'ten',
+};
 
 function evaluate(alts){
   if(busy)return;
