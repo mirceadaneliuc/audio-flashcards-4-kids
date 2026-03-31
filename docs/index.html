@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="description" content="English vocabulary flashcards for kids — audio, voice recognition, syllable breakdown">
 <meta name="theme-color" content="#FF6B6B">
-<title>English Flashcards 4 Kids v2.2.0</title>
-<meta name="version" content="2.2.0">
+<title>English Flashcards 4 Kids v2.3.0</title>
+<meta name="version" content="2.3.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <style>
@@ -204,7 +204,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 
 <!-- TOP BAR (only shown on menu) -->
 <div id="topbar">
-  <div id="logo"><span>ENGLISH v2.2.0</span>FLASHCARDS 4 KIDS</div>
+  <div id="logo"><span>ENGLISH v2.3.0</span>FLASHCARDS 4 KIDS</div>
   <div id="stars-box">⭐ <span id="stars">0</span></div>
 </div>
 
@@ -363,84 +363,85 @@ function startListening(isRetry){
   if(!SR){setStatus('SPEECH RECOGNITION NOT AVAILABLE');return;}
   if(!isRetry){ autoRetries=0; synth.cancel(); }
 
-  recog=new SR();
-  recog.lang='en-US';recog.maxAlternatives=6;
-  recog.continuous=false;
-  recog.interimResults=true;
-  let interimBest='';
+  // wait for any previous session to fully close before starting
+  setTimeout(()=>{
+    if(busy)return; // card may have advanced while waiting
+    recog=new SR();
+    recog.lang='en-US';recog.maxAlternatives=6;
+    recog.continuous=false;
+    recog.interimResults=true;
+    let interimBest='';
+    let handled=false; // prevent double-handling
 
-  recog.onresult=e=>{
-    const results=e.results[e.results.length-1];
-    const alts=[...results].map(a=>a.transcript.trim().toLowerCase()).filter(a=>a!=='');
-    console.log('RAW RESULT:',alts,'isFinal:',results.isFinal);
-    if(alts.length>0) interimBest=alts[0];
-    if(results.isFinal){
-      listening=false; setMicState('idle');
-      if(alts.length>0){ autoRetries=0; evaluate(alts); }
-      else if(interimBest){ autoRetries=0; evaluate([interimBest]); }
-      else if(autoRetries<3){
-        autoRetries++;
-        console.log('Empty final, silent retry',autoRetries);
-        setTimeout(()=>startListening(true),200);
-      } else {
-        autoRetries=0;
-        setStatus("DIDN'T HEAR YOU — TRY AGAIN!");
-        enableMic(true);
-      }
-    }
-  };
-
-  recog.onnomatch=e=>{
-    listening=false; setMicState('idle');
-    console.log('NO MATCH interim:',interimBest,'retries:',autoRetries);
-    if(interimBest){ autoRetries=0; evaluate([interimBest]); }
-    else if(autoRetries<3){
-      autoRetries++;
-      console.log('NO MATCH silent retry',autoRetries);
-      setTimeout(()=>startListening(true),200);
-    } else {
+    function handleResult(alts){
+      if(handled)return; handled=true;
       autoRetries=0;
-      setStatus("DIDN'T HEAR YOU — TRY AGAIN!");
-      enableMic(true);
-    }
-  };
-
-  recog.onerror=e=>{
-    listening=false; setMicState('idle');
-    console.log('ERROR:',e.error,'interim:',interimBest);
-    if(e.error==='not-allowed'){ setStatus('PLEASE ALLOW THE MICROPHONE'); return; }
-    if(e.error==='network'){ setStatus('NEED INTERNET FOR VOICE'); return; }
-    if(e.error==='aborted'){ return; }
-    if(e.error==='no-speech'||e.error==='service-not-allowed'){
-      if(interimBest){ autoRetries=0; evaluate([interimBest]); }
-      else if(autoRetries<3){
-        autoRetries++;
-        console.log('no-speech silent retry',autoRetries);
-        setTimeout(()=>startListening(true),200);
-      } else {
-        autoRetries=0;
-        setStatus("DIDN'T HEAR YOU — TRY AGAIN!");
-        enableMic(true);
-      }
-    } else {
-      setStatus('TRY AGAIN!'); enableMic(true);
-    }
-  };
-
-  recog.onend=e=>{
-    if(listening){
       listening=false; setMicState('idle');
-      if(interimBest){ autoRetries=0; evaluate([interimBest]); }
-      else{ enableMic(true); }
+      evaluate(alts);
     }
-  };
 
-  try{
-    recog.start();
-    listening=true;
-    if(!isRetry){ setMicState('listening'); setStatus('LISTENING...'); }
-  }
-  catch(e){ listening=false; console.warn('start error:',e); }
+    function handleEmpty(){
+      if(handled)return;
+      listening=false; setMicState('idle');
+      if(autoRetries<3){
+        autoRetries++;
+        console.log('silent retry',autoRetries);
+        setTimeout(()=>startListening(true), 300);
+      } else {
+        handled=true;
+        autoRetries=0;
+        listening=false; setMicState('idle');
+        // treat as wrong attempt so wrong-answer feedback plays
+        attempts++;
+        onWrong(attempts);
+      }
+    }
+
+    recog.onresult=e=>{
+      const res=e.results[e.results.length-1];
+      const alts=[...res].map(a=>a.transcript.trim().toLowerCase()).filter(a=>a!=='');
+      console.log('RAW RESULT:',alts,'isFinal:',res.isFinal);
+      if(alts.length>0) interimBest=alts[0];
+      if(res.isFinal){
+        if(alts.length>0) handleResult(alts);
+        else if(interimBest) handleResult([interimBest]);
+        else handleEmpty();
+      }
+    };
+
+    recog.onnomatch=e=>{
+      console.log('NO MATCH interim:',interimBest,'retries:',autoRetries);
+      if(interimBest) handleResult([interimBest]);
+      else handleEmpty();
+    };
+
+    recog.onerror=e=>{
+      console.log('ERROR:',e.error,'interim:',interimBest,'retries:',autoRetries);
+      if(e.error==='aborted') return; // ignore — we triggered this
+      if(handled) return;
+      if(e.error==='not-allowed'){ handled=true; listening=false; setMicState('idle'); setStatus('PLEASE ALLOW THE MICROPHONE'); return; }
+      if(e.error==='network'){ handled=true; listening=false; setMicState('idle'); setStatus('NEED INTERNET FOR VOICE'); return; }
+      if(interimBest){ handleResult([interimBest]); }
+      else { handleEmpty(); }
+    };
+
+    recog.onend=e=>{
+      if(listening&&!handled){
+        listening=false; setMicState('idle');
+        if(interimBest) handleResult([interimBest]);
+        else enableMic(true);
+      }
+    };
+
+    try{
+      recog.start();
+      listening=true;
+      if(!isRetry){ setMicState('listening'); setStatus('LISTENING...'); }
+    } catch(e){
+      listening=false;
+      console.warn('start error:',e);
+    }
+  }, isRetry ? 300 : 50);
 }
 
 function stopListening(){

@@ -2,7 +2,7 @@
 
 > An audio-first English vocabulary app for young non-English speaking children. No reading required — just images, sound, and voice.
 
-![version](https://img.shields.io/badge/version-2.2.0-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue) ![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Android-orange)
+![version](https://img.shields.io/badge/version-2.3.0-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue) ![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Android-orange)
 
 ---
 
@@ -65,6 +65,11 @@
 ---
 
 ## 📋 Changelog
+
+### v2.3.0 — 2026-03-31
+- **Fixed double-press bug:** abort error from previous session no longer resets retry counter — 300ms gap between retries lets old session fully close
+- **Fixed hang after retries:** when all 3 retries exhaust with no result, now correctly calls onWrong() so slow-repeat and syllable feedback plays normally
+- **handled flag:** prevents double-handling when multiple recognition events fire for the same attempt
 
 ### v2.2.0 — 2026-03-31
 - **Silent retry logic:** when Chrome returns NO MATCH or empty result, app automatically retries up to 3 times (200ms gap) before giving up — child says "nine" once and Chrome gets multiple chances to recognise it
