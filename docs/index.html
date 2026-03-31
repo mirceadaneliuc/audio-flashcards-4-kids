@@ -363,36 +363,66 @@ function startListening(){
   if(!SR){setStatus('SPEECH RECOGNITION NOT AVAILABLE');return;}
   synth.cancel();
   recog=new SR();
-  recog.lang='en-US';recog.continuous=false;recog.interimResults=false;recog.maxAlternatives=6;
+  recog.lang='en-US';recog.continuous=false;recog.interimResults=true;recog.maxAlternatives=6;
+
+  let interimBest=''; // capture interim transcripts before final
+
   recog.onresult=e=>{
-    listening=false;setMicState('idle');
-    const alts=[...e.results[0]].map(a=>a.transcript.trim().toLowerCase());
-    console.log('RAW RESULT:',alts,'isFinal:',e.results[0].isFinal);
-    if(alts.length===0||alts.every(a=>a==='')){
-      console.log('EMPTY RESULT — treating as no-speech');
-      setStatus("DIDN'T HEAR YOU — TRY AGAIN!");
-      enableMic(true);
-      return;
+    const results=e.results[e.results.length-1];
+    const alts=[...results].map(a=>a.transcript.trim().toLowerCase()).filter(a=>a!=='');
+    console.log('RAW RESULT:',alts,'isFinal:',results.isFinal);
+
+    // always save interim — Chrome may not produce a final for short words
+    if(alts.length>0) interimBest=alts[0];
+
+    if(results.isFinal){
+      listening=false;setMicState('idle');
+      if(alts.length===0&&interimBest){
+        console.log('Final empty, using saved interim:',interimBest);
+        evaluate([interimBest]);
+      } else if(alts.length>0){
+        evaluate(alts);
+      } else {
+        setStatus("DIDN'T HEAR YOU — TRY AGAIN!");
+        enableMic(true);
+      }
     }
-    evaluate(alts);
   };
+
   recog.onnomatch=e=>{
     listening=false;setMicState('idle');
-    console.log('NO MATCH event fired');
-    setStatus("DIDN'T HEAR YOU — TRY AGAIN!");
-    enableMic(true);
+    console.log('NO MATCH — interim was:',interimBest);
+    // if we captured any interim audio, use it
+    if(interimBest){
+      evaluate([interimBest]);
+    } else {
+      attempts++;
+      onWrong(attempts);
+    }
+    interimBest='';
   };
+
   recog.onerror=e=>{
     listening=false;setMicState('idle');
-    console.log('ERROR:',e.error);
-    if(e.error==='not-allowed')setStatus('PLEASE ALLOW THE MICROPHONE');
-    else if(e.error==='no-speech'){setStatus("DIDN'T HEAR YOU — TRY AGAIN!");enableMic(true);}
-    else if(e.error==='network')setStatus('NEED INTERNET FOR VOICE');
-    else{setStatus('TRY AGAIN!');enableMic(true);}
+    console.log('ERROR:',e.error,'interim:',interimBest);
+    if(e.error==='not-allowed') setStatus('PLEASE ALLOW THE MICROPHONE');
+    else if(e.error==='no-speech'){
+      if(interimBest){ evaluate([interimBest]); }
+      else{ setStatus("DIDN'T HEAR YOU — TRY AGAIN!"); enableMic(true); }
+    }
+    else if(e.error==='network') setStatus('NEED INTERNET FOR VOICE');
+    else{ setStatus('TRY AGAIN!'); enableMic(true); }
+    interimBest='';
   };
+
   recog.onend=e=>{
-    console.log('RECOGNITION ENDED, listening was:',listening);
-    if(listening){listening=false;setMicState('idle');enableMic(true);}
+    console.log('RECOGNITION ENDED, listening:',listening,'interim:',interimBest);
+    if(listening){
+      listening=false; setMicState('idle');
+      if(interimBest){ evaluate([interimBest]); }
+      else{ enableMic(true); }
+      interimBest='';
+    }
   };
   try{recog.start();listening=true;setMicState('listening');setStatus('LISTENING...');}
   catch(e){listening=false;}

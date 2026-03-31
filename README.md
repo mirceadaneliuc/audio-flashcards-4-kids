@@ -2,7 +2,7 @@
 
 > An audio-first English vocabulary app for young non-English speaking children. No reading required — just images, sound, and voice.
 
-![version](https://img.shields.io/badge/version-1.6.0-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue) ![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Android-orange)
+![version](https://img.shields.io/badge/version-1.7.0-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue) ![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Android-orange)
 
 ---
 
@@ -65,6 +65,10 @@
 ---
 
 ## 📋 Changelog
+
+### v1.7.0 — 2026-03-31
+- **Root cause fix for bee/short words:** Chrome fires `NO MATCH` instead of `onresult` for very short words — now captures interim transcripts before Chrome drops them, so "bee", "two", "egg" etc. are rescued from the interim buffer
+- **interimResults:true:** recognition now reads partial results as they come in, giving a second chance before Chrome discards low-confidence short words
 
 ### v1.6.0 — 2026-03-30
 - **Comprehensive alias coverage for ALL single-syllable words:** egg, arm, foot, ear, numbers (one through ten), red, blue, sun, star, fire, rain, snow, bed, key, cup, hat, and more — each with 15-25 phonetic aliases
