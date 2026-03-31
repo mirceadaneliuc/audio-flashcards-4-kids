@@ -2,7 +2,7 @@
 
 > An audio-first English vocabulary app for young non-English speaking children. No reading required — just images, sound, and voice.
 
-![version](https://img.shields.io/badge/version-1.5.0-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue) ![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Android-orange)
+![version](https://img.shields.io/badge/version-1.6.0-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue) ![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Android-orange)
 
 ---
 
@@ -65,6 +65,11 @@
 ---
 
 ## 📋 Changelog
+
+### v1.6.0 — 2026-03-30
+- **Comprehensive alias coverage for ALL single-syllable words:** egg, arm, foot, ear, numbers (one through ten), red, blue, sun, star, fire, rain, snow, bed, key, cup, hat, and more — each with 15-25 phonetic aliases
+- **Three-tier match threshold:** 4-letter words use 55%, 5-6 letter words use 68%, longer words use 75% — makes short words much more forgiving
+- **Improved article stripping:** alias check also strips "a/an/the" before matching
 
 ### v1.5.0 — 2026-03-30
 - **Layout rebuilt:** 🔊 always fixed to left screen edge, 🎤 always fixed to right screen edge — works in portrait and landscape with no media queries
