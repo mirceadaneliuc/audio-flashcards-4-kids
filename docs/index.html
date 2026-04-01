@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="description" content="English vocabulary flashcards for kids — audio, voice recognition, syllable breakdown">
 <meta name="theme-color" content="#FF6B6B">
-<title>English Flashcards 4 Kids v2.7.0</title>
-<meta name="version" content="2.7.0">
+<title>English Flashcards 4 Kids v2.8.0</title>
+<meta name="version" content="2.8.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <style>
@@ -204,7 +204,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 
 <!-- TOP BAR (only shown on menu) -->
 <div id="topbar">
-  <div id="logo"><span>ENGLISH v2.7.0</span>FLASHCARDS 4 KIDS</div>
+  <div id="logo"><span>ENGLISH v2.8.0</span>FLASHCARDS 4 KIDS</div>
   <div id="stars-box">⭐ <span id="stars">0</span></div>
 </div>
 
@@ -383,9 +383,9 @@ function startListening(){
     if(alts&&alts.length>0){
       evaluate(alts);
     } else {
-      // No speech detected at all — don't penalise, just re-enable mic silently
-      setStatus('TAP 🎤 AND SAY THE WORD!');
-      enableMic(true);
+      // Chrome heard nothing — count as wrong attempt so 3-strike system works
+      attempts++;
+      onWrong(attempts);
     }
   }
 
@@ -603,6 +603,7 @@ function showCard(){
   setTimeout(()=>speak(item.w,0.88,1.1,()=>{
     enableMic(true);
     setStatus('NOW SAY THE WORD! 🎤');
+    setTimeout(()=>{ if(!listening&&!busy) startListening(); },600);
   }),500);
 }
 
@@ -725,7 +726,11 @@ document.getElementById('btn-listen').addEventListener('click',()=>{
   enableMic(false);
   speak(deck[idx].w,0.88,1.1,()=>{enableMic(true);setStatus('NOW SAY THE WORD! 🎤');});
 });
+let _micLastTap=0;
 document.getElementById('btn-mic').addEventListener('click',()=>{
+  const now=Date.now();
+  if(now-_micLastTap<800)return; // debounce 800ms
+  _micLastTap=now;
   if(listening){stopListening();return;}
   startListening();
 });
