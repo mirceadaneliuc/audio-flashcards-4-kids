@@ -2,7 +2,7 @@
 
 > An audio-first English vocabulary app for young non-English speaking children. No reading required — just images, sound, and voice.
 
-![version](https://img.shields.io/badge/version-3.1.0-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue) ![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Android-orange)
+![version](https://img.shields.io/badge/version-3.2.0-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue) ![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Android-orange)
 
 ---
 
@@ -66,6 +66,11 @@
 
 ## 📋 Changelog
 
+### v3.2.0 — 2026-04-01
+- **NO MATCH fully ignored:** only the 5s timeout ends a failed session — Chrome fires NO MATCH then the real result arrives, we no longer cut it off
+- **Session auto-restart:** when Chrome closes the session early on Android (very common), we restart it silently keeping the mic blue
+- **Seven syllable fix:** SE-VEN instead of SEV-VEN
+
 ### v3.1.0 — 2026-04-01
 - **Removed phonetic syllable spelling:** AYT, FIYVE, WUN etc. removed — numbers show clean syllables (EIGHT, FIVE, ONE). Kids at this level don't know letters yet
 - **NO MATCH 500ms delay:** waits half a second after NO MATCH before counting as wrong attempt — real Chrome result often arrives just after NO MATCH fires
@@ -107,6 +112,11 @@
 - **Clean single-shot recognition** — one session per tap, 100ms startup gap, interim capture still active for short words
 - **Fixed stuck 🔊/🎤 button sounds** — stopListening now properly clears wave animation and speaking class
 - **onend fallback** — if Chrome ends session without result but has interim, uses interim; otherwise re-enables mic for manual retry
+
+### v3.2.0 — 2026-04-01
+- **NO MATCH fully ignored:** only the 5s timeout ends a failed session — Chrome fires NO MATCH then the real result arrives, we no longer cut it off
+- **Session auto-restart:** when Chrome closes the session early on Android (very common), we restart it silently keeping the mic blue
+- **Seven syllable fix:** SE-VEN instead of SEV-VEN
 
 ### v3.1.0 — 2026-04-01
 - **Removed phonetic syllable spelling:** AYT, FIYVE, WUN etc. removed — numbers show clean syllables (EIGHT, FIVE, ONE). Kids at this level don't know letters yet

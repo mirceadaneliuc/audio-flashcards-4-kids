@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="description" content="English vocabulary flashcards for kids — audio, voice recognition, syllable breakdown">
 <meta name="theme-color" content="#FF6B6B">
-<title>English Flashcards 4 Kids v3.1.0</title>
-<meta name="version" content="3.1.0">
+<title>English Flashcards 4 Kids v3.2.0</title>
+<meta name="version" content="3.2.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <style>
@@ -204,7 +204,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 
 <!-- TOP BAR (only shown on menu) -->
 <div id="topbar">
-  <div id="logo"><span>ENGLISH v3.1.0</span>FLASHCARDS 4 KIDS</div>
+  <div id="logo"><span>ENGLISH v3.2.0</span>FLASHCARDS 4 KIDS</div>
   <div id="stars-box">⭐ <span id="stars">0</span></div>
 </div>
 
@@ -407,10 +407,8 @@ function startListening(){
   };
   recog.onnomatch=()=>{
     console.log('NO MATCH, interim:',interimBest);
-    // Wait 500ms — real result sometimes arrives just after NO MATCH
-    setTimeout(()=>{
-      if(!done) finish(interimBest?[interimBest]:null);
-    }, 500);
+    // Do NOT finish here — real result often arrives after NO MATCH
+    // The 5s timeout will handle it if nothing comes
   };
   recog.onerror=e=>{
     console.log('ERROR:',e.error);
@@ -420,8 +418,28 @@ function startListening(){
     finish(interimBest?[interimBest]:null);
   };
   recog.onend=()=>{
-    // continuous session ended unexpectedly
-    if(!done) finish(interimBest?[interimBest]:null);
+    // Chrome closed session early (common on Android) — restart if we still have time
+    if(!done){
+      if(interimBest){
+        finish([interimBest]); // use what we have
+      } else {
+        // restart silently — keep mic blue
+        console.log('session ended early, restarting...');
+        try{
+          const r2=new SR();
+          r2.lang='en-US'; r2.maxAlternatives=6;
+          r2.continuous=false; r2.interimResults=true;
+          r2.onresult=recog.onresult;
+          r2.onnomatch=recog.onnomatch;
+          r2.onerror=recog.onerror;
+          r2.onend=recog.onend;
+          recog=r2;
+          r2.start();
+        } catch(e){
+          finish(null);
+        }
+      }
+    }
   };
 
   try{
