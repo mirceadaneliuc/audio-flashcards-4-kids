@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="description" content="English vocabulary flashcards for kids — audio, voice recognition, syllable breakdown">
 <meta name="theme-color" content="#FF6B6B">
-<title>English Flashcards 4 Kids v3.2.1</title>
-<meta name="version" content="3.2.1">
+<title>English Flashcards 4 Kids v3.2.2</title>
+<meta name="version" content="3.2.2">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <style>
@@ -204,7 +204,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 
 <!-- TOP BAR (only shown on menu) -->
 <div id="topbar">
-  <div id="logo"><span>ENGLISH v3.2.1</span>FLASHCARDS 4 KIDS</div>
+  <div id="logo"><span>ENGLISH v3.2.2</span>FLASHCARDS 4 KIDS</div>
   <div id="stars-box">⭐ <span id="stars">0</span></div>
 </div>
 
@@ -346,7 +346,7 @@ function speakSyllables(syls,done){
     if(i>=syls.length){renderSyls(syls,-1);setTimeout(done,380);return;}
     renderSyls(syls,i);
     setTimeout(()=>{
-      const u=new SpeechSynthesisUtterance(syls[i]);
+      const u=new SpeechSynthesisUtterance(syls[i].toLowerCase());
       u.lang='en-US';u.rate=0.52;u.pitch=1.2;u.volume=1.0;
       const v=pickVoice();if(v)u.voice=v;
       u.onstart=()=>wave.classList.add('on');
@@ -395,8 +395,19 @@ function startListening(){
     const alts=[...res].map(a=>a.transcript.trim().toLowerCase()).filter(a=>a!=='');
     console.log('RESULT:',alts,'final:',res.isFinal);
     if(alts.length>0) interimBest=alts[0];
-    if(res.isFinal && alts.length>0) finish(alts);
-    // empty final: keep waiting for real result
+    // Cancel timeout — Chrome is actively processing, give it more time
+    clearTimeout(timer);
+    if(res.isFinal){
+      if(alts.length>0){
+        finish(alts);
+      } else {
+        // Empty final — reset timer to wait for the real result
+        timer=setTimeout(()=>{
+          console.log('post-result timeout, interim:',interimBest);
+          finish(interimBest?[interimBest]:null);
+        }, 2000);
+      }
+    }
   };
 
   recog.onnomatch=()=>{

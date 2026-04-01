@@ -2,7 +2,7 @@
 
 > An audio-first English vocabulary app for young non-English speaking children. No reading required — just images, sound, and voice.
 
-![version](https://img.shields.io/badge/version-3.2.1-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue) ![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Android-orange)
+![version](https://img.shields.io/badge/version-3.2.2-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue) ![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Android-orange)
 
 ---
 
@@ -66,6 +66,10 @@
 
 ## 📋 Changelog
 
+### v3.2.2 — 2026-04-01
+- **Timer cancelled on any result event:** Chrome was delivering ['six'] AFTER the 2.5s timeout had already fired — now any result cancels the timer and resets it to 2s for the real result
+- **Syllables spoken in lowercase:** fixes "EN" being spelled as letters E-N — TTS now speaks "en" as a natural sound
+
 ### v3.2.1 — 2026-04-01
 - **Simplified recognition:** single session, 2.5s timeout, no restart loop
 - **NO MATCH counts as wrong:** clean and fast — no more 5s waits or double mic sounds
@@ -117,6 +121,10 @@
 - **Clean single-shot recognition** — one session per tap, 100ms startup gap, interim capture still active for short words
 - **Fixed stuck 🔊/🎤 button sounds** — stopListening now properly clears wave animation and speaking class
 - **onend fallback** — if Chrome ends session without result but has interim, uses interim; otherwise re-enables mic for manual retry
+
+### v3.2.2 — 2026-04-01
+- **Timer cancelled on any result event:** Chrome was delivering ['six'] AFTER the 2.5s timeout had already fired — now any result cancels the timer and resets it to 2s for the real result
+- **Syllables spoken in lowercase:** fixes "EN" being spelled as letters E-N — TTS now speaks "en" as a natural sound
 
 ### v3.2.1 — 2026-04-01
 - **Simplified recognition:** single session, 2.5s timeout, no restart loop
