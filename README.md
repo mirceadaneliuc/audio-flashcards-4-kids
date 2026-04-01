@@ -2,7 +2,7 @@
 
 > An audio-first English vocabulary app for young non-English speaking children. No reading required — just images, sound, and voice.
 
-![version](https://img.shields.io/badge/version-2.8.0-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue) ![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Android-orange)
+![version](https://img.shields.io/badge/version-2.9.0-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue) ![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Android-orange)
 
 ---
 
@@ -66,6 +66,11 @@
 
 ## 📋 Changelog
 
+### v2.9.0 — 2026-04-01
+- **continuous=true for recognition:** Chrome keeps the session open so short words like four/nine/eight have up to 5 seconds to be recognized instead of timing out immediately
+- **NO MATCH ignored during continuous session:** only the 5s timeout or a final result closes the session — no more premature failures from Chrome cutting off too early
+- **5 second auto-stop:** if no speech detected after 5s, uses whatever interim was captured or counts as wrong attempt
+
 ### v2.8.0 — 2026-04-01
 - **Mic button debounced 800ms:** tablet was registering multiple taps per press, causing rapid repeated recognition sessions and NO MATCH spam
 - **NO MATCH counts as attempt:** Chrome returning nothing IS a failed attempt — 3 strikes still works even when Chrome can't hear short words
@@ -91,6 +96,11 @@
 - **Clean single-shot recognition** — one session per tap, 100ms startup gap, interim capture still active for short words
 - **Fixed stuck 🔊/🎤 button sounds** — stopListening now properly clears wave animation and speaking class
 - **onend fallback** — if Chrome ends session without result but has interim, uses interim; otherwise re-enables mic for manual retry
+
+### v2.9.0 — 2026-04-01
+- **continuous=true for recognition:** Chrome keeps the session open so short words like four/nine/eight have up to 5 seconds to be recognized instead of timing out immediately
+- **NO MATCH ignored during continuous session:** only the 5s timeout or a final result closes the session — no more premature failures from Chrome cutting off too early
+- **5 second auto-stop:** if no speech detected after 5s, uses whatever interim was captured or counts as wrong attempt
 
 ### v2.8.0 — 2026-04-01
 - **Mic button debounced 800ms:** tablet was registering multiple taps per press, causing rapid repeated recognition sessions and NO MATCH spam

@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="description" content="English vocabulary flashcards for kids — audio, voice recognition, syllable breakdown">
 <meta name="theme-color" content="#FF6B6B">
-<title>English Flashcards 4 Kids v2.8.0</title>
-<meta name="version" content="2.8.0">
+<title>English Flashcards 4 Kids v2.9.0</title>
+<meta name="version" content="2.9.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <style>
@@ -204,7 +204,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 
 <!-- TOP BAR (only shown on menu) -->
 <div id="topbar">
-  <div id="logo"><span>ENGLISH v2.8.0</span>FLASHCARDS 4 KIDS</div>
+  <div id="logo"><span>ENGLISH v2.9.0</span>FLASHCARDS 4 KIDS</div>
   <div id="stars-box">⭐ <span id="stars">0</span></div>
 </div>
 
@@ -371,44 +371,52 @@ function startListening(){
   recog=new SR();
   recog.lang='en-US';
   recog.maxAlternatives=6;
-  recog.continuous=false;
+  recog.continuous=true;   // keep session open so Chrome has time to process
   recog.interimResults=true;
 
   let interimBest='';
   let done=false;
+  let stopTimer=null;
 
   function finish(alts){
     if(done)return; done=true;
+    clearTimeout(stopTimer);
+    // stop continuous session
+    const r=recog; recog=null;
+    try{r.stop();}catch(e){}
     listening=false; setMicState('idle');
     if(alts&&alts.length>0){
       evaluate(alts);
     } else {
-      // Chrome heard nothing — count as wrong attempt so 3-strike system works
       attempts++;
       onWrong(attempts);
     }
   }
 
   recog.onresult=e=>{
+    // with continuous=true, grab the latest result
     const res=e.results[e.results.length-1];
     const alts=[...res].map(a=>a.transcript.trim().toLowerCase()).filter(a=>a!=='');
     console.log('RESULT:',alts,'final:',res.isFinal);
-    if(alts.length>0) interimBest=alts[0];
-    if(res.isFinal) finish(alts.length>0?alts:(interimBest?[interimBest]:null));
+    if(alts.length>0){ interimBest=alts[0]; }
+    if(res.isFinal && alts.length>0){
+      finish(alts);
+    }
   };
   recog.onnomatch=()=>{
     console.log('NO MATCH, interim:',interimBest);
-    finish(interimBest?[interimBest]:null);
+    // don't finish on first no-match with continuous — let timer decide
   };
   recog.onerror=e=>{
     console.log('ERROR:',e.error);
     if(e.error==='aborted'||done)return;
-    if(e.error==='not-allowed'){done=true;listening=false;setMicState('idle');setStatus('ALLOW MIC IN BROWSER SETTINGS');return;}
-    if(e.error==='network'){done=true;listening=false;setMicState('idle');setStatus('NEED INTERNET FOR VOICE');return;}
+    if(e.error==='not-allowed'){done=true;clearTimeout(stopTimer);listening=false;setMicState('idle');setStatus('ALLOW MIC IN BROWSER SETTINGS');return;}
+    if(e.error==='network'){done=true;clearTimeout(stopTimer);listening=false;setMicState('idle');setStatus('NEED INTERNET FOR VOICE');return;}
     finish(interimBest?[interimBest]:null);
   };
   recog.onend=()=>{
-    if(!done&&listening) finish(interimBest?[interimBest]:null);
+    // continuous session ended unexpectedly
+    if(!done) finish(interimBest?[interimBest]:null);
   };
 
   try{
@@ -416,6 +424,11 @@ function startListening(){
     listening=true;
     setMicState('listening');
     setStatus('LISTENING...');
+    // auto-stop after 5 seconds max — use whatever we have
+    stopTimer=setTimeout(()=>{
+      console.log('timeout, interim:',interimBest);
+      finish(interimBest?[interimBest]:null);
+    }, 5000);
   }catch(e){
     listening=false;
     console.warn('start error:',e);
