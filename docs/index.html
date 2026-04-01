@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="description" content="English vocabulary flashcards for kids — audio, voice recognition, syllable breakdown">
 <meta name="theme-color" content="#FF6B6B">
-<title>English Flashcards 4 Kids v3.2.0</title>
-<meta name="version" content="3.2.0">
+<title>English Flashcards 4 Kids v3.2.1</title>
+<meta name="version" content="3.2.1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <style>
@@ -204,7 +204,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 
 <!-- TOP BAR (only shown on menu) -->
 <div id="topbar">
-  <div id="logo"><span>ENGLISH v3.2.0</span>FLASHCARDS 4 KIDS</div>
+  <div id="logo"><span>ENGLISH v3.2.1</span>FLASHCARDS 4 KIDS</div>
   <div id="stars-box">⭐ <span id="stars">0</span></div>
 </div>
 
@@ -365,23 +365,20 @@ function startListening(){
   if(listening||busy)return;
   if(!SR){setStatus('SPEECH RECOGNITION NOT AVAILABLE');return;}
   stopListening();
-  // Don't cancel synth here — onWrong may be mid-speech when user taps mic
-  // The mic button is disabled while TTS plays so this is safe
 
   recog=new SR();
   recog.lang='en-US';
   recog.maxAlternatives=6;
-  recog.continuous=true;   // keep session open so Chrome has time to process
+  recog.continuous=false;
   recog.interimResults=true;
 
   let interimBest='';
   let done=false;
-  let stopTimer=null;
+  let timer=null;
 
   function finish(alts){
     if(done)return; done=true;
-    clearTimeout(stopTimer);
-    // stop continuous session
+    clearTimeout(timer);
     const r=recog; recog=null;
     try{r.stop();}catch(e){}
     listening=false; setMicState('idle');
@@ -398,48 +395,25 @@ function startListening(){
     const alts=[...res].map(a=>a.transcript.trim().toLowerCase()).filter(a=>a!=='');
     console.log('RESULT:',alts,'final:',res.isFinal);
     if(alts.length>0) interimBest=alts[0];
-    if(res.isFinal){
-      if(alts.length>0){
-        finish(alts); // got real transcript — done
-      }
-      // if empty final, keep listening — real result may be 100ms away
-    }
+    if(res.isFinal && alts.length>0) finish(alts);
+    // empty final: keep waiting for real result
   };
+
   recog.onnomatch=()=>{
     console.log('NO MATCH, interim:',interimBest);
-    // Do NOT finish here — real result often arrives after NO MATCH
-    // The 5s timeout will handle it if nothing comes
+    finish(interimBest?[interimBest]:null);
   };
+
   recog.onerror=e=>{
     console.log('ERROR:',e.error);
     if(e.error==='aborted'||done)return;
-    if(e.error==='not-allowed'){done=true;clearTimeout(stopTimer);listening=false;setMicState('idle');setStatus('ALLOW MIC IN BROWSER SETTINGS');return;}
-    if(e.error==='network'){done=true;clearTimeout(stopTimer);listening=false;setMicState('idle');setStatus('NEED INTERNET FOR VOICE');return;}
+    if(e.error==='not-allowed'){done=true;clearTimeout(timer);listening=false;setMicState('idle');setStatus('ALLOW MIC IN BROWSER SETTINGS');return;}
+    if(e.error==='network'){done=true;clearTimeout(timer);listening=false;setMicState('idle');setStatus('NEED INTERNET FOR VOICE');return;}
     finish(interimBest?[interimBest]:null);
   };
+
   recog.onend=()=>{
-    // Chrome closed session early (common on Android) — restart if we still have time
-    if(!done){
-      if(interimBest){
-        finish([interimBest]); // use what we have
-      } else {
-        // restart silently — keep mic blue
-        console.log('session ended early, restarting...');
-        try{
-          const r2=new SR();
-          r2.lang='en-US'; r2.maxAlternatives=6;
-          r2.continuous=false; r2.interimResults=true;
-          r2.onresult=recog.onresult;
-          r2.onnomatch=recog.onnomatch;
-          r2.onerror=recog.onerror;
-          r2.onend=recog.onend;
-          recog=r2;
-          r2.start();
-        } catch(e){
-          finish(null);
-        }
-      }
-    }
+    if(!done) finish(interimBest?[interimBest]:null);
   };
 
   try{
@@ -447,11 +421,11 @@ function startListening(){
     listening=true;
     setMicState('listening');
     setStatus('LISTENING...');
-    // auto-stop after 5 seconds max — use whatever we have
-    stopTimer=setTimeout(()=>{
+    // 2.5s timeout — enough for any word, short enough to feel responsive
+    timer=setTimeout(()=>{
       console.log('timeout, interim:',interimBest);
       finish(interimBest?[interimBest]:null);
-    }, 5000);
+    }, 2500);
   }catch(e){
     listening=false;
     console.warn('start error:',e);

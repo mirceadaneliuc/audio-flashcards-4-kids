@@ -2,7 +2,7 @@
 
 > An audio-first English vocabulary app for young non-English speaking children. No reading required — just images, sound, and voice.
 
-![version](https://img.shields.io/badge/version-3.2.0-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue) ![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Android-orange)
+![version](https://img.shields.io/badge/version-3.2.1-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue) ![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Android-orange)
 
 ---
 
@@ -66,6 +66,11 @@
 
 ## 📋 Changelog
 
+### v3.2.1 — 2026-04-01
+- **Simplified recognition:** single session, 2.5s timeout, no restart loop
+- **NO MATCH counts as wrong:** clean and fast — no more 5s waits or double mic sounds
+- **Empty final waits:** if Chrome returns empty final, keeps waiting for real result within 2.5s window
+
 ### v3.2.0 — 2026-04-01
 - **NO MATCH fully ignored:** only the 5s timeout ends a failed session — Chrome fires NO MATCH then the real result arrives, we no longer cut it off
 - **Session auto-restart:** when Chrome closes the session early on Android (very common), we restart it silently keeping the mic blue
@@ -112,6 +117,11 @@
 - **Clean single-shot recognition** — one session per tap, 100ms startup gap, interim capture still active for short words
 - **Fixed stuck 🔊/🎤 button sounds** — stopListening now properly clears wave animation and speaking class
 - **onend fallback** — if Chrome ends session without result but has interim, uses interim; otherwise re-enables mic for manual retry
+
+### v3.2.1 — 2026-04-01
+- **Simplified recognition:** single session, 2.5s timeout, no restart loop
+- **NO MATCH counts as wrong:** clean and fast — no more 5s waits or double mic sounds
+- **Empty final waits:** if Chrome returns empty final, keeps waiting for real result within 2.5s window
 
 ### v3.2.0 — 2026-04-01
 - **NO MATCH fully ignored:** only the 5s timeout ends a failed session — Chrome fires NO MATCH then the real result arrives, we no longer cut it off
