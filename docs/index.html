@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="description" content="English vocabulary flashcards for kids — audio, voice recognition, syllable breakdown">
 <meta name="theme-color" content="#FF6B6B">
-<title>English Flashcards 4 Kids v3.3.1</title>
-<meta name="version" content="3.3.1">
+<title>English Flashcards 4 Kids v3.4.0</title>
+<meta name="version" content="3.4.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <style>
@@ -212,7 +212,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 
 <!-- TOP BAR (only shown on menu) -->
 <div id="topbar">
-  <div id="logo"><span>ENGLISH v3.3.1</span>FLASHCARDS 4 KIDS</div>
+  <div id="logo"><span>ENGLISH v3.4.0</span>FLASHCARDS 4 KIDS</div>
   <div id="stars-box">⭐ <span id="stars">0</span></div>
 </div>
 
@@ -383,6 +383,21 @@ function startListening(){
   recog.maxAlternatives=6;
   recog.continuous=false;
   recog.interimResults=true;
+
+  // JSGF grammar — tells Chrome exactly which word to listen for
+  // This biases recognition strongly toward the target word
+  try {
+    const SGL = window.SpeechGrammarList || window.webkitSpeechGrammarList;
+    if(SGL && deck[idx]){
+      const word = deck[idx].w.toLowerCase();
+      // Build grammar with target word + common mishearings from aliases
+      const variants = [word, ...(ALIASES[word]||[])].slice(0,15).join(' | ');
+      const grammar = '#JSGF V1.0; grammar word; public <word> = ' + variants + ' ;';
+      const list = new SGL();
+      list.addFromString(grammar, 1);
+      recog.grammars = list;
+    }
+  } catch(e){ console.warn('grammar setup:', e); }
 
   let interimBest='';
   let done=false;
