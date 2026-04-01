@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="description" content="English vocabulary flashcards for kids — audio, voice recognition, syllable breakdown">
 <meta name="theme-color" content="#FF6B6B">
-<title>English Flashcards 4 Kids v3.0.0</title>
-<meta name="version" content="3.0.0">
+<title>English Flashcards 4 Kids v3.1.0</title>
+<meta name="version" content="3.1.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <style>
@@ -204,7 +204,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 
 <!-- TOP BAR (only shown on menu) -->
 <div id="topbar">
-  <div id="logo"><span>ENGLISH v3.0.0</span>FLASHCARDS 4 KIDS</div>
+  <div id="logo"><span>ENGLISH v3.1.0</span>FLASHCARDS 4 KIDS</div>
   <div id="stars-box">⭐ <span id="stars">0</span></div>
 </div>
 
@@ -249,7 +249,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 <script>
 const CATS={
   animals:{label:"ANIMALS",color:"#FF6B6B",preview:["🐶","🐱","🦁"],words:[
-    {w:"dog",e:"🐶",s:["DOG"]},{w:"cat",e:"🐱",s:["CAT"]},{w:"lion",e:"🦁",s:["LIE","ON"]},
+    {w:"dog",e:"🐶",s:["DOG"]},{w:"cat",e:"🐱",s:["CAT"]},{w:"lion",e:"🦁",s:["LI","ON"]},
     {w:"bird",e:"🐦",s:["BIRD"]},{w:"fish",e:"🐟",s:["FISH"]},{w:"rabbit",e:"🐰",s:["RAB","BIT"]},
     {w:"elephant",e:"🐘",s:["EL","E","PHANT"]},{w:"monkey",e:"🐒",s:["MON","KEY"]},
     {w:"frog",e:"🐸",s:["FROG"]},{w:"horse",e:"🐴",s:["HORSE"]},{w:"duck",e:"🦆",s:["DUCK"]},
@@ -267,9 +267,9 @@ const CATS={
     {w:"pink",e:"🩷",s:["PINK"]},{w:"white",e:"⬜",s:["WHITE"]},{w:"black",e:"⬛",s:["BLACK"]},{w:"brown",e:"🟫",s:["BROWN"]},
   ]},
   numbers:{label:"NUMBERS",color:"#339AF0",preview:["1️⃣","2️⃣","3️⃣"],words:[
-    {w:"one",e:"1️⃣",s:["WUN"]},{w:"two",e:"2️⃣",s:["TOO"]},{w:"three",e:"3️⃣",s:["THREE"]},
-    {w:"four",e:"4️⃣",s:["FOR"]},{w:"five",e:"5️⃣",s:["FIYVE"]},{w:"six",e:"6️⃣",s:["SIX"]},
-    {w:"seven",e:"7️⃣",s:["SEV","EN"]},{w:"eight",e:"8️⃣",s:["AYT"]},{w:"nine",e:"9️⃣",s:["NIYN"]},{w:"ten",e:"🔟",s:["TEN"]},
+    {w:"one",e:"1️⃣",s:["ONE"]},{w:"two",e:"2️⃣",s:["TWO"]},{w:"three",e:"3️⃣",s:["THREE"]},
+    {w:"four",e:"4️⃣",s:["FOUR"]},{w:"five",e:"5️⃣",s:["FIVE"]},{w:"six",e:"6️⃣",s:["SIX"]},
+    {w:"seven",e:"7️⃣",s:["SEV","EN"]},{w:"eight",e:"8️⃣",s:["EIGHT"]},{w:"nine",e:"9️⃣",s:["NINE"]},{w:"ten",e:"🔟",s:["TEN"]},
   ]},
   body:{label:"BODY",color:"#51CF66",preview:["👁️","👂","✋"],words:[
     {w:"eye",e:"👁️",s:["EYE"]},{w:"ear",e:"👂",s:["EAR"]},{w:"nose",e:"👃",s:["NOSE"]},
@@ -407,7 +407,10 @@ function startListening(){
   };
   recog.onnomatch=()=>{
     console.log('NO MATCH, interim:',interimBest);
-    // ignore — let the 5s timer handle it
+    // Wait 500ms — real result sometimes arrives just after NO MATCH
+    setTimeout(()=>{
+      if(!done) finish(interimBest?[interimBest]:null);
+    }, 500);
   };
   recog.onerror=e=>{
     console.log('ERROR:',e.error);
