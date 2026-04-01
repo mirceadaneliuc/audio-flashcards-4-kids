@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="description" content="English vocabulary flashcards for kids — audio, voice recognition, syllable breakdown">
 <meta name="theme-color" content="#FF6B6B">
-<title>English Flashcards 4 Kids v3.4.0</title>
-<meta name="version" content="3.4.0">
+<title>English Flashcards 4 Kids v3.5.0</title>
+<meta name="version" content="3.5.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <style>
@@ -212,7 +212,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 
 <!-- TOP BAR (only shown on menu) -->
 <div id="topbar">
-  <div id="logo"><span>ENGLISH v3.4.0</span>FLASHCARDS 4 KIDS</div>
+  <div id="logo"><span>ENGLISH v3.5.0</span>FLASHCARDS 4 KIDS</div>
   <div id="stars-box">⭐ <span id="stars">0</span></div>
 </div>
 
@@ -258,6 +258,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 
 <div id="streak">🔥 <span id="streak-n">3</span> IN A ROW!</div>
 
+<script src="config.js"></script>
 <script>
 const CATS={
   animals:{label:"ANIMALS",color:"#FF6B6B",preview:["🐶","🐱","🦁"],words:[
@@ -370,122 +371,113 @@ function speakSyllables(syls,done){
   next();
 }
 
-/* SPEECH RECOGNITION */
-const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-let recog=null;
-function startListening(){
-  if(listening||busy)return;
-  if(!SR){setStatus('SPEECH RECOGNITION NOT AVAILABLE');return;}
-  stopListening();
+/* SPEECH RECOGNITION — Hugging Face Whisper API */
+// Token loaded from config.js (not in git — see config.example.js)
+let HF_TOKEN = '';
+const HF_URL = 'https://router.huggingface.co/hf-inference/models/openai/whisper-large-v3-turbo/v1/audio/transcriptions';
 
-  recog=new SR();
-  recog.lang='en-US';
-  recog.maxAlternatives=6;
-  recog.continuous=false;
-  recog.interimResults=true;
+let mediaRecorder = null;
+let audioChunks   = [];
+let recordTimer   = null;
 
-  // JSGF grammar — tells Chrome exactly which word to listen for
-  // This biases recognition strongly toward the target word
-  try {
-    const SGL = window.SpeechGrammarList || window.webkitSpeechGrammarList;
-    if(SGL && deck[idx]){
-      const word = deck[idx].w.toLowerCase();
-      // Build grammar with target word + common mishearings from aliases
-      const variants = [word, ...(ALIASES[word]||[])].slice(0,15).join(' | ');
-      const grammar = '#JSGF V1.0; grammar word; public <word> = ' + variants + ' ;';
-      const list = new SGL();
-      list.addFromString(grammar, 1);
-      recog.grammars = list;
-    }
-  } catch(e){ console.warn('grammar setup:', e); }
+async function startListening(){
+  if(listening||busy) return;
 
-  let interimBest='';
-  let done=false;
-  let timer=null;
-
-  function finish(alts){
-    if(done)return; done=true;
-    clearTimeout(timer);
-    const r=recog; recog=null;
-    try{r.stop();}catch(e){}
-    listening=false; setMicState('idle');
-    if(alts&&alts.length>0){
-      evaluate(alts);
-    } else {
-      attempts++;
-      onWrong(attempts);
-    }
+  // Request mic
+  let stream;
+  try{
+    stream = await navigator.mediaDevices.getUserMedia({audio:true, video:false});
+  } catch(e){
+    console.warn('mic error:', e);
+    setStatus('ALLOW MIC IN BROWSER SETTINGS');
+    return;
   }
 
-  recog.onresult=e=>{
-    const res=e.results[e.results.length-1];
-    const alts=[...res].map(a=>a.transcript.trim().toLowerCase()).filter(a=>a!=='');
-    console.log('RESULT:',alts,'final:',res.isFinal);
-    if(alts.length>0) interimBest=alts[0];
-    // Cancel timeout — Chrome is actively processing, give it more time
-    clearTimeout(timer);
-    if(res.isFinal){
-      if(alts.length>0){
-        finish(alts);
-      } else {
-        // Empty final — reset timer to wait for the real result
-        timer=setTimeout(()=>{
-          console.log('post-result timeout, interim:',interimBest);
-          finish(interimBest?[interimBest]:null);
-        }, 2000);
-      }
-    }
+  listening = true;
+  setMicState('listening');
+  setStatus('LISTENING...');
+
+  audioChunks = [];
+  mediaRecorder = new MediaRecorder(stream, {mimeType: getSupportedMime()});
+
+  mediaRecorder.ondataavailable = e => {
+    if(e.data && e.data.size > 0) audioChunks.push(e.data);
   };
 
-  recog.onnomatch=()=>{
-    console.log('NO MATCH, interim:',interimBest);
-    finish(interimBest?[interimBest]:null);
-  };
+  mediaRecorder.onstop = async () => {
+    // Stop all tracks to release mic
+    stream.getTracks().forEach(t => t.stop());
+    listening = false;
+    setMicState('idle');
+    setStatus('THINKING...');
 
-  recog.onerror=e=>{
-    console.log('ERROR:',e.error);
-    if(done)return; // already handled
-    if(e.error==='aborted')return; // we triggered this, ignore
-    if(e.error==='not-allowed'){done=true;clearTimeout(timer);listening=false;setMicState('idle');setStatus('ALLOW MIC IN BROWSER SETTINGS');return;}
-    if(e.error==='network'){done=true;clearTimeout(timer);listening=false;setMicState('idle');setStatus('NEED INTERNET FOR VOICE');return;}
-    if(e.error==='no-speech'){
-      // no-speech means timeout — use interim if we have it
-      finish(interimBest?[interimBest]:null);
+    const blob = new Blob(audioChunks, {type: getSupportedMime()});
+    if(blob.size < 1000){
+      console.log('Audio too short, size:', blob.size);
+      attempts++; onWrong(attempts);
       return;
     }
-    finish(interimBest?[interimBest]:null);
+
+    try{
+      const formData = new FormData();
+      formData.append('file', blob, 'audio.webm');
+      formData.append('model', 'openai/whisper-large-v3-turbo');
+      formData.append('language', 'en');
+
+      const res = await fetch(HF_URL, {
+        method: 'POST',
+        headers: {'Authorization': 'Bearer ' + (window.HF_TOKEN || HF_TOKEN)},
+        body: formData
+      });
+
+      if(!res.ok){
+        const err = await res.text();
+        console.warn('HF error:', res.status, err);
+        setStatus('TRY AGAIN!');
+        enableMic(true);
+        return;
+      }
+
+      const data = await res.json();
+      const transcript = (data.text || '').trim().toLowerCase()
+        .replace(/[.,!?]/g,'');  // strip punctuation
+      console.log('Whisper transcript:', transcript, '| target:', deck[idx].w);
+
+      if(transcript){
+        evaluate([transcript]);
+      } else {
+        attempts++; onWrong(attempts);
+      }
+
+    } catch(e){
+      console.warn('Whisper fetch error:', e);
+      setStatus('NEED INTERNET FOR VOICE');
+      enableMic(true);
+    }
   };
 
-  recog.onend=()=>{
-    if(!done) finish(interimBest?[interimBest]:null);
-  };
-
-  try{
-    recog.start();
-    listening=true;
-    setMicState('listening');
-    setStatus('LISTENING...');
-    // 2.5s timeout — enough for any word, short enough to feel responsive
-    timer=setTimeout(()=>{
-      console.log('timeout, interim:',interimBest);
-      finish(interimBest?[interimBest]:null);
-    }, 2500);
-  }catch(e){
-    listening=false;
-    console.warn('start error:',e);
-  }
+  // Record for up to 3 seconds then auto-stop
+  mediaRecorder.start(100); // collect in 100ms chunks
+  recordTimer = setTimeout(()=>stopListening(), 3000);
 }
 
 function stopListening(){
-  if(recog){
-    const r=recog; recog=null; // null first so stale events are ignored
-    try{r.abort();}catch(e){}
+  clearTimeout(recordTimer);
+  if(mediaRecorder && mediaRecorder.state !== 'inactive'){
+    mediaRecorder.stop();
   }
-  listening=false;
+  listening = false;
   setMicState('idle');
-  document.getElementById('wave').classList.remove('on');
-  document.getElementById('btn-listen').classList.remove('speaking');
 }
+
+function getSupportedMime(){
+  const types = ['audio/webm;codecs=opus','audio/webm','audio/ogg;codecs=opus','audio/mp4'];
+  for(const t of types){
+    if(MediaRecorder.isTypeSupported(t)) return t;
+  }
+  return '';
+}
+
 
 /* FUZZY MATCH + ALIASES */
 const ALIASES={

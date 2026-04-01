@@ -2,7 +2,7 @@
 
 > An audio-first English vocabulary app for young non-English speaking children. No reading required — just images, sound, and voice.
 
-![version](https://img.shields.io/badge/version-3.4.0-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue) ![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Android-orange)
+![version](https://img.shields.io/badge/version-3.5.0-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue) ![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Android-orange)
 
 ---
 
@@ -65,6 +65,11 @@
 ---
 
 ## 📋 Changelog
+
+### v3.5.0 — 2026-04-01
+- **Replaced Web Speech API with Hugging Face Whisper:** records audio via MediaRecorder, sends to openai/whisper-large-v3-turbo — works universally on any device/browser, handles short words, numbers, and accents perfectly
+- **3 second recording window:** mic stays open for 3s then auto-stops and sends to Whisper
+- **No more device-specific issues:** Whisper runs server-side, same quality on any tablet or phone
 
 ### v3.4.0 — 2026-04-01
 - **JSGF grammar biasing:** tells Chrome exactly which word to listen for before each recognition session — Chrome heavily biases toward the target word and its known aliases, making short words like "five", "two", "ten" much more likely to be recognized
@@ -136,6 +141,11 @@
 - **Clean single-shot recognition** — one session per tap, 100ms startup gap, interim capture still active for short words
 - **Fixed stuck 🔊/🎤 button sounds** — stopListening now properly clears wave animation and speaking class
 - **onend fallback** — if Chrome ends session without result but has interim, uses interim; otherwise re-enables mic for manual retry
+
+### v3.5.0 — 2026-04-01
+- **Replaced Web Speech API with Hugging Face Whisper:** records audio via MediaRecorder, sends to openai/whisper-large-v3-turbo — works universally on any device/browser, handles short words, numbers, and accents perfectly
+- **3 second recording window:** mic stays open for 3s then auto-stops and sends to Whisper
+- **No more device-specific issues:** Whisper runs server-side, same quality on any tablet or phone
 
 ### v3.4.0 — 2026-04-01
 - **JSGF grammar biasing:** tells Chrome exactly which word to listen for before each recognition session — Chrome heavily biases toward the target word and its known aliases, making short words like "five", "two", "ten" much more likely to be recognized
