@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="description" content="English vocabulary flashcards for kids — audio, voice recognition, syllable breakdown">
 <meta name="theme-color" content="#FF6B6B">
-<title>English Flashcards 4 Kids v3.2.3</title>
-<meta name="version" content="3.2.3">
+<title>English Flashcards 4 Kids v3.3.1</title>
+<meta name="version" content="3.3.1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <style>
@@ -167,6 +167,14 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
   100%{box-shadow:-4px 0 20px rgba(51,154,240,.8),0 0 0 0 rgba(51,154,240,0)}
 }
 
+/* tap confirm buttons */
+#tap-confirm{display:none;position:absolute;inset:0;background:rgba(255,249,240,0.97);border-radius:28px;flex-direction:column;align-items:center;justify-content:center;gap:12px;z-index:10;}
+#tap-confirm.show{display:flex;}
+#tap-confirm .tc-label{font-family:'Fredoka One',cursive;font-size:20px;color:#aaa;text-transform:uppercase;}
+#tap-confirm .tc-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:0 12px;}
+.tc-btn{border:none;border-radius:16px;font-family:'Fredoka One',cursive;font-size:26px;padding:14px 0;cursor:pointer;color:#fff;transition:transform .15s;}
+.tc-btn:active{transform:scale(.88);}
+
 /* confetti */
 .cf{position:fixed;width:12px;height:12px;pointer-events:none;z-index:200;animation:cff 1.5s ease-in forwards;}
 @keyframes cff{from{transform:translateY(-40px) rotate(0);opacity:1}to{transform:translateY(105vh) rotate(760deg);opacity:0}}
@@ -204,7 +212,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 
 <!-- TOP BAR (only shown on menu) -->
 <div id="topbar">
-  <div id="logo"><span>ENGLISH v3.2.3</span>FLASHCARDS 4 KIDS</div>
+  <div id="logo"><span>ENGLISH v3.3.1</span>FLASHCARDS 4 KIDS</div>
   <div id="stars-box">⭐ <span id="stars">0</span></div>
 </div>
 
@@ -235,6 +243,10 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
       <div class="wb"></div><div class="wb"></div>
     </div>
     <div id="feedback"><div id="fb-emoji"></div><div id="fb-text"></div></div>
+    <div id="tap-confirm">
+      <div class="tc-label">TAP THE NUMBER YOU SAID!</div>
+      <div class="tc-grid" id="tc-grid"></div>
+    </div>
   </div>
 
   <div id="status-text">LISTEN FIRST! 🔊</div>
@@ -621,7 +633,7 @@ function startGame(key){
 }
 
 function showCard(){
-  stopListening();synth.cancel();hideFeedback();attempts=0;busy=false;
+  stopListening();synth.cancel();hideFeedback();hideTapConfirm();attempts=0;busy=false;
   const item=deck[idx];
   document.getElementById('main-emoji').textContent=item.e;
   document.getElementById('main-emoji').style.transform='scale(1)';
@@ -633,7 +645,6 @@ function showCard(){
   setTimeout(()=>speak(item.w,0.88,1.1,()=>{
     enableMic(true);
     setStatus('NOW SAY THE WORD! 🎤');
-    setTimeout(()=>{ if(!listening&&!busy) startListening(); },600);
   }),500);
 }
 
@@ -665,6 +676,35 @@ function onCorrect(){
   setTimeout(()=>{hideFeedback();idx++;if(idx>=deck.length)finishGame();else showCard();},1900);
 }
 
+/* TAP CONFIRM — shown after 2 failed attempts on numbers */
+const NUMBER_WORDS=['one','two','three','four','five','six','seven','eight','nine','ten'];
+const NUMBER_COLORS=['#FF6B6B','#FFA94D','#CC5DE8','#339AF0','#51CF66','#F06595','#20C997','#845EF7','#FF6B6B','#FFA94D'];
+
+function showTapConfirm(){
+  const grid=document.getElementById('tc-grid');
+  grid.innerHTML='';
+  NUMBER_WORDS.forEach((word,i)=>{
+    const btn=document.createElement('button');
+    btn.className='tc-btn';
+    btn.style.background=NUMBER_COLORS[i];
+    btn.textContent=i+1;
+    btn.onclick=()=>{
+      hideTapConfirm();
+      if(word===deck[idx].w.toLowerCase()){
+        onCorrect();
+      } else {
+        attempts++;
+        onWrong(attempts);
+      }
+    };
+    grid.appendChild(btn);
+  });
+  document.getElementById('tap-confirm').classList.add('show');
+}
+function hideTapConfirm(){
+  document.getElementById('tap-confirm').classList.remove('show');
+}
+
 /* WRONG */
 function onWrong(n){
   streak=0; document.getElementById('streak').classList.remove('on');
@@ -686,7 +726,14 @@ function onWrong(n){
     setTimeout(()=>{
       hideFeedback();
       speakSyllables(item.s,()=>{
-        speak(item.w,0.65,1.1,()=>{ enableMic(true); setStatus('TRY AGAIN! 🎤'); });
+        speak(item.w,0.65,1.1,()=>{
+          enableMic(true);
+          setStatus('TRY AGAIN! 🎤');
+          // For numbers: show tap buttons as fallback after syllable breakdown
+          if(NUMBER_WORDS.includes(item.w.toLowerCase())){
+            setTimeout(()=>{ if(!busy) showTapConfirm(); }, 4000);
+          }
+        });
       });
     },700);
 

@@ -2,7 +2,7 @@
 
 > An audio-first English vocabulary app for young non-English speaking children. No reading required — just images, sound, and voice.
 
-![version](https://img.shields.io/badge/version-3.2.3-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue) ![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Android-orange)
+![version](https://img.shields.io/badge/version-3.3.1-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue) ![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Android-orange)
 
 ---
 
@@ -66,6 +66,13 @@
 
 ## 📋 Changelog
 
+### v3.3.1 — 2026-04-01
+- **Removed auto-mic:** Chrome on Android silently blocks programmatic mic activation — DuckDuckGo works because every session starts from a real user tap. Now child must tap 🎤 manually, ensuring Chrome grants full mic access every time
+
+### v3.3.0 — 2026-04-01
+- **Tap-to-confirm fallback for numbers:** after 2 failed voice attempts on any number, large digit buttons (1-10) appear inside the card — child taps the number they said to confirm and move on
+- **Keeps learning flow:** numbers are hardest for Chrome SR with non-native children — this fallback ensures the session never stalls on numbers
+
 ### v3.2.3 — 2026-04-01
 - **Number threshold lowered to 30%:** was 40%, still won't help empty results but catches more accent variations
 - **Fixed aborted error causing spurious onWrong:** ERROR:aborted was triggering wrong-attempt counter when mic button was tapped
@@ -125,6 +132,13 @@
 - **Clean single-shot recognition** — one session per tap, 100ms startup gap, interim capture still active for short words
 - **Fixed stuck 🔊/🎤 button sounds** — stopListening now properly clears wave animation and speaking class
 - **onend fallback** — if Chrome ends session without result but has interim, uses interim; otherwise re-enables mic for manual retry
+
+### v3.3.1 — 2026-04-01
+- **Removed auto-mic:** Chrome on Android silently blocks programmatic mic activation — DuckDuckGo works because every session starts from a real user tap. Now child must tap 🎤 manually, ensuring Chrome grants full mic access every time
+
+### v3.3.0 — 2026-04-01
+- **Tap-to-confirm fallback for numbers:** after 2 failed voice attempts on any number, large digit buttons (1-10) appear inside the card — child taps the number they said to confirm and move on
+- **Keeps learning flow:** numbers are hardest for Chrome SR with non-native children — this fallback ensures the session never stalls on numbers
 
 ### v3.2.3 — 2026-04-01
 - **Number threshold lowered to 30%:** was 40%, still won't help empty results but catches more accent variations
