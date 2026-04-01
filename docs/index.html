@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="description" content="English vocabulary flashcards for kids — audio, voice recognition, syllable breakdown">
 <meta name="theme-color" content="#FF6B6B">
-<title>English Flashcards 4 Kids v2.6.0</title>
-<meta name="version" content="2.6.0">
+<title>English Flashcards 4 Kids v2.7.0</title>
+<meta name="version" content="2.7.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <style>
@@ -204,7 +204,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 
 <!-- TOP BAR (only shown on menu) -->
 <div id="topbar">
-  <div id="logo"><span>ENGLISH v2.6.0</span>FLASHCARDS 4 KIDS</div>
+  <div id="logo"><span>ENGLISH v2.7.0</span>FLASHCARDS 4 KIDS</div>
   <div id="stars-box">⭐ <span id="stars">0</span></div>
 </div>
 
@@ -365,7 +365,8 @@ function startListening(){
   if(listening||busy)return;
   if(!SR){setStatus('SPEECH RECOGNITION NOT AVAILABLE');return;}
   stopListening();
-  synth.cancel();
+  // Don't cancel synth here — onWrong may be mid-speech when user taps mic
+  // The mic button is disabled while TTS plays so this is safe
 
   recog=new SR();
   recog.lang='en-US';
@@ -422,7 +423,10 @@ function startListening(){
 }
 
 function stopListening(){
-  if(recog){try{recog.abort();}catch(e){}recog=null;}
+  if(recog){
+    const r=recog; recog=null; // null first so stale events are ignored
+    try{r.abort();}catch(e){}
+  }
   listening=false;
   setMicState('idle');
   document.getElementById('wave').classList.remove('on');
@@ -599,8 +603,6 @@ function showCard(){
   setTimeout(()=>speak(item.w,0.88,1.1,()=>{
     enableMic(true);
     setStatus('NOW SAY THE WORD! 🎤');
-    // short pause then auto-start mic
-    setTimeout(()=>{ if(!listening&&!busy) startListening(); }, 500);
   }),500);
 }
 

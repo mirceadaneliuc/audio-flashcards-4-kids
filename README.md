@@ -2,7 +2,7 @@
 
 > An audio-first English vocabulary app for young non-English speaking children. No reading required — just images, sound, and voice.
 
-![version](https://img.shields.io/badge/version-2.6.0-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue) ![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Android-orange)
+![version](https://img.shields.io/badge/version-2.7.0-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue) ![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Android-orange)
 
 ---
 
@@ -66,6 +66,12 @@
 
 ## 📋 Changelog
 
+### v2.7.0 — 2026-03-31
+- **Removed auto-mic:** was causing race conditions with onWrong TTS — child taps mic manually after hearing the word
+- **Fixed aborted error:** stopListening now nulls recog BEFORE calling abort(), so stale error events from dying sessions are ignored
+- **Fixed word only spoken once:** removed synth.cancel() from startListening — onWrong TTS no longer gets cancelled when mic button is tapped
+- **3-strike flow now works cleanly:** 1st=slow replay, 2nd=syllables, 3rd=move to back of queue
+
 ### v2.6.0 — 2026-03-31
 - **NO MATCH no longer counts as wrong attempt:** when Chrome hears nothing (silence, background noise, short vowel sounds) the mic just re-enables silently — only actual speech that doesn't match counts as a fail
 - **Numbers fix:** "one", "two", "six" etc. were consuming all 3 attempts via empty NO MATCH before child could even speak
@@ -80,6 +86,12 @@
 - **Clean single-shot recognition** — one session per tap, 100ms startup gap, interim capture still active for short words
 - **Fixed stuck 🔊/🎤 button sounds** — stopListening now properly clears wave animation and speaking class
 - **onend fallback** — if Chrome ends session without result but has interim, uses interim; otherwise re-enables mic for manual retry
+
+### v2.7.0 — 2026-03-31
+- **Removed auto-mic:** was causing race conditions with onWrong TTS — child taps mic manually after hearing the word
+- **Fixed aborted error:** stopListening now nulls recog BEFORE calling abort(), so stale error events from dying sessions are ignored
+- **Fixed word only spoken once:** removed synth.cancel() from startListening — onWrong TTS no longer gets cancelled when mic button is tapped
+- **3-strike flow now works cleanly:** 1st=slow replay, 2nd=syllables, 3rd=move to back of queue
 
 ### v2.6.0 — 2026-03-31
 - **NO MATCH no longer counts as wrong attempt:** when Chrome hears nothing (silence, background noise, short vowel sounds) the mic just re-enables silently — only actual speech that doesn't match counts as a fail
