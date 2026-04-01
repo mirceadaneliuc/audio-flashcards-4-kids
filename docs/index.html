@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="description" content="English vocabulary flashcards for kids — audio, voice recognition, syllable breakdown">
 <meta name="theme-color" content="#FF6B6B">
-<title>English Flashcards 4 Kids v2.9.0</title>
-<meta name="version" content="2.9.0">
+<title>English Flashcards 4 Kids v3.0.0</title>
+<meta name="version" content="3.0.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <style>
@@ -204,7 +204,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 
 <!-- TOP BAR (only shown on menu) -->
 <div id="topbar">
-  <div id="logo"><span>ENGLISH v2.9.0</span>FLASHCARDS 4 KIDS</div>
+  <div id="logo"><span>ENGLISH v3.0.0</span>FLASHCARDS 4 KIDS</div>
   <div id="stars-box">⭐ <span id="stars">0</span></div>
 </div>
 
@@ -249,7 +249,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 <script>
 const CATS={
   animals:{label:"ANIMALS",color:"#FF6B6B",preview:["🐶","🐱","🦁"],words:[
-    {w:"dog",e:"🐶",s:["DOG"]},{w:"cat",e:"🐱",s:["CAT"]},{w:"lion",e:"🦁",s:["LI","ON"]},
+    {w:"dog",e:"🐶",s:["DOG"]},{w:"cat",e:"🐱",s:["CAT"]},{w:"lion",e:"🦁",s:["LIE","ON"]},
     {w:"bird",e:"🐦",s:["BIRD"]},{w:"fish",e:"🐟",s:["FISH"]},{w:"rabbit",e:"🐰",s:["RAB","BIT"]},
     {w:"elephant",e:"🐘",s:["EL","E","PHANT"]},{w:"monkey",e:"🐒",s:["MON","KEY"]},
     {w:"frog",e:"🐸",s:["FROG"]},{w:"horse",e:"🐴",s:["HORSE"]},{w:"duck",e:"🦆",s:["DUCK"]},
@@ -267,9 +267,9 @@ const CATS={
     {w:"pink",e:"🩷",s:["PINK"]},{w:"white",e:"⬜",s:["WHITE"]},{w:"black",e:"⬛",s:["BLACK"]},{w:"brown",e:"🟫",s:["BROWN"]},
   ]},
   numbers:{label:"NUMBERS",color:"#339AF0",preview:["1️⃣","2️⃣","3️⃣"],words:[
-    {w:"one",e:"1️⃣",s:["ONE"]},{w:"two",e:"2️⃣",s:["TWO"]},{w:"three",e:"3️⃣",s:["THREE"]},
-    {w:"four",e:"4️⃣",s:["FOUR"]},{w:"five",e:"5️⃣",s:["FIVE"]},{w:"six",e:"6️⃣",s:["SIX"]},
-    {w:"seven",e:"7️⃣",s:["SEV","EN"]},{w:"eight",e:"8️⃣",s:["EIGHT"]},{w:"nine",e:"9️⃣",s:["NINE"]},{w:"ten",e:"🔟",s:["TEN"]},
+    {w:"one",e:"1️⃣",s:["WUN"]},{w:"two",e:"2️⃣",s:["TOO"]},{w:"three",e:"3️⃣",s:["THREE"]},
+    {w:"four",e:"4️⃣",s:["FOR"]},{w:"five",e:"5️⃣",s:["FIYVE"]},{w:"six",e:"6️⃣",s:["SIX"]},
+    {w:"seven",e:"7️⃣",s:["SEV","EN"]},{w:"eight",e:"8️⃣",s:["AYT"]},{w:"nine",e:"9️⃣",s:["NIYN"]},{w:"ten",e:"🔟",s:["TEN"]},
   ]},
   body:{label:"BODY",color:"#51CF66",preview:["👁️","👂","✋"],words:[
     {w:"eye",e:"👁️",s:["EYE"]},{w:"ear",e:"👂",s:["EAR"]},{w:"nose",e:"👃",s:["NOSE"]},
@@ -394,18 +394,20 @@ function startListening(){
   }
 
   recog.onresult=e=>{
-    // with continuous=true, grab the latest result
     const res=e.results[e.results.length-1];
     const alts=[...res].map(a=>a.transcript.trim().toLowerCase()).filter(a=>a!=='');
     console.log('RESULT:',alts,'final:',res.isFinal);
-    if(alts.length>0){ interimBest=alts[0]; }
-    if(res.isFinal && alts.length>0){
-      finish(alts);
+    if(alts.length>0) interimBest=alts[0];
+    if(res.isFinal){
+      if(alts.length>0){
+        finish(alts); // got real transcript — done
+      }
+      // if empty final, keep listening — real result may be 100ms away
     }
   };
   recog.onnomatch=()=>{
     console.log('NO MATCH, interim:',interimBest);
-    // don't finish on first no-match with continuous — let timer decide
+    // ignore — let the 5s timer handle it
   };
   recog.onerror=e=>{
     console.log('ERROR:',e.error);
@@ -482,8 +484,8 @@ const ALIASES={
   ten:  ['tin','tan','hen','den','men','pen','then','when','zen','bin','din','fin','gin','pin','sin','win','10','ten!'],
   arm:  ['are','bar','car','far','jar','tar','star','charm','farm','harm','art','ark','arc','hard'],
   foot: ['food','full','fool','pool','cool','tool','book','cook','hook','look','rook','took','wood','good'],
-  ear:  ['here','year','fear','beer','dear','near','tear','we are','were','wear','air','are'],
-  eye:  ['i','ai','aye','hi','my','by','die','lie','pie','tie','buy','cry','dry','fly','fry','guy','rye'],
+  ear:  ['here','year','fear','beer','dear','near','tear','we are','were','wear','air','are','era','eer','ir','ur','ears'],
+  eye:  ['i','ai','aye','hi','my','by','die','lie','pie','tie','buy','cry','dry','fly','fry','guy','rye','I','eye!','eyes','the eye'],
   leg:  ['peg','beg','keg','reg','lake','lick','lid','lip'],
   hair: ['hare','here','hear','heir','air','bare','care','dare','fair','fare','pair','share','spare','stare'],
   hand: ['and','band','land','sand','bland','brand','grand','stand'],
@@ -568,7 +570,10 @@ function evaluate(alts){
   }
 
   const charLen=target.replace(/\s/g,'').length;
-  const threshold=charLen<=4?0.55:charLen<=6?0.68:0.75;
+  // Numbers category gets extra-low threshold since children mispronounce them
+  const numWords=['one','two','three','four','five','six','seven','eight','nine','ten'];
+  const isNum=numWords.includes(target);
+  const threshold=isNum?0.4:(charLen<=4?0.55:charLen<=6?0.68:0.75);
 
   console.log('heard:',alts,'| target:',target,'| score:',best.toFixed(2),'| threshold:',threshold);
   best>=threshold?onCorrect():(attempts++,onWrong(attempts));
