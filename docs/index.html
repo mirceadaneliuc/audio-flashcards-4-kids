@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="description" content="English vocabulary flashcards for kids — audio, voice recognition, syllable breakdown">
 <meta name="theme-color" content="#FF6B6B">
-<title>English Flashcards 4 Kids v3.2.2</title>
-<meta name="version" content="3.2.2">
+<title>English Flashcards 4 Kids v3.2.3</title>
+<meta name="version" content="3.2.3">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <style>
@@ -204,7 +204,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 
 <!-- TOP BAR (only shown on menu) -->
 <div id="topbar">
-  <div id="logo"><span>ENGLISH v3.2.2</span>FLASHCARDS 4 KIDS</div>
+  <div id="logo"><span>ENGLISH v3.2.3</span>FLASHCARDS 4 KIDS</div>
   <div id="stars-box">⭐ <span id="stars">0</span></div>
 </div>
 
@@ -417,9 +417,15 @@ function startListening(){
 
   recog.onerror=e=>{
     console.log('ERROR:',e.error);
-    if(e.error==='aborted'||done)return;
+    if(done)return; // already handled
+    if(e.error==='aborted')return; // we triggered this, ignore
     if(e.error==='not-allowed'){done=true;clearTimeout(timer);listening=false;setMicState('idle');setStatus('ALLOW MIC IN BROWSER SETTINGS');return;}
     if(e.error==='network'){done=true;clearTimeout(timer);listening=false;setMicState('idle');setStatus('NEED INTERNET FOR VOICE');return;}
+    if(e.error==='no-speech'){
+      // no-speech means timeout — use interim if we have it
+      finish(interimBest?[interimBest]:null);
+      return;
+    }
     finish(interimBest?[interimBest]:null);
   };
 
@@ -579,7 +585,7 @@ function evaluate(alts){
   // Numbers category gets extra-low threshold since children mispronounce them
   const numWords=['one','two','three','four','five','six','seven','eight','nine','ten'];
   const isNum=numWords.includes(target);
-  const threshold=isNum?0.4:(charLen<=4?0.55:charLen<=6?0.68:0.75);
+  const threshold=isNum?0.3:(charLen<=4?0.55:charLen<=6?0.68:0.75);
 
   console.log('heard:',alts,'| target:',target,'| score:',best.toFixed(2),'| threshold:',threshold);
   best>=threshold?onCorrect():(attempts++,onWrong(attempts));

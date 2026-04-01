@@ -2,7 +2,7 @@
 
 > An audio-first English vocabulary app for young non-English speaking children. No reading required — just images, sound, and voice.
 
-![version](https://img.shields.io/badge/version-3.2.2-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue) ![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Android-orange)
+![version](https://img.shields.io/badge/version-3.2.3-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue) ![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Android-orange)
 
 ---
 
@@ -66,6 +66,10 @@
 
 ## 📋 Changelog
 
+### v3.2.3 — 2026-04-01
+- **Number threshold lowered to 30%:** was 40%, still won't help empty results but catches more accent variations
+- **Fixed aborted error causing spurious onWrong:** ERROR:aborted was triggering wrong-attempt counter when mic button was tapped
+
 ### v3.2.2 — 2026-04-01
 - **Timer cancelled on any result event:** Chrome was delivering ['six'] AFTER the 2.5s timeout had already fired — now any result cancels the timer and resets it to 2s for the real result
 - **Syllables spoken in lowercase:** fixes "EN" being spelled as letters E-N — TTS now speaks "en" as a natural sound
@@ -121,6 +125,10 @@
 - **Clean single-shot recognition** — one session per tap, 100ms startup gap, interim capture still active for short words
 - **Fixed stuck 🔊/🎤 button sounds** — stopListening now properly clears wave animation and speaking class
 - **onend fallback** — if Chrome ends session without result but has interim, uses interim; otherwise re-enables mic for manual retry
+
+### v3.2.3 — 2026-04-01
+- **Number threshold lowered to 30%:** was 40%, still won't help empty results but catches more accent variations
+- **Fixed aborted error causing spurious onWrong:** ERROR:aborted was triggering wrong-attempt counter when mic button was tapped
 
 ### v3.2.2 — 2026-04-01
 - **Timer cancelled on any result event:** Chrome was delivering ['six'] AFTER the 2.5s timeout had already fired — now any result cancels the timer and resets it to 2s for the real result
