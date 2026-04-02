@@ -227,14 +227,22 @@ function dtw(a, b){
 }
 
 // ── AUDIO RECORDING ──
+let _sharedStream = null;
+
+async function getStream(){
+  if(!_sharedStream || _sharedStream.getTracks().some(t=>t.readyState==='ended')){
+    _sharedStream = await navigator.mediaDevices.getUserMedia({audio:{channelCount:1},video:false});
+  }
+  return _sharedStream;
+}
+
 async function recordAudio(ms=2000){
-  const stream = await navigator.mediaDevices.getUserMedia({audio:{sampleRate:16000,channelCount:1},video:false});
+  const stream = await getStream();
   return new Promise(resolve=>{
     const chunks=[];
     const mr = new MediaRecorder(stream);
     mr.ondataavailable=e=>chunks.push(e.data);
     mr.onstop=async()=>{
-      stream.getTracks().forEach(t=>t.stop());
       const blob=new Blob(chunks,{type:'audio/webm'});
       const ab=await blob.arrayBuffer();
       const ac=new AudioContext();
