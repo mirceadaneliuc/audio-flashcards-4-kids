@@ -1,0 +1,718 @@
+{
+  "animals": {
+    "label": "ANIMALS",
+    "icon": "🐾",
+    "color": "#FF6B6B",
+    "subcategories": {
+      "farm": {
+        "label": "FARM ANIMALS",
+        "icon": "🐄",
+        "words": [
+          {"w":"cow","e":"🐄","s":["COW"]},
+          {"w":"pig","e":"🐷","s":["PIG"]},
+          {"w":"horse","e":"🐴","s":["HORSE"]},
+          {"w":"sheep","e":"🐑","s":["SHEEP"]},
+          {"w":"chicken","e":"🐔","s":["CHICK","EN"]},
+          {"w":"goat","e":"🐐","s":["GOAT"]},
+          {"w":"duck","e":"🦆","s":["DUCK"]},
+          {"w":"donkey","e":"🫏","s":["DON","KEY"]},
+          {"w":"turkey","e":"🦃","s":["TUR","KEY"]}
+        ]
+      },
+      "wild": {
+        "label": "WILD ANIMALS",
+        "icon": "🦁",
+        "words": [
+          {"w":"lion","e":"🦁","s":["LI","ON"]},
+          {"w":"elephant","e":"🐘","s":["EL","E","PHANT"]},
+          {"w":"monkey","e":"🐒","s":["MON","KEY"]},
+          {"w":"bear","e":"🐻","s":["BEAR"]},
+          {"w":"frog","e":"🐸","s":["FROG"]},
+          {"w":"tiger","e":"🐯","s":["TI","GER"]},
+          {"w":"zebra","e":"🦓","s":["ZE","BRA"]},
+          {"w":"giraffe","e":"🦒","s":["GI","RAFFE"]},
+          {"w":"crocodile","e":"🐊","s":["CROC","O","DILE"]},
+          {"w":"hippo","e":"🦛","s":["HIP","PO"]}
+        ]
+      },
+      "pets": {
+        "label": "PETS",
+        "icon": "🐶",
+        "words": [
+          {"w":"dog","e":"🐶","s":["DOG"]},
+          {"w":"cat","e":"🐱","s":["CAT"]},
+          {"w":"rabbit","e":"🐰","s":["RAB","BIT"]},
+          {"w":"fish","e":"🐟","s":["FISH"]},
+          {"w":"hamster","e":"🐹","s":["HAM","STER"]},
+          {"w":"parrot","e":"🦜","s":["PAR","ROT"]},
+          {"w":"turtle","e":"🐢","s":["TUR","TLE"]},
+          {"w":"guinea pig","e":"🐹","s":["GUIN","EA","PIG"]}
+        ]
+      },
+      "birds": {
+        "label": "BIRDS",
+        "icon": "🐦",
+        "words": [
+          {"w":"bird","e":"🐦","s":["BIRD"]},
+          {"w":"owl","e":"🦉","s":["OWL"]},
+          {"w":"eagle","e":"🦅","s":["EA","GLE"]},
+          {"w":"penguin","e":"🐧","s":["PEN","GUIN"]},
+          {"w":"parrot","e":"🦜","s":["PAR","ROT"]},
+          {"w":"robin","e":"🐦","s":["ROB","IN"]},
+          {"w":"flamingo","e":"🦩","s":["FLA","MIN","GO"]},
+          {"w":"swan","e":"🦢","s":["SWAN"]}
+        ]
+      },
+      "sea": {
+        "label": "SEA ANIMALS",
+        "icon": "🐠",
+        "words": [
+          {"w":"fish","e":"🐟","s":["FISH"]},
+          {"w":"shark","e":"🦈","s":["SHARK"]},
+          {"w":"whale","e":"🐋","s":["WHALE"]},
+          {"w":"dolphin","e":"🐬","s":["DOL","PHIN"]},
+          {"w":"crab","e":"🦀","s":["CRAB"]},
+          {"w":"octopus","e":"🐙","s":["OC","TO","PUS"]},
+          {"w":"jellyfish","e":"🪼","s":["JEL","LY","FISH"]},
+          {"w":"seahorse","e":"🦄","s":["SEA","HORSE"]},
+          {"w":"lobster","e":"🦞","s":["LOB","STER"]}
+        ]
+      },
+      "insects": {
+        "label": "INSECTS",
+        "icon": "🐛",
+        "words": [
+          {"w":"bee","e":"🐝","s":["BEE"]},
+          {"w":"butterfly","e":"🦋","s":["BUT","TER","FLY"]},
+          {"w":"ant","e":"🐜","s":["ANT"]},
+          {"w":"ladybug","e":"🐞","s":["LA","DY","BUG"]},
+          {"w":"caterpillar","e":"🐛","s":["CAT","ER","PIL","LAR"]},
+          {"w":"grasshopper","e":"🦗","s":["GRASS","HOP","PER"]},
+          {"w":"dragonfly","e":"🪲","s":["DRAG","ON","FLY"]}
+        ]
+      }
+    }
+  },
+  "food": {
+    "label": "FOOD",
+    "icon": "🍎",
+    "color": "#FFA94D",
+    "subcategories": {
+      "fruits": {
+        "label": "FRUITS",
+        "icon": "🍎",
+        "words": [
+          {"w":"apple","e":"🍎","s":["AP","PLE"]},
+          {"w":"banana","e":"🍌","s":["BA","NA","NA"]},
+          {"w":"orange","e":"🍊","s":["OR","ANGE"]},
+          {"w":"strawberry","e":"🍓","s":["STRAW","BER","RY"]},
+          {"w":"grape","e":"🍇","s":["GRAPE"]},
+          {"w":"watermelon","e":"🍉","s":["WA","TER","MEL","ON"]},
+          {"w":"lemon","e":"🍋","s":["LEM","ON"]},
+          {"w":"peach","e":"🍑","s":["PEACH"]},
+          {"w":"pear","e":"🍐","s":["PEAR"]},
+          {"w":"cherry","e":"🍒","s":["CHER","RY"]},
+          {"w":"mango","e":"🥭","s":["MAN","GO"]},
+          {"w":"pineapple","e":"🍍","s":["PINE","AP","PLE"]}
+        ]
+      },
+      "vegetables": {
+        "label": "VEGETABLES",
+        "icon": "🥕",
+        "words": [
+          {"w":"carrot","e":"🥕","s":["CAR","ROT"]},
+          {"w":"potato","e":"🥔","s":["PO","TA","TO"]},
+          {"w":"tomato","e":"🍅","s":["TO","MA","TO"]},
+          {"w":"broccoli","e":"🥦","s":["BROC","CO","LI"]},
+          {"w":"corn","e":"🌽","s":["CORN"]},
+          {"w":"onion","e":"🧅","s":["ON","ION"]},
+          {"w":"pepper","e":"🫑","s":["PEP","PER"]},
+          {"w":"cucumber","e":"🥒","s":["CU","CUM","BER"]},
+          {"w":"pea","e":"🫛","s":["PEA"]}
+        ]
+      },
+      "dairy": {
+        "label": "DAIRY",
+        "icon": "🥛",
+        "words": [
+          {"w":"milk","e":"🥛","s":["MILK"]},
+          {"w":"cheese","e":"🧀","s":["CHEESE"]},
+          {"w":"egg","e":"🥚","s":["EGG"]},
+          {"w":"butter","e":"🧈","s":["BUT","TER"]},
+          {"w":"yogurt","e":"🍦","s":["YO","GURT"]}
+        ]
+      },
+      "bakery": {
+        "label": "BAKERY",
+        "icon": "🍞",
+        "words": [
+          {"w":"bread","e":"🍞","s":["BREAD"]},
+          {"w":"cake","e":"🎂","s":["CAKE"]},
+          {"w":"cookie","e":"🍪","s":["COO","KIE"]},
+          {"w":"pizza","e":"🍕","s":["PIZ","ZA"]},
+          {"w":"muffin","e":"🧁","s":["MUF","FIN"]},
+          {"w":"pancake","e":"🥞","s":["PAN","CAKE"]},
+          {"w":"toast","e":"🍞","s":["TOAST"]}
+        ]
+      },
+      "drinks": {
+        "label": "DRINKS",
+        "icon": "🥤",
+        "words": [
+          {"w":"water","e":"💧","s":["WA","TER"]},
+          {"w":"juice","e":"🧃","s":["JUICE"]},
+          {"w":"milk","e":"🥛","s":["MILK"]},
+          {"w":"tea","e":"🍵","s":["TEA"]},
+          {"w":"lemonade","e":"🍋","s":["LEM","ON","ADE"]},
+          {"w":"smoothie","e":"🥤","s":["SMOOTH","IE"]}
+        ]
+      },
+      "sweets": {
+        "label": "SWEETS",
+        "icon": "🍬",
+        "words": [
+          {"w":"candy","e":"🍬","s":["CAN","DY"]},
+          {"w":"chocolate","e":"🍫","s":["CHOC","O","LATE"]},
+          {"w":"ice cream","e":"🍦","s":["ICE","CREAM"]},
+          {"w":"lollipop","e":"🍭","s":["LOL","LI","POP"]},
+          {"w":"cupcake","e":"🧁","s":["CUP","CAKE"]},
+          {"w":"jelly","e":"🍮","s":["JEL","LY"]}
+        ]
+      }
+    }
+  },
+  "colors": {
+    "label": "COLORS",
+    "icon": "🎨",
+    "color": "#CC5DE8",
+    "subcategories": {
+      "basic": {
+        "label": "BASIC COLORS",
+        "icon": "🎨",
+        "words": [
+          {"w":"red","e":"🟥","s":["RED"]},
+          {"w":"blue","e":"🟦","s":["BLUE"]},
+          {"w":"yellow","e":"🟨","s":["YEL","LOW"]},
+          {"w":"green","e":"🟩","s":["GREEN"]},
+          {"w":"orange","e":"🟧","s":["OR","ANGE"]},
+          {"w":"purple","e":"🟪","s":["PUR","PLE"]},
+          {"w":"pink","e":"🩷","s":["PINK"]},
+          {"w":"white","e":"⬜","s":["WHITE"]},
+          {"w":"black","e":"⬛","s":["BLACK"]},
+          {"w":"brown","e":"🟫","s":["BROWN"]},
+          {"w":"gray","e":"🩶","s":["GRAY"]}
+        ]
+      }
+    }
+  },
+  "numbers": {
+    "label": "NUMBERS",
+    "icon": "🔢",
+    "color": "#339AF0",
+    "subcategories": {
+      "1to10": {
+        "label": "1 TO 10",
+        "icon": "🔟",
+        "words": [
+          {"w":"one","e":"1️⃣","s":["ONE"]},
+          {"w":"two","e":"2️⃣","s":["TWO"]},
+          {"w":"three","e":"3️⃣","s":["THREE"]},
+          {"w":"four","e":"4️⃣","s":["FOUR"]},
+          {"w":"five","e":"5️⃣","s":["FIVE"]},
+          {"w":"six","e":"6️⃣","s":["SIX"]},
+          {"w":"seven","e":"7️⃣","s":["SE","VEN"]},
+          {"w":"eight","e":"8️⃣","s":["EIGHT"]},
+          {"w":"nine","e":"9️⃣","s":["NINE"]},
+          {"w":"ten","e":"🔟","s":["TEN"]}
+        ]
+      },
+      "11to20": {
+        "label": "11 TO 20",
+        "icon": "2️⃣0️⃣",
+        "words": [
+          {"w":"eleven","e":"1️⃣1️⃣","s":["E","LEV","EN"]},
+          {"w":"twelve","e":"1️⃣2️⃣","s":["TWELVE"]},
+          {"w":"thirteen","e":"1️⃣3️⃣","s":["THIR","TEEN"]},
+          {"w":"fourteen","e":"1️⃣4️⃣","s":["FOUR","TEEN"]},
+          {"w":"fifteen","e":"1️⃣5️⃣","s":["FIF","TEEN"]},
+          {"w":"sixteen","e":"1️⃣6️⃣","s":["SIX","TEEN"]},
+          {"w":"seventeen","e":"1️⃣7️⃣","s":["SEV","EN","TEEN"]},
+          {"w":"eighteen","e":"1️⃣8️⃣","s":["EIGH","TEEN"]},
+          {"w":"nineteen","e":"1️⃣9️⃣","s":["NINE","TEEN"]},
+          {"w":"twenty","e":"2️⃣0️⃣","s":["TWEN","TY"]}
+        ]
+      },
+      "tens": {
+        "label": "TENS",
+        "icon": "💯",
+        "words": [
+          {"w":"ten","e":"1️⃣0️⃣","s":["TEN"]},
+          {"w":"twenty","e":"2️⃣0️⃣","s":["TWEN","TY"]},
+          {"w":"thirty","e":"3️⃣0️⃣","s":["THIR","TY"]},
+          {"w":"forty","e":"4️⃣0️⃣","s":["FOR","TY"]},
+          {"w":"fifty","e":"5️⃣0️⃣","s":["FIF","TY"]},
+          {"w":"sixty","e":"6️⃣0️⃣","s":["SIX","TY"]},
+          {"w":"seventy","e":"7️⃣0️⃣","s":["SEV","EN","TY"]},
+          {"w":"eighty","e":"8️⃣0️⃣","s":["EIGH","TY"]},
+          {"w":"ninety","e":"9️⃣0️⃣","s":["NINE","TY"]},
+          {"w":"hundred","e":"💯","s":["HUN","DRED"]}
+        ]
+      }
+    }
+  },
+  "shapes": {
+    "label": "SHAPES",
+    "icon": "🔷",
+    "color": "#F06595",
+    "subcategories": {
+      "basic": {
+        "label": "BASIC SHAPES",
+        "icon": "🔷",
+        "words": [
+          {"w":"circle","e":"⭕","s":["CIR","CLE"]},
+          {"w":"square","e":"🟥","s":["SQUARE"]},
+          {"w":"triangle","e":"🔺","s":["TRI","AN","GLE"]},
+          {"w":"star","e":"⭐","s":["STAR"]},
+          {"w":"heart","e":"❤️","s":["HEART"]},
+          {"w":"diamond","e":"💎","s":["DIA","MOND"]},
+          {"w":"rectangle","e":"▬","s":["REC","TAN","GLE"]},
+          {"w":"oval","e":"🥚","s":["O","VAL"]}
+        ]
+      }
+    }
+  },
+  "sizes": {
+    "label": "SIZES",
+    "icon": "📏",
+    "color": "#20C997",
+    "subcategories": {
+      "basic": {
+        "label": "SIZES",
+        "icon": "📏",
+        "words": [
+          {"w":"big","e":"🔵","s":["BIG"]},
+          {"w":"small","e":"🔹","s":["SMALL"]},
+          {"w":"tall","e":"🏢","s":["TALL"]},
+          {"w":"short","e":"🏠","s":["SHORT"]},
+          {"w":"long","e":"📏","s":["LONG"]},
+          {"w":"wide","e":"↔️","s":["WIDE"]},
+          {"w":"heavy","e":"⚖️","s":["HEAV","Y"]},
+          {"w":"light","e":"🪶","s":["LIGHT"]},
+          {"w":"thick","e":"📚","s":["THICK"]},
+          {"w":"thin","e":"📄","s":["THIN"]}
+        ]
+      }
+    }
+  },
+  "feelings": {
+    "label": "FEELINGS",
+    "icon": "😊",
+    "color": "#FF6B6B",
+    "subcategories": {
+      "basic": {
+        "label": "FEELINGS",
+        "icon": "😊",
+        "words": [
+          {"w":"happy","e":"😊","s":["HAP","PY"]},
+          {"w":"sad","e":"😢","s":["SAD"]},
+          {"w":"angry","e":"😠","s":["AN","GRY"]},
+          {"w":"scared","e":"😨","s":["SCARED"]},
+          {"w":"tired","e":"😴","s":["TIRED"]},
+          {"w":"hungry","e":"😋","s":["HUN","GRY"]},
+          {"w":"surprised","e":"😮","s":["SUR","PRISED"]},
+          {"w":"bored","e":"😑","s":["BORED"]},
+          {"w":"excited","e":"🤩","s":["EX","CIT","ED"]},
+          {"w":"sick","e":"🤒","s":["SICK"]}
+        ]
+      }
+    }
+  },
+  "body": {
+    "label": "BODY",
+    "icon": "💪",
+    "color": "#51CF66",
+    "subcategories": {
+      "face": {
+        "label": "FACE",
+        "icon": "😊",
+        "words": [
+          {"w":"eye","e":"👁️","s":["EYE"]},
+          {"w":"ear","e":"👂","s":["EAR"]},
+          {"w":"nose","e":"👃","s":["NOSE"]},
+          {"w":"mouth","e":"👄","s":["MOUTH"]},
+          {"w":"teeth","e":"🦷","s":["TEETH"]},
+          {"w":"tongue","e":"👅","s":["TONGUE"]},
+          {"w":"cheek","e":"😊","s":["CHEEK"]},
+          {"w":"chin","e":"🫦","s":["CHIN"]}
+        ]
+      },
+      "upper": {
+        "label": "UPPER BODY",
+        "icon": "💪",
+        "words": [
+          {"w":"head","e":"🗣️","s":["HEAD"]},
+          {"w":"neck","e":"🦒","s":["NECK"]},
+          {"w":"shoulder","e":"💪","s":["SHOUL","DER"]},
+          {"w":"arm","e":"💪","s":["ARM"]},
+          {"w":"hand","e":"✋","s":["HAND"]},
+          {"w":"finger","e":"☝️","s":["FIN","GER"]},
+          {"w":"chest","e":"👕","s":["CHEST"]},
+          {"w":"back","e":"🔙","s":["BACK"]}
+        ]
+      },
+      "lower": {
+        "label": "LOWER BODY",
+        "icon": "🦵",
+        "words": [
+          {"w":"leg","e":"🦵","s":["LEG"]},
+          {"w":"knee","e":"🦵","s":["KNEE"]},
+          {"w":"foot","e":"🦶","s":["FOOT"]},
+          {"w":"toe","e":"🦶","s":["TOE"]},
+          {"w":"hip","e":"🕺","s":["HIP"]},
+          {"w":"hair","e":"💇","s":["HAIR"]},
+          {"w":"heart","e":"❤️","s":["HEART"]}
+        ]
+      }
+    }
+  },
+  "home": {
+    "label": "HOME",
+    "icon": "🏠",
+    "color": "#F06595",
+    "subcategories": {
+      "bedroom": {
+        "label": "BEDROOM",
+        "icon": "🛏️",
+        "words": [
+          {"w":"bed","e":"🛏️","s":["BED"]},
+          {"w":"pillow","e":"🛏️","s":["PIL","LOW"]},
+          {"w":"blanket","e":"🛏️","s":["BLAN","KET"]},
+          {"w":"lamp","e":"💡","s":["LAMP"]},
+          {"w":"clock","e":"🕐","s":["CLOCK"]},
+          {"w":"window","e":"🪟","s":["WIN","DOW"]}
+        ]
+      },
+      "kitchen": {
+        "label": "KITCHEN",
+        "icon": "🍳",
+        "words": [
+          {"w":"cup","e":"☕","s":["CUP"]},
+          {"w":"plate","e":"🍽️","s":["PLATE"]},
+          {"w":"spoon","e":"🥄","s":["SPOON"]},
+          {"w":"fork","e":"🍴","s":["FORK"]},
+          {"w":"pot","e":"🫕","s":["POT"]},
+          {"w":"fridge","e":"🧊","s":["FRIDGE"]},
+          {"w":"stove","e":"🍳","s":["STOVE"]},
+          {"w":"knife","e":"🔪","s":["KNIFE"]}
+        ]
+      },
+      "living": {
+        "label": "LIVING ROOM",
+        "icon": "🛋️",
+        "words": [
+          {"w":"sofa","e":"🛋️","s":["SO","FA"]},
+          {"w":"table","e":"🪑","s":["TA","BLE"]},
+          {"w":"chair","e":"🪑","s":["CHAIR"]},
+          {"w":"television","e":"📺","s":["TEL","E","VI","SION"]},
+          {"w":"book","e":"📚","s":["BOOK"]},
+          {"w":"phone","e":"📱","s":["PHONE"]},
+          {"w":"door","e":"🚪","s":["DOOR"]}
+        ]
+      },
+      "bathroom": {
+        "label": "BATHROOM",
+        "icon": "🛁",
+        "words": [
+          {"w":"soap","e":"🧼","s":["SOAP"]},
+          {"w":"towel","e":"🪥","s":["TOW","EL"]},
+          {"w":"toothbrush","e":"🪥","s":["TOOTH","BRUSH"]},
+          {"w":"mirror","e":"🪞","s":["MIR","ROR"]},
+          {"w":"bath","e":"🛁","s":["BATH"]},
+          {"w":"toilet","e":"🚽","s":["TOI","LET"]}
+        ]
+      }
+    }
+  },
+  "nature": {
+    "label": "NATURE",
+    "icon": "🌿",
+    "color": "#20C997",
+    "subcategories": {
+      "weather": {
+        "label": "WEATHER",
+        "icon": "☀️",
+        "words": [
+          {"w":"sun","e":"☀️","s":["SUN"]},
+          {"w":"rain","e":"🌧️","s":["RAIN"]},
+          {"w":"snow","e":"❄️","s":["SNOW"]},
+          {"w":"cloud","e":"☁️","s":["CLOUD"]},
+          {"w":"wind","e":"💨","s":["WIND"]},
+          {"w":"rainbow","e":"🌈","s":["RAIN","BOW"]},
+          {"w":"storm","e":"⛈️","s":["STORM"]},
+          {"w":"thunder","e":"⚡","s":["THUN","DER"]}
+        ]
+      },
+      "plants": {
+        "label": "PLANTS",
+        "icon": "🌸",
+        "words": [
+          {"w":"tree","e":"🌳","s":["TREE"]},
+          {"w":"flower","e":"🌸","s":["FLOW","ER"]},
+          {"w":"leaf","e":"🍃","s":["LEAF"]},
+          {"w":"grass","e":"🌿","s":["GRASS"]},
+          {"w":"bush","e":"🌿","s":["BUSH"]},
+          {"w":"rose","e":"🌹","s":["ROSE"]},
+          {"w":"sunflower","e":"🌻","s":["SUN","FLOW","ER"]},
+          {"w":"mushroom","e":"🍄","s":["MUSH","ROOM"]}
+        ]
+      },
+      "space": {
+        "label": "SPACE",
+        "icon": "🚀",
+        "words": [
+          {"w":"moon","e":"🌙","s":["MOON"]},
+          {"w":"star","e":"⭐","s":["STAR"]},
+          {"w":"sun","e":"☀️","s":["SUN"]},
+          {"w":"rocket","e":"🚀","s":["ROCK","ET"]},
+          {"w":"comet","e":"☄️","s":["COM","ET"]},
+          {"w":"asteroid","e":"🪨","s":["AS","TER","OID"]},
+          {"w":"galaxy","e":"🌌","s":["GAL","AX","Y"]},
+          {"w":"telescope","e":"🔭","s":["TEL","E","SCOPE"]}
+        ]
+      },
+      "solar": {
+        "label": "SOLAR SYSTEM",
+        "icon": "🪐",
+        "words": [
+          {"w":"mercury","e":"🪐","s":["MER","CU","RY"]},
+          {"w":"venus","e":"🪐","s":["VE","NUS"]},
+          {"w":"earth","e":"🌍","s":["EARTH"]},
+          {"w":"mars","e":"🔴","s":["MARS"]},
+          {"w":"jupiter","e":"🟠","s":["JU","PI","TER"]},
+          {"w":"saturn","e":"🪐","s":["SAT","URN"]},
+          {"w":"uranus","e":"🔵","s":["U","RA","NUS"]},
+          {"w":"neptune","e":"💙","s":["NEP","TUNE"]}
+        ]
+      },
+      "landforms": {
+        "label": "LANDFORMS",
+        "icon": "🏔️",
+        "words": [
+          {"w":"mountain","e":"🏔️","s":["MOUN","TAIN"]},
+          {"w":"river","e":"🏞️","s":["RIV","ER"]},
+          {"w":"beach","e":"🏖️","s":["BEACH"]},
+          {"w":"forest","e":"🌲","s":["FOR","EST"]},
+          {"w":"lake","e":"🏞️","s":["LAKE"]},
+          {"w":"island","e":"🏝️","s":["IS","LAND"]},
+          {"w":"desert","e":"🏜️","s":["DES","ERT"]},
+          {"w":"volcano","e":"🌋","s":["VOL","CA","NO"]}
+        ]
+      }
+    }
+  },
+  "seasons": {
+    "label": "SEASONS",
+    "icon": "🍂",
+    "color": "#FFA94D",
+    "subcategories": {
+      "spring": {
+        "label": "SPRING",
+        "icon": "🌸",
+        "words": [
+          {"w":"spring","e":"🌸","s":["SPRING"]},
+          {"w":"flower","e":"🌺","s":["FLOW","ER"]},
+          {"w":"rain","e":"🌧️","s":["RAIN"]},
+          {"w":"bird","e":"🐦","s":["BIRD"]},
+          {"w":"rainbow","e":"🌈","s":["RAIN","BOW"]}
+        ]
+      },
+      "summer": {
+        "label": "SUMMER",
+        "icon": "☀️",
+        "words": [
+          {"w":"summer","e":"☀️","s":["SUM","MER"]},
+          {"w":"sun","e":"🌞","s":["SUN"]},
+          {"w":"beach","e":"🏖️","s":["BEACH"]},
+          {"w":"ice cream","e":"🍦","s":["ICE","CREAM"]},
+          {"w":"butterfly","e":"🦋","s":["BUT","TER","FLY"]}
+        ]
+      },
+      "fall": {
+        "label": "FALL",
+        "icon": "🍂",
+        "words": [
+          {"w":"fall","e":"🍂","s":["FALL"]},
+          {"w":"leaf","e":"🍁","s":["LEAF"]},
+          {"w":"wind","e":"💨","s":["WIND"]},
+          {"w":"pumpkin","e":"🎃","s":["PUMP","KIN"]},
+          {"w":"acorn","e":"🌰","s":["A","CORN"]}
+        ]
+      },
+      "winter": {
+        "label": "WINTER",
+        "icon": "❄️",
+        "words": [
+          {"w":"winter","e":"❄️","s":["WIN","TER"]},
+          {"w":"snow","e":"🌨️","s":["SNOW"]},
+          {"w":"snowflake","e":"❄️","s":["SNOW","FLAKE"]},
+          {"w":"coat","e":"🧥","s":["COAT"]},
+          {"w":"fireplace","e":"🔥","s":["FIRE","PLACE"]}
+        ]
+      }
+    }
+  },
+  "clothes": {
+    "label": "CLOTHES",
+    "icon": "👕",
+    "color": "#845EF7",
+    "subcategories": {
+      "everyday": {
+        "label": "EVERYDAY",
+        "icon": "👕",
+        "words": [
+          {"w":"shirt","e":"👕","s":["SHIRT"]},
+          {"w":"pants","e":"👖","s":["PANTS"]},
+          {"w":"dress","e":"👗","s":["DRESS"]},
+          {"w":"shoes","e":"👟","s":["SHOES"]},
+          {"w":"socks","e":"🧦","s":["SOCKS"]},
+          {"w":"hat","e":"🎩","s":["HAT"]},
+          {"w":"jacket","e":"🧥","s":["JACK","ET"]}
+        ]
+      },
+      "accessories": {
+        "label": "ACCESSORIES",
+        "icon": "👒",
+        "words": [
+          {"w":"scarf","e":"🧣","s":["SCARF"]},
+          {"w":"gloves","e":"🧤","s":["GLOVES"]},
+          {"w":"belt","e":"👔","s":["BELT"]},
+          {"w":"bag","e":"👜","s":["BAG"]},
+          {"w":"sunglasses","e":"🕶️","s":["SUN","GLASS","ES"]},
+          {"w":"watch","e":"⌚","s":["WATCH"]}
+        ]
+      },
+      "seasonal": {
+        "label": "SEASONAL",
+        "icon": "🌂",
+        "words": [
+          {"w":"raincoat","e":"🌧️","s":["RAIN","COAT"]},
+          {"w":"boots","e":"👢","s":["BOOTS"]},
+          {"w":"swimsuit","e":"🩱","s":["SWIM","SUIT"]},
+          {"w":"sweater","e":"🧶","s":["SWEAT","ER"]},
+          {"w":"sandals","e":"👡","s":["SAN","DALS"]},
+          {"w":"umbrella","e":"☂️","s":["UM","BREL","LA"]}
+        ]
+      }
+    }
+  },
+  "family": {
+    "label": "FAMILY",
+    "icon": "👨‍👩‍👧",
+    "color": "#FF6B6B",
+    "subcategories": {
+      "immediate": {
+        "label": "IMMEDIATE",
+        "icon": "👪",
+        "words": [
+          {"w":"mom","e":"👩","s":["MOM"]},
+          {"w":"dad","e":"👨","s":["DAD"]},
+          {"w":"baby","e":"👶","s":["BA","BY"]},
+          {"w":"sister","e":"👧","s":["SIS","TER"]},
+          {"w":"brother","e":"👦","s":["BROTH","ER"]}
+        ]
+      },
+      "extended": {
+        "label": "EXTENDED",
+        "icon": "👴",
+        "words": [
+          {"w":"grandma","e":"👵","s":["GRAND","MA"]},
+          {"w":"grandpa","e":"👴","s":["GRAND","PA"]},
+          {"w":"uncle","e":"👨","s":["UN","CLE"]},
+          {"w":"aunt","e":"👩","s":["AUNT"]},
+          {"w":"cousin","e":"🧒","s":["COUS","IN"]}
+        ]
+      }
+    }
+  },
+  "transport": {
+    "label": "TRANSPORT",
+    "icon": "🚗",
+    "color": "#339AF0",
+    "subcategories": {
+      "land": {
+        "label": "LAND",
+        "icon": "🚗",
+        "words": [
+          {"w":"car","e":"🚗","s":["CAR"]},
+          {"w":"bus","e":"🚌","s":["BUS"]},
+          {"w":"train","e":"🚂","s":["TRAIN"]},
+          {"w":"bike","e":"🚲","s":["BIKE"]},
+          {"w":"truck","e":"🚚","s":["TRUCK"]},
+          {"w":"motorcycle","e":"🏍️","s":["MO","TOR","CY","CLE"]}
+        ]
+      },
+      "air": {
+        "label": "AIR",
+        "icon": "✈️",
+        "words": [
+          {"w":"plane","e":"✈️","s":["PLANE"]},
+          {"w":"helicopter","e":"🚁","s":["HEL","I","COP","TER"]},
+          {"w":"rocket","e":"🚀","s":["ROCK","ET"]},
+          {"w":"hot air balloon","e":"🎈","s":["HOT","AIR","BAL","LOON"]}
+        ]
+      },
+      "water": {
+        "label": "WATER",
+        "icon": "🚢",
+        "words": [
+          {"w":"boat","e":"⛵","s":["BOAT"]},
+          {"w":"ship","e":"🚢","s":["SHIP"]},
+          {"w":"submarine","e":"🤿","s":["SUB","MA","RINE"]},
+          {"w":"canoe","e":"🛶","s":["CA","NOE"]}
+        ]
+      }
+    }
+  },
+  "school": {
+    "label": "SCHOOL",
+    "icon": "🏫",
+    "color": "#20C997",
+    "subcategories": {
+      "supplies": {
+        "label": "SUPPLIES",
+        "icon": "✏️",
+        "words": [
+          {"w":"pencil","e":"✏️","s":["PEN","CIL"]},
+          {"w":"book","e":"📚","s":["BOOK"]},
+          {"w":"bag","e":"🎒","s":["BAG"]},
+          {"w":"ruler","e":"📏","s":["RUL","ER"]},
+          {"w":"eraser","e":"🧹","s":["E","RA","SER"]},
+          {"w":"scissors","e":"✂️","s":["SCIS","SORS"]},
+          {"w":"crayon","e":"🖍️","s":["CRAY","ON"]},
+          {"w":"glue","e":"🫙","s":["GLUE"]}
+        ]
+      },
+      "people": {
+        "label": "PEOPLE",
+        "icon": "👩‍🏫",
+        "words": [
+          {"w":"teacher","e":"👩‍🏫","s":["TEACH","ER"]},
+          {"w":"student","e":"🧑‍🎓","s":["STU","DENT"]},
+          {"w":"principal","e":"👔","s":["PRIN","CI","PAL"]},
+          {"w":"friend","e":"🤝","s":["FRIEND"]}
+        ]
+      },
+      "places": {
+        "label": "PLACES",
+        "icon": "🏫",
+        "words": [
+          {"w":"classroom","e":"🏫","s":["CLASS","ROOM"]},
+          {"w":"library","e":"📚","s":["LI","BRA","RY"]},
+          {"w":"playground","e":"🛝","s":["PLAY","GROUND"]},
+          {"w":"cafeteria","e":"🍽️","s":["CAF","E","TE","RI","A"]},
+          {"w":"gym","e":"🏋️","s":["GYM"]}
+        ]
+      }
+    }
+  }
+}
