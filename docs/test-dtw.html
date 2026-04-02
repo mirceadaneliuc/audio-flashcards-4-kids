@@ -63,6 +63,9 @@ button:disabled{opacity:.3;cursor:not-allowed;}
     <button id="btn-prev">◀ PREV</button>
     <button id="btn-next">NEXT ▶</button>
   </div>
+  <div style="margin-top:12px;">
+    <button id="btn-autorecord" style="background:#2d6a4f;color:#fff;border:none;border-radius:50px;padding:10px 20px;font-size:14px;cursor:pointer;width:100%;">⚡ AUTO-RECORD ALL WORDS</button>
+  </div>
 </div>
 
 <div id="log"><div>DTW Test Log — ready</div></div>
@@ -355,6 +358,41 @@ document.getElementById('btn-next').addEventListener('click',()=>{idx=(idx+1)%WO
 document.getElementById('threshold').addEventListener('input',function(){
   document.getElementById('threshold-val').textContent=this.value;
 });
+
+// Auto-record all words
+async function autoRecordAll(){
+  const btn = document.getElementById('btn-autorecord');
+  btn.disabled = true;
+  for(let i=0; i<WORDS.length; i++){
+    idx = i;
+    showWord();
+    const word = WORDS[i].w;
+    btn.textContent = '⚡ Recording ' + (i+1) + '/' + WORDS.length + ': ' + word;
+    setStatus('Speaking "' + word + '"...');
+    // speak the word
+    await new Promise(resolve => {
+      speakWord(word, async () => {
+        await new Promise(r => setTimeout(r, 200));
+        // record 1.5s after TTS
+        try {
+          const buf = await recordAudio(1500);
+          fingerprints[word] = extractMFCC(buf);
+          log('📌 ' + word + ' (' + fingerprints[word].length + ' frames)');
+        } catch(e) {
+          log('❌ Failed: ' + word + ' — ' + e.message);
+        }
+        await new Promise(r => setTimeout(r, 300));
+        resolve();
+      });
+    });
+  }
+  btn.textContent = '✅ ALL ' + WORDS.length + ' WORDS RECORDED!';
+  btn.disabled = false;
+  showWord();
+  log('🎉 Auto-record complete! ' + Object.keys(fingerprints).length + ' fingerprints ready.');
+}
+
+document.getElementById('btn-autorecord').addEventListener('click', autoRecordAll);
 
 showWord();
 log('Ready. '+WORDS.length+' single-syllable words loaded.');
