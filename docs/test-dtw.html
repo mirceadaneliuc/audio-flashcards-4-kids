@@ -295,7 +295,7 @@ async function recognize(){
 
     // Compare against all fingerprints
     let bestWord='', bestScore=Infinity;
-    const scores = {};
+    window.scores = {}; const scores = window.scores;
     for(const [word, fp] of Object.entries(fingerprints)){
       const score = dtw(mfcc, fp);
       scores[word] = score.toFixed(1);
@@ -303,7 +303,7 @@ async function recognize(){
     }
 
     const targetScore = scores[target] || 'N/A';
-    log(`🎤 "${target}" → best:"${bestWord}" (${bestScore.toFixed(1)}) | target score:${targetScore} | threshold:${threshold}`);
+    window.lastTarget=target; log(`🎤 "${target}" → best:"${bestWord}" (${bestScore.toFixed(1)}) | target score:${targetScore} | threshold:${threshold}`);
 
     if(bestWord===target && bestScore<=threshold){
       setResult('✅ CORRECT! "'+bestWord+'" ('+bestScore.toFixed(1)+')','pass');
