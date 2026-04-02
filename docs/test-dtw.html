@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>DTW Speech Test v0.1</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:sans-serif;background:#1a1a2e;color:#fff;display:flex;flex-direction:column;align-items:center;min-height:100vh;padding:20px;}
+h1{font-size:24px;margin:20px 0 8px;color:#FF6B6B;}
+#subtitle{font-size:13px;color:#888;margin-bottom:20px;}
+#card{background:#16213e;border-radius:24px;padding:30px;width:100%;max-width:400px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.4);}
+#emoji{font-size:90px;margin-bottom:12px;}
+#word{font-size:48px;font-weight:900;text-transform:uppercase;color:#FF6B6B;margin-bottom:8px;}
+#status{font-size:15px;color:#aaa;min-height:24px;margin-bottom:20px;}
+.btn-row{display:flex;gap:12px;justify-content:center;margin-bottom:16px;}
+button{border:none;border-radius:50px;padding:14px 28px;font-size:22px;cursor:pointer;transition:transform .15s,opacity .15s;}
+button:active{transform:scale(.92);}
+button:disabled{opacity:.3;cursor:not-allowed;}
+#btn-speak{background:#FFA94D;color:#fff;}
+#btn-mic{background:#FF6B6B;color:#fff;}
+#btn-mic.listening{background:#339AF0;animation:pulse .9s ease-out infinite;}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(51,154,240,.6)}70%{box-shadow:0 0 0 18px rgba(51,154,240,0)}100%{box-shadow:0 0 0 0 rgba(51,154,240,0)}}
+#result{font-size:18px;font-weight:700;padding:12px 20px;border-radius:12px;min-height:50px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;}
+.pass{background:#2d6a4f;color:#95d5b2;}
+.fail{background:#6b2d2d;color:#ffb3b3;}
+.info{background:#1e3a5f;color:#90c8ff;}
+#nav{display:flex;gap:10px;justify-content:center;}
+#nav button{padding:10px 20px;font-size:16px;background:#333;color:#fff;}
+#progress{font-size:13px;color:#666;margin-bottom:8px;}
+#log{width:100%;max-width:400px;margin-top:16px;background:#0d1117;border-radius:12px;padding:12px;font-family:monospace;font-size:12px;color:#58a6ff;max-height:200px;overflow-y:auto;}
+#log div{border-bottom:1px solid #21262d;padding:4px 0;}
+#threshold-row{display:flex;align-items:center;gap:10px;margin-bottom:16px;font-size:14px;}
+#threshold-row label{color:#aaa;}
+#threshold{width:120px;}
+#threshold-val{color:#FFA94D;font-weight:bold;width:40px;}
+</style>
+</head>
+<body>
+<h1>🎤 DTW Speech Test</h1>
+<div id="subtitle">Single-syllable words · MFCC + DTW recognition</div>
+
+<div id="card">
+  <div id="emoji">🐶</div>
+  <div id="word">DOG</div>
+  <div id="progress">Word 1 of 0</div>
+  <div id="status">TAP 🔊 TO HEAR THE WORD</div>
+
+  <div class="btn-row">
+    <button id="btn-speak">🔊</button>
+    <button id="btn-mic" disabled>🎤</button>
+  </div>
+
+  <div id="threshold-row">
+    <label>DTW Threshold:</label>
+    <input type="range" id="threshold" min="0" max="200" value="80" step="5">
+    <span id="threshold-val">80</span>
+  </div>
+
+  <div id="result" class="info">Tap 🔊 then 🎤</div>
+
+  <div id="nav">
+    <button id="btn-prev">◀ PREV</button>
+    <button id="btn-next">NEXT ▶</button>
+  </div>
+</div>
+
+<div id="log"><div>DTW Test Log — ready</div></div>
+
+<script>
+// ── WORD LIST (single syllable only, deduplicated) ──
+const WORDS = [
+  {w:"ant",e:"🐜"},{w:"arm",e:"💪"},{w:"aunt",e:"👩"},{w:"back",e:"🔙"},
+  {w:"bag",e:"🎒"},{w:"bath",e:"🛁"},{w:"beach",e:"🏖️"},{w:"bear",e:"🐻"},
+  {w:"bed",e:"🛏️"},{w:"bee",e:"🐝"},{w:"belt",e:"👔"},{w:"big",e:"🔵"},
+  {w:"bike",e:"🚲"},{w:"bird",e:"🐦"},{w:"black",e:"⬛"},{w:"blue",e:"🟦"},
+  {w:"boat",e:"⛵"},{w:"book",e:"📚"},{w:"boots",e:"👢"},{w:"bored",e:"😑"},
+  {w:"bread",e:"🍞"},{w:"brown",e:"🟫"},{w:"bus",e:"🚌"},{w:"bush",e:"🌿"},
+  {w:"cake",e:"🎂"},{w:"car",e:"🚗"},{w:"cat",e:"🐱"},{w:"chair",e:"🪑"},
+  {w:"cheek",e:"😊"},{w:"cheese",e:"🧀"},{w:"chest",e:"👕"},{w:"chin",e:"🫦"},
+  {w:"clock",e:"🕐"},{w:"cloud",e:"☁️"},{w:"coat",e:"🧥"},{w:"corn",e:"🌽"},
+  {w:"cow",e:"🐄"},{w:"crab",e:"🦀"},{w:"cup",e:"☕"},{w:"dad",e:"👨"},
+  {w:"dog",e:"🐶"},{w:"door",e:"🚪"},{w:"dress",e:"👗"},{w:"duck",e:"🦆"},
+  {w:"ear",e:"👂"},{w:"earth",e:"🌍"},{w:"egg",e:"🥚"},{w:"eight",e:"8️⃣"},
+  {w:"eye",e:"👁️"},{w:"fall",e:"🍂"},{w:"fish",e:"🐟"},{w:"five",e:"5️⃣"},
+  {w:"foot",e:"🦶"},{w:"fork",e:"🍴"},{w:"four",e:"4️⃣"},{w:"fridge",e:"🧊"},
+  {w:"friend",e:"🤝"},{w:"frog",e:"🐸"},{w:"glue",e:"🫙"},{w:"goat",e:"🐐"},
+  {w:"grape",e:"🍇"},{w:"grass",e:"🌿"},{w:"gray",e:"🩶"},{w:"green",e:"🟩"},
+  {w:"gym",e:"🏋️"},{w:"hair",e:"💇"},{w:"hand",e:"✋"},{w:"hat",e:"🎩"},
+  {w:"head",e:"🗣️"},{w:"heart",e:"❤️"},{w:"hip",e:"🕺"},{w:"horse",e:"🐴"},
+  {w:"juice",e:"🧃"},{w:"knee",e:"🦵"},{w:"knife",e:"🔪"},{w:"lake",e:"🏞️"},
+  {w:"lamp",e:"💡"},{w:"leaf",e:"🍃"},{w:"leg",e:"🦵"},{w:"light",e:"🪶"},
+  {w:"long",e:"📏"},{w:"mars",e:"🔴"},{w:"milk",e:"🥛"},{w:"mom",e:"👩"},
+  {w:"moon",e:"🌙"},{w:"mouth",e:"👄"},{w:"neck",e:"🦒"},{w:"nine",e:"9️⃣"},
+  {w:"nose",e:"👃"},{w:"one",e:"1️⃣"},{w:"owl",e:"🦉"},{w:"pants",e:"👖"},
+  {w:"pea",e:"🫛"},{w:"peach",e:"🍑"},{w:"pear",e:"🍐"},{w:"phone",e:"📱"},
+  {w:"pig",e:"🐷"},{w:"pink",e:"🩷"},{w:"plane",e:"✈️"},{w:"plate",e:"🍽️"},
+  {w:"pot",e:"🫕"},{w:"rain",e:"🌧️"},{w:"red",e:"🟥"},{w:"rose",e:"🌹"},
+  {w:"sad",e:"😢"},{w:"scarf",e:"🧣"},{w:"shark",e:"🦈"},{w:"sheep",e:"🐑"},
+  {w:"ship",e:"🚢"},{w:"shirt",e:"👕"},{w:"shoes",e:"👟"},{w:"short",e:"🏠"},
+  {w:"sick",e:"🤒"},{w:"six",e:"6️⃣"},{w:"small",e:"🔹"},{w:"snow",e:"❄️"},
+  {w:"soap",e:"🧼"},{w:"socks",e:"🧦"},{w:"spoon",e:"🥄"},{w:"spring",e:"🌸"},
+  {w:"square",e:"🟥"},{w:"star",e:"⭐"},{w:"storm",e:"⛈️"},{w:"stove",e:"🍳"},
+  {w:"sun",e:"☀️"},{w:"swan",e:"🦢"},{w:"tall",e:"🏢"},{w:"tea",e:"🍵"},
+  {w:"teeth",e:"🦷"},{w:"ten",e:"🔟"},{w:"thin",e:"📄"},{w:"three",e:"3️⃣"},
+  {w:"tired",e:"😴"},{w:"toast",e:"🍞"},{w:"toe",e:"🦶"},{w:"tongue",e:"👅"},
+  {w:"train",e:"🚂"},{w:"tree",e:"🌳"},{w:"truck",e:"🚚"},{w:"twelve",e:"1️⃣2️⃣"},
+  {w:"two",e:"2️⃣"},{w:"watch",e:"⌚"},{w:"whale",e:"🐋"},{w:"white",e:"⬜"},
+  {w:"wide",e:"↔️"},{w:"wind",e:"💨"},{w:"winter",e:"❄️"}
+];
+
+let idx = 0;
+let fingerprints = {}; // word → MFCC array (reference)
+let listening = false;
+
+const synth = window.speechSynthesis;
+let voices = [];
+synth.onvoiceschanged = () => { voices = synth.getVoices(); };
+
+// ── MFCC EXTRACTION ──
+const FFT_SIZE = 512;
+const N_MFCC = 13;
+const N_FILTERS = 26;
+const SAMPLE_RATE = 16000;
+
+function hzToMel(hz){ return 2595 * Math.log10(1 + hz/700); }
+function melToHz(mel){ return 700 * (Math.pow(10, mel/2595) - 1); }
+
+function getMelFilterbank(nFilters, fftSize, sr){
+  const fMin = 0, fMax = sr/2;
+  const melMin = hzToMel(fMin), melMax = hzToMel(fMax);
+  const melPoints = Array.from({length:nFilters+2}, (_,i) => melMin + i*(melMax-melMin)/(nFilters+1));
+  const hzPoints = melPoints.map(melToHz);
+  const binPoints = hzPoints.map(h => Math.floor((fftSize+1)*h/sr));
+  const filters = [];
+  for(let m=1; m<=nFilters; m++){
+    const f = new Float32Array(fftSize/2+1);
+    for(let k=binPoints[m-1]; k<binPoints[m]; k++)
+      f[k] = (k-binPoints[m-1])/(binPoints[m]-binPoints[m-1]);
+    for(let k=binPoints[m]; k<binPoints[m+1]; k++)
+      f[k] = (binPoints[m+1]-k)/(binPoints[m+1]-binPoints[m]);
+    filters.push(f);
+  }
+  return filters;
+}
+
+const MEL_FILTERS = getMelFilterbank(N_FILTERS, FFT_SIZE, SAMPLE_RATE);
+
+function dct(x){
+  const N=x.length, out=new Float32Array(N_MFCC);
+  for(let k=0;k<N_MFCC;k++){
+    let s=0;
+    for(let n=0;n<N;n++) s+=x[n]*Math.cos(Math.PI*k*(2*n+1)/(2*N));
+    out[k]=s;
+  }
+  return out;
+}
+
+function extractMFCC(audioBuffer){
+  // resample to 16kHz if needed
+  const data = audioBuffer.getChannelData(0);
+  const sr = audioBuffer.sampleRate;
+  const targetLen = Math.floor(data.length * SAMPLE_RATE / sr);
+  const resampled = new Float32Array(targetLen);
+  for(let i=0;i<targetLen;i++){
+    const src = i * sr / SAMPLE_RATE;
+    const lo = Math.floor(src), hi = Math.min(lo+1, data.length-1);
+    resampled[i] = data[lo] + (src-lo)*(data[hi]-data[lo]);
+  }
+
+  const hop = 160, win = FFT_SIZE;
+  const frames = [];
+  for(let i=0; i+win<=resampled.length; i+=hop){
+    // window
+    const frame = new Float32Array(win);
+    for(let j=0;j<win;j++)
+      frame[j] = resampled[i+j] * (0.54 - 0.46*Math.cos(2*Math.PI*j/(win-1)));
+
+    // FFT magnitude
+    const mag = simplefft(frame);
+
+    // mel filterbank
+    const energy = MEL_FILTERS.map(f => {
+      let s=0; for(let k=0;k<f.length;k++) s+=f[k]*mag[k]*mag[k];
+      return Math.log(Math.max(s,1e-10));
+    });
+
+    // DCT
+    frames.push(dct(energy));
+  }
+  return frames; // array of Float32Array(13)
+}
+
+function simplefft(frame){
+  // Real FFT via DFT (slow but sufficient for this size)
+  const N=frame.length, mag=new Float32Array(N/2+1);
+  for(let k=0;k<=N/2;k++){
+    let re=0,im=0;
+    for(let n=0;n<N;n++){
+      const angle=-2*Math.PI*k*n/N;
+      re+=frame[n]*Math.cos(angle);
+      im+=frame[n]*Math.sin(angle);
+    }
+    mag[k]=Math.sqrt(re*re+im*im)/N;
+  }
+  return mag;
+}
+
+// ── DTW ──
+function dtw(a, b){
+  const M=a.length, N=b.length;
+  if(M===0||N===0) return Infinity;
+  const cost = (x,y) => {
+    let s=0; for(let i=0;i<x.length;i++) s+=(x[i]-y[i])**2;
+    return Math.sqrt(s);
+  };
+  const dp = Array.from({length:M}, ()=>new Float32Array(N).fill(Infinity));
+  dp[0][0] = cost(a[0],b[0]);
+  for(let i=1;i<M;i++) dp[i][0]=dp[i-1][0]+cost(a[i],b[0]);
+  for(let j=1;j<N;j++) dp[0][j]=dp[0][j-1]+cost(a[0],b[j]);
+  for(let i=1;i<M;i++) for(let j=1;j<N;j++)
+    dp[i][j]=cost(a[i],b[j])+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
+  return dp[M-1][N-1] / (M+N);
+}
+
+// ── AUDIO RECORDING ──
+async function recordAudio(ms=2000){
+  const stream = await navigator.mediaDevices.getUserMedia({audio:{sampleRate:16000,channelCount:1},video:false});
+  return new Promise(resolve=>{
+    const chunks=[];
+    const mr = new MediaRecorder(stream);
+    mr.ondataavailable=e=>chunks.push(e.data);
+    mr.onstop=async()=>{
+      stream.getTracks().forEach(t=>t.stop());
+      const blob=new Blob(chunks,{type:'audio/webm'});
+      const ab=await blob.arrayBuffer();
+      const ac=new AudioContext();
+      const buf=await ac.decodeAudioData(ab);
+      ac.close();
+      resolve(buf);
+    };
+    mr.start();
+    setTimeout(()=>mr.stop(), ms);
+  });
+}
+
+// ── TTS ──
+function speakWord(word, onDone){
+  synth.cancel();
+  setTimeout(()=>{
+    const u=new SpeechSynthesisUtterance(word);
+    u.lang='en-US'; u.rate=0.85; u.pitch=1.1; u.volume=1.0;
+    const v=voices.find(v=>v.lang==='en-US')||voices.find(v=>v.lang.startsWith('en'))||null;
+    if(v) u.voice=v;
+    u.onend=()=>{if(onDone)onDone();};
+    u.onerror=()=>{if(onDone)onDone();};
+    synth.speak(u);
+  },50);
+}
+
+// ── FINGERPRINT RECORDING ──
+async function recordFingerprint(word){
+  setStatus('Recording reference for "'+word+'"...');
+  speakWord(word, async()=>{
+    await new Promise(r=>setTimeout(r,300));
+    const buf = await recordAudio(1500);
+    fingerprints[word] = extractMFCC(buf);
+    log('📌 Fingerprint recorded for "'+word+'" ('+fingerprints[word].length+' frames)');
+    setStatus('✅ Reference saved! Now tap 🎤 to test.');
+    document.getElementById('btn-mic').disabled=false;
+  });
+}
+
+// ── RECOGNITION ──
+async function recognize(){
+  if(listening) return;
+  listening=true;
+  setMicState(true);
+  setStatus('Listening...');
+  setResult('','info');
+
+  try{
+    const buf = await recordAudio(2000);
+    const mfcc = extractMFCC(buf);
+    listening=false; setMicState(false);
+
+    if(mfcc.length===0){
+      setStatus('No audio captured');
+      setResult('❌ No audio','fail');
+      return;
+    }
+
+    const threshold = parseInt(document.getElementById('threshold').value);
+    const target = WORDS[idx].w;
+
+    // Compare against all fingerprints
+    let bestWord='', bestScore=Infinity;
+    const scores = {};
+    for(const [word, fp] of Object.entries(fingerprints)){
+      const score = dtw(mfcc, fp);
+      scores[word] = score.toFixed(1);
+      if(score < bestScore){ bestScore=score; bestWord=word; }
+    }
+
+    const targetScore = scores[target] || 'N/A';
+    log(`🎤 "${target}" → best:"${bestWord}" (${bestScore.toFixed(1)}) | target score:${targetScore} | threshold:${threshold}`);
+
+    if(bestWord===target && bestScore<=threshold){
+      setResult('✅ CORRECT! "'+bestWord+'" ('+bestScore.toFixed(1)+')','pass');
+      setStatus('Great! Score: '+bestScore.toFixed(1)+' / threshold: '+threshold);
+    } else if(scores[target]){
+      setResult('❌ HEARD: "'+bestWord+'" ('+bestScore.toFixed(1)+') | target score: '+targetScore,'fail');
+      setStatus('Try again or adjust threshold');
+    } else {
+      setResult('⚠️ No fingerprint yet — record reference first','info');
+      setStatus('Tap 🔊 to record reference first');
+    }
+  }catch(e){
+    listening=false; setMicState(false);
+    setResult('❌ Error: '+e.message,'fail');
+    log('ERROR: '+e.message);
+  }
+}
+
+// ── UI ──
+function showWord(){
+  const item=WORDS[idx];
+  document.getElementById('emoji').textContent=item.e;
+  document.getElementById('word').textContent=item.w.toUpperCase();
+  document.getElementById('progress').textContent='Word '+(idx+1)+' of '+WORDS.length;
+  document.getElementById('btn-mic').disabled=!fingerprints[item.w];
+  setStatus(fingerprints[item.w]?'Tap 🎤 to test':'Tap 🔊 to record reference');
+  setResult('','info');
+}
+function setStatus(t){document.getElementById('status').textContent=t;}
+function setResult(t,cls){const el=document.getElementById('result');el.textContent=t;el.className=cls;}
+function setMicState(on){
+  const b=document.getElementById('btn-mic');
+  b.textContent=on?'👂':'🎤';
+  if(on) b.classList.add('listening'); else b.classList.remove('listening');
+}
+function log(msg){
+  const el=document.getElementById('log');
+  const d=document.createElement('div');d.textContent=msg;
+  el.insertBefore(d,el.firstChild);
+  if(el.children.length>50) el.removeChild(el.lastChild);
+}
+
+document.getElementById('btn-speak').addEventListener('click',()=>{
+  recordFingerprint(WORDS[idx].w);
+});
+document.getElementById('btn-mic').addEventListener('click',recognize);
+document.getElementById('btn-prev').addEventListener('click',()=>{idx=(idx-1+WORDS.length)%WORDS.length;showWord();});
+document.getElementById('btn-next').addEventListener('click',()=>{idx=(idx+1)%WORDS.length;showWord();});
+document.getElementById('threshold').addEventListener('input',function(){
+  document.getElementById('threshold-val').textContent=this.value;
+});
+
+showWord();
+log('Ready. '+WORDS.length+' single-syllable words loaded.');
+</script>
+</body>
+</html>
