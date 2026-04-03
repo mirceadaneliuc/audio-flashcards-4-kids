@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#FF6B6B">
-<title>English Flashcards 4 Kids v4.0.0</title>
-<meta name="version" content="4.0.0">
+<title>English Flashcards 4 Kids v4.2.0</title>
+<meta name="version" content="4.2.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <script src="vosk.js"></script>
@@ -103,7 +103,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 <!-- SPLASH -->
 <div id="splash">
   <div class="sp-emoji">🌍</div>
-  <div class="sp-title"><span>ENGLISH v4.0</span>FLASHCARDS 4 KIDS</div>
+  <div class="sp-title"><span>ENGLISH v4.2.0</span>FLASHCARDS 4 KIDS</div>
   <div class="sp-sub">👆 TAP TO START!</div>
 </div>
 
@@ -116,7 +116,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 
 <!-- TOPBAR -->
 <div id="topbar">
-  <div id="logo"><span>ENGLISH v4.0</span>FLASHCARDS 4 KIDS</div>
+  <div id="logo"><span>ENGLISH v4.2.0</span>FLASHCARDS 4 KIDS</div>
   <div id="stars-box">⭐ <span id="stars">0</span></div>
 </div>
 
@@ -410,7 +410,7 @@ function buildCatMenu(){
     const subs=Object.values(cat.subcategories);
     const totalWords=subs.reduce((s,sub)=>s+sub.words.length,0);
     btn.innerHTML=`<div class="cc-icon">${cat.icon||'📚'}</div><div class="cc-title">${cat.label}</div><div style="font-size:12px;opacity:.8">${totalWords} words</div>`;
-    btn.onclick=()=>showSubMenu(key);
+    btn.onclick=()=>{speak(cat.label,1.0,1.1,null);setTimeout(()=>showSubMenu(key),600);};
     grid.appendChild(btn);
   });
 }
@@ -429,7 +429,7 @@ function showSubMenu(catKey){
     btn.className='sub-card';
     btn.style.background=cat.color||'#888';
     btn.innerHTML=`<div class="sc-icon">${sub.icon||'📝'}</div><div class="sc-title">${sub.label}</div><div class="sc-count">${sub.words.length} words</div>`;
-    btn.onclick=()=>startGame(catKey,key);
+    btn.onclick=()=>{speak(sub.label,1.0,1.1,null);setTimeout(()=>startGame(catKey,key),700);};
     grid.appendChild(btn);
   });
 }
@@ -467,14 +467,30 @@ function startGame(catKey,subKey){
 function showCard(){
   stopListening();if(synth)synth.cancel();hideFeedback();attempts=0;busy=false;
   const item=deck[idx];
-  document.getElementById('main-emoji').textContent=item.e;
-  document.getElementById('main-emoji').style.transform='scale(1)';
+  // Image or emoji
+  const mediaEl=document.getElementById('main-emoji');
+  if(item.img){
+    mediaEl.innerHTML=`<img src="${item.img}" alt="${item.w}" style="width:180px;height:180px;object-fit:contain;border-radius:12px;" onerror="this.parentNode.textContent='${item.e}'">`;
+  } else {
+    mediaEl.textContent=item.e;
+  }
+  mediaEl.style.transform='scale(1)';
   document.getElementById('main-word').textContent=item.w.toUpperCase();
   document.getElementById('partial-text').textContent='';
   renderSyls(item.s,-1);updateProg();
   setMicState('idle');enableMic(false);
+  if(!voskReady){
+    setStatus('🎤 LOADING VOICE...');
+    const waitVosk=setInterval(()=>{
+      if(voskReady){clearInterval(waitVosk);_playCard(item);}
+    },200);
+  } else {
+    _playCard(item);
+  }
+}
+function _playCard(item){
   setStatus('LISTEN FIRST! 🔊');
-  setTimeout(()=>speak(item.w,0.88,1.1,()=>{enableMic(true);setStatus('NOW SAY THE WORD! 🎤');startListening();}),500);
+  setTimeout(()=>speak(item.w,0.88,1.1,()=>{enableMic(true);setStatus('NOW SAY THE WORD! 🎤');startListening();}),300);
 }
 
 function navPrev(){if(busy)return;if(synth)synth.cancel();stopListening();idx=(idx-1+deck.length)%deck.length;showCard();}
