@@ -163,7 +163,7 @@
           {"w":"juice","e":"🧃","s":["JUICE"]},
           {"w":"milk","e":"🥛","s":["MILK"]},
           {"w":"tea","e":"🍵","s":["TEA"]},
-          {"w":"lemonade","e":"🍋","s":["LEM","ON","ADE"]},
+          {"w":"lemonade","e":"🍋🥤","s":["LEM","ON","ADE"]},
           {"w":"smoothie","e":"🥤","s":["SMOOTH","IE"]}
         ]
       },

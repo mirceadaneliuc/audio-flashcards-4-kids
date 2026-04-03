@@ -3,17 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<meta name="description" content="English vocabulary flashcards for kids — audio, voice recognition, syllable breakdown">
 <meta name="theme-color" content="#FF6B6B">
-<title>English Flashcards 4 Kids v3.5.0</title>
-<meta name="version" content="3.5.0">
+<title>English Flashcards 4 Kids v4.0.0</title>
+<meta name="version" content="4.0.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+<script src="vosk.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden;}
-
-/* ── SPLASH ── */
+/* SPLASH */
 #splash{position:fixed;inset:0;background:linear-gradient(160deg,#FF6B6B,#FF8E53);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:999;cursor:pointer;user-select:none;}
 .sp-emoji{font-size:100px;animation:bob 1.1s ease-in-out infinite alternate;}
 .sp-title{font-family:'Fredoka One',cursive;font-size:36px;color:#fff;text-align:center;line-height:1.2;}
@@ -21,184 +20,82 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 .sp-sub{font-family:'Fredoka One',cursive;font-size:22px;color:rgba(255,255,255,.85);text-align:center;padding:0 24px;animation:blink 1.4s ease-in-out infinite;}
 @keyframes bob{from{transform:translateY(0)}to{transform:translateY(-16px)}}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.5}}
-
-/* ── TOP BAR ── */
+/* LOADING VOSK */
+#vosk-loading{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:998;}
+#vosk-loading.show{display:flex;}
+.vl-text{font-family:'Fredoka One',cursive;font-size:22px;color:#fff;text-align:center;padding:0 24px;}
+.vl-bar{width:260px;height:12px;background:rgba(255,255,255,.2);border-radius:8px;overflow:hidden;}
+.vl-fill{height:100%;background:#51CF66;border-radius:8px;animation:pulse-bar 1.2s ease-in-out infinite;}
+@keyframes pulse-bar{0%,100%{width:20%}50%{width:80%}}
+/* TOPBAR */
 #topbar{width:100%;max-width:600px;display:flex;align-items:center;justify-content:space-between;padding:12px 18px 4px;}
 #logo{font-family:'Fredoka One',cursive;font-size:17px;color:#FF6B6B;line-height:1.2;}
 #logo span{font-size:21px;display:block;}
 #stars-box{display:flex;align-items:center;gap:6px;background:#fff;border-radius:50px;padding:6px 14px;font-weight:900;font-size:19px;box-shadow:0 2px 10px rgba(0,0,0,.1);}
-
-/* ── MENU ── */
-#menu-screen{width:100%;max-width:600px;display:flex;flex-direction:column;padding:6px 14px 14px;gap:10px;}
-#menu-title{font-family:'Fredoka One',cursive;font-size:26px;text-align:center;color:#aaa;padding:4px 0;}
-#menu-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+/* CATEGORY MENU */
+#cat-screen{width:100%;max-width:600px;display:flex;flex-direction:column;padding:6px 14px 14px;gap:10px;}
+#cat-title{font-family:'Fredoka One',cursive;font-size:26px;text-align:center;color:#aaa;padding:4px 0;}
+#cat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
 .cat-card{border:none;border-radius:22px;padding:14px 12px 12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;box-shadow:0 4px 18px rgba(0,0,0,.15);transition:transform .15s;color:#fff;font-family:'Fredoka One',cursive;}
 .cat-card:active{transform:scale(.94);}
-.cc-icons{display:flex;gap:4px;font-size:38px;line-height:1;}
-.cc-title{font-size:21px;}
-
-/* ── GAME SCREEN ── */
-/* Left and right padding = 90px to keep content clear of the fixed edge buttons */
-#game-screen{
-  width:100%;
-  max-width:100%;
-  display:none;
-  flex-direction:column;
-  align-items:center;
-  padding:4px 100px 12px;
-  gap:8px;
-  min-height:100dvh;
-}
-
-/* top row: back + progress */
+.cc-icon{font-size:38px;line-height:1;}
+.cc-title{font-size:20px;}
+/* SUBCATEGORY MENU */
+#sub-screen{width:100%;max-width:600px;display:none;flex-direction:column;padding:6px 14px 14px;gap:10px;}
+#sub-back{background:none;border:none;font-size:28px;cursor:pointer;align-self:flex-start;padding:2px 4px;}
+#sub-title{font-family:'Fredoka One',cursive;font-size:22px;text-align:center;color:#aaa;padding:4px 0;}
+#sub-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+.sub-card{border:none;border-radius:20px;padding:14px 12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;box-shadow:0 4px 14px rgba(0,0,0,.12);transition:transform .15s;color:#fff;font-family:'Fredoka One',cursive;}
+.sub-card:active{transform:scale(.94);}
+.sc-icon{font-size:34px;line-height:1;}
+.sc-title{font-size:17px;text-align:center;}
+.sc-count{font-size:13px;opacity:.8;}
+/* GAME */
+#game-screen{width:100%;max-width:100%;display:none;flex-direction:column;align-items:center;padding:4px 100px 12px;gap:8px;min-height:100dvh;}
 #top-row{width:100%;display:flex;align-items:center;gap:10px;}
-#btn-back{background:none;border:none;font-size:28px;cursor:pointer;padding:2px 4px;border-radius:10px;flex-shrink:0;}
+#btn-back-game{background:none;border:none;font-size:28px;cursor:pointer;padding:2px 4px;border-radius:10px;flex-shrink:0;}
 #prog-wrap{flex:1;height:12px;background:#e8e8e8;border-radius:8px;overflow:hidden;}
 #prog-bar{height:100%;border-radius:8px;transition:width .5s ease;width:0%;}
-
-/* ── CARD — arrows live inside here ── */
-#main-card{
-  width:100%;
-  max-width:500px;
-  min-height:260px;
-  border-radius:28px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:6px;
-  padding:16px 60px;   /* horizontal padding keeps content away from arrow buttons */
-  box-shadow:0 8px 32px rgba(0,0,0,.12);
-  background:#fff;
-  position:relative;
-  overflow:hidden;
-  border-top:8px solid #FF6B6B;
-  transition:border-top-color .3s;
-}
-
-/* ◀ ▶ arrows inside card, vertically centred */
-.btn-arrow{
-  position:absolute;
-  top:50%;
-  transform:translateY(-50%);
-  width:48px;height:48px;
-  border-radius:50%;border:none;
-  font-size:20px;cursor:pointer;
-  background:rgba(0,0,0,.07);
-  color:#888;
-  transition:background .15s,transform .15s;
-  display:flex;align-items:center;justify-content:center;
-}
+#stars-box-game{display:flex;align-items:center;gap:5px;background:#fff;border-radius:50px;padding:5px 12px;font-weight:900;font-size:17px;box-shadow:0 2px 8px rgba(0,0,0,.1);flex-shrink:0;}
+#main-card{width:100%;max-width:500px;min-height:260px;border-radius:28px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:16px 60px;box-shadow:0 8px 32px rgba(0,0,0,.12);background:#fff;position:relative;overflow:hidden;border-top:8px solid #FF6B6B;transition:border-top-color .3s;}
+.btn-arrow{position:absolute;top:50%;transform:translateY(-50%);width:48px;height:48px;border-radius:50%;border:none;font-size:20px;cursor:pointer;background:rgba(0,0,0,.07);color:#888;transition:background .15s,transform .15s;display:flex;align-items:center;justify-content:center;}
 .btn-arrow:active{background:rgba(0,0,0,.18);transform:translateY(-50%) scale(.88);}
-#btn-prev{left:8px;}
-#btn-next{right:8px;}
-
+#btn-prev{left:8px;}#btn-next{right:8px;}
 #main-emoji{font-size:110px;line-height:1;transition:transform .3s cubic-bezier(.34,1.56,.64,1);}
 #main-word{font-family:'Fredoka One',cursive;font-size:44px;text-transform:uppercase;text-align:center;transition:color .3s;}
 #syl-row{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;min-height:36px;align-items:center;}
 .syl{font-family:'Fredoka One',cursive;font-size:23px;padding:3px 9px;border-radius:10px;background:#f1f3f5;color:#bbb;transition:background .15s,transform .2s;}
 .syl.lit{background:#FFA94D;color:#fff;transform:scale(1.18);}
-
-/* wave */
 #wave{display:flex;align-items:flex-end;gap:4px;height:22px;opacity:0;transition:opacity .25s;}
 #wave.on{opacity:1;}
 .wb{width:5px;border-radius:3px;animation:wv .75s ease-in-out infinite;}
-.wb:nth-child(1){height:8px;animation-delay:0s}
-.wb:nth-child(2){height:16px;animation-delay:.12s}
-.wb:nth-child(3){height:22px;animation-delay:.24s}
-.wb:nth-child(4){height:14px;animation-delay:.36s}
-.wb:nth-child(5){height:8px;animation-delay:.48s}
+.wb:nth-child(1){height:8px;animation-delay:0s}.wb:nth-child(2){height:16px;animation-delay:.12s}.wb:nth-child(3){height:22px;animation-delay:.24s}.wb:nth-child(4){height:14px;animation-delay:.36s}.wb:nth-child(5){height:8px;animation-delay:.48s}
 @keyframes wv{0%,100%{transform:scaleY(.4)}50%{transform:scaleY(1)}}
-
-/* feedback overlay */
+#partial-text{font-size:14px;color:#aaa;font-style:italic;min-height:18px;}
 #feedback{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border-radius:28px;pointer-events:none;opacity:0;transition:opacity .25s;}
 #feedback.show{opacity:1;}
 #fb-emoji{font-size:70px;}
 #fb-text{font-family:'Fredoka One',cursive;font-size:28px;color:#fff;text-align:center;padding:0 12px;}
-
-/* ── STATUS ── */
 #status-text{font-family:'Fredoka One',cursive;font-size:17px;color:#aaa;text-align:center;text-transform:uppercase;min-height:24px;width:100%;max-width:500px;}
-
-/* ════════════════════════════════════
-   HEAR (🔊) and SPEAK (🎤) buttons
-   Always fixed to screen edges.
-   Works in portrait AND landscape — no media queries needed.
-════════════════════════════════════ */
-#btn-listen{
-  position:fixed;
-  left:0;
-  top:50%;
-  transform:translateY(-50%);
-  width:86px;height:86px;
-  border-radius:0 50px 50px 0;   /* flat on left, rounded on right */
-  border:none;font-size:38px;
-  cursor:pointer;
-  background:#FFA94D;color:#fff;
-  box-shadow:4px 0 20px rgba(255,169,77,.5);
-  transition:background .2s,transform .15s;
-  z-index:100;
-  display:flex;align-items:center;justify-content:center;
-}
+/* FIXED BUTTONS */
+#btn-listen{position:fixed;left:0;top:50%;transform:translateY(-50%);width:86px;height:86px;border-radius:0 50px 50px 0;border:none;font-size:38px;cursor:pointer;background:#FFA94D;color:#fff;box-shadow:4px 0 20px rgba(255,169,77,.5);transition:background .2s,transform .15s;z-index:100;display:flex;align-items:center;justify-content:center;}
 #btn-listen:active{transform:translateY(-50%) scale(.9);}
 #btn-listen.speaking{background:#339AF0;}
-
-#btn-mic{
-  position:fixed;
-  right:0;
-  top:50%;
-  transform:translateY(-50%);
-  width:92px;height:92px;
-  border-radius:50px 0 0 50px;   /* rounded on left, flat on right */
-  border:none;font-size:44px;
-  cursor:pointer;
-  background:#FF6B6B;color:#fff;
-  box-shadow:-4px 0 20px rgba(255,107,107,.5);
-  transition:background .2s,transform .15s,opacity .2s;
-  z-index:100;
-  display:flex;align-items:center;justify-content:center;
-}
+#btn-mic{position:fixed;right:0;top:50%;transform:translateY(-50%);width:92px;height:92px;border-radius:50px 0 0 50px;border:none;font-size:44px;cursor:pointer;background:#FF6B6B;color:#fff;box-shadow:-4px 0 20px rgba(255,107,107,.5);transition:background .2s,transform .15s,opacity .2s;z-index:100;display:flex;align-items:center;justify-content:center;}
 #btn-mic:active:not(:disabled){transform:translateY(-50%) scale(.9);}
 #btn-mic.listening{background:#339AF0;animation:pulse .9s ease-out infinite;}
 #btn-mic.success{background:#51CF66;}
 #btn-mic:disabled{opacity:.28;cursor:not-allowed;animation:none !important;}
-@keyframes pulse{
-  0%{box-shadow:-4px 0 20px rgba(51,154,240,.8),0 0 0 0 rgba(51,154,240,.6)}
-  70%{box-shadow:-4px 0 20px rgba(51,154,240,.4),0 0 0 22px rgba(51,154,240,0)}
-  100%{box-shadow:-4px 0 20px rgba(51,154,240,.8),0 0 0 0 rgba(51,154,240,0)}
-}
-
-/* tap confirm buttons */
-#tap-confirm{display:none;position:absolute;inset:0;background:rgba(255,249,240,0.97);border-radius:28px;flex-direction:column;align-items:center;justify-content:center;gap:12px;z-index:10;}
-#tap-confirm.show{display:flex;}
-#tap-confirm .tc-label{font-family:'Fredoka One',cursive;font-size:20px;color:#aaa;text-transform:uppercase;}
-#tap-confirm .tc-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:0 12px;}
-.tc-btn{border:none;border-radius:16px;font-family:'Fredoka One',cursive;font-size:26px;padding:14px 0;cursor:pointer;color:#fff;transition:transform .15s;}
-.tc-btn:active{transform:scale(.88);}
-
-/* confetti */
+@keyframes pulse{0%{box-shadow:-4px 0 20px rgba(51,154,240,.8),0 0 0 0 rgba(51,154,240,.6)}70%{box-shadow:-4px 0 20px rgba(51,154,240,.4),0 0 0 22px rgba(51,154,240,0)}100%{box-shadow:-4px 0 20px rgba(51,154,240,.8),0 0 0 0 rgba(51,154,240,0)}}
+/* CONFETTI */
 .cf{position:fixed;width:12px;height:12px;pointer-events:none;z-index:200;animation:cff 1.5s ease-in forwards;}
 @keyframes cff{from{transform:translateY(-40px) rotate(0);opacity:1}to{transform:translateY(105vh) rotate(760deg);opacity:0}}
-
-/* streak */
+/* STREAK */
 #streak{position:fixed;top:56px;right:100px;background:#FFA94D;color:#fff;font-family:'Fredoka One',cursive;font-size:18px;border-radius:50px;padding:6px 14px;box-shadow:0 4px 16px rgba(255,169,77,.5);transform:scale(0);transition:transform .4s cubic-bezier(.4,0,.2,1);z-index:50;}
 #streak.on{transform:scale(1);}
-
-/* ── DEBUG PANEL ── */
-#debug-panel{
-  position:fixed;bottom:0;left:0;right:0;
-  background:rgba(0,0,0,.82);color:#0f0;
-  font-family:monospace;font-size:13px;
-  padding:8px 12px;z-index:999;
-  display:none;
-  max-height:140px;overflow-y:auto;
-}
-#debug-panel.on{display:block;}
-#debug-toggle{
-  position:fixed;bottom:4px;left:50%;transform:translateX(-50%);
-  background:rgba(0,0,0,.5);color:#fff;
-  border:none;border-radius:20px;padding:4px 14px;
-  font-size:11px;cursor:pointer;z-index:1000;
-}
+/* VOSK STATUS */
+#vosk-status{position:fixed;bottom:8px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.6);color:#fff;font-family:'Fredoka One',cursive;font-size:13px;border-radius:20px;padding:4px 14px;z-index:50;pointer-events:none;opacity:0;transition:opacity .3s;}
+#vosk-status.show{opacity:1;}
 </style>
 </head>
 <body>
@@ -206,159 +103,114 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 <!-- SPLASH -->
 <div id="splash">
   <div class="sp-emoji">🌍</div>
-  <div class="sp-title"><span>ENGLISH</span>FLASHCARDS 4 KIDS</div>
+  <div class="sp-title"><span>ENGLISH v4.0</span>FLASHCARDS 4 KIDS</div>
   <div class="sp-sub">👆 TAP TO START!</div>
 </div>
 
-<!-- TOP BAR (only shown on menu) -->
+<!-- VOSK LOADING -->
+<div id="vosk-loading">
+  <div class="sp-emoji" style="font-size:60px;">🎤</div>
+  <div class="vl-text">Loading voice recognition...<br><span style="font-size:16px;opacity:.7">First time only — ~40MB</span></div>
+  <div class="vl-bar"><div class="vl-fill"></div></div>
+</div>
+
+<!-- TOPBAR -->
 <div id="topbar">
-  <div id="logo"><span>ENGLISH v3.5.0</span>FLASHCARDS 4 KIDS</div>
+  <div id="logo"><span>ENGLISH v4.0</span>FLASHCARDS 4 KIDS</div>
   <div id="stars-box">⭐ <span id="stars">0</span></div>
 </div>
 
-<!-- MENU -->
-<div id="menu-screen">
-  <div id="menu-title">PICK A CATEGORY!</div>
-  <div id="menu-grid"></div>
+<!-- CATEGORY MENU -->
+<div id="cat-screen">
+  <div id="cat-title">PICK A CATEGORY!</div>
+  <div id="cat-grid"></div>
 </div>
 
-<!-- GAME — edge buttons are OUTSIDE this div, fixed to viewport -->
+<!-- SUBCATEGORY MENU -->
+<div id="sub-screen">
+  <button id="sub-back">⬅️</button>
+  <div id="sub-title">PICK A TOPIC!</div>
+  <div id="sub-grid"></div>
+</div>
+
+<!-- GAME -->
 <div id="game-screen">
   <div id="top-row">
-    <button id="btn-back">⬅️</button>
+    <button id="btn-back-game">⬅️</button>
     <div id="prog-wrap"><div id="prog-bar"></div></div>
-    <div id="stars-box-game" style="display:flex;align-items:center;gap:5px;background:#fff;border-radius:50px;padding:5px 12px;font-weight:900;font-size:17px;box-shadow:0 2px 8px rgba(0,0,0,.1);flex-shrink:0;">⭐ <span id="stars-game">0</span></div>
+    <div id="stars-box-game">⭐ <span id="stars-game">0</span></div>
   </div>
-
   <div id="main-card">
-    <!-- arrows inside the card -->
     <button class="btn-arrow" id="btn-prev">◀</button>
     <button class="btn-arrow" id="btn-next">▶</button>
-
     <div id="main-emoji">🐶</div>
     <div id="main-word">DOG</div>
     <div id="syl-row"></div>
-    <div id="wave">
-      <div class="wb"></div><div class="wb"></div><div class="wb"></div>
-      <div class="wb"></div><div class="wb"></div>
-    </div>
+    <div id="wave"><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div></div>
+    <div id="partial-text"></div>
     <div id="feedback"><div id="fb-emoji"></div><div id="fb-text"></div></div>
-    <div id="tap-confirm">
-      <div class="tc-label">TAP THE NUMBER YOU SAID!</div>
-      <div class="tc-grid" id="tc-grid"></div>
-    </div>
   </div>
-
   <div id="status-text">LISTEN FIRST! 🔊</div>
 </div>
 
-<!-- FIXED EDGE BUTTONS — always visible regardless of orientation -->
-<button id="btn-listen">🔊</button>
-<button id="btn-mic" disabled>🎤</button>
-
+<button id="btn-listen" style="display:none">🔊</button>
+<button id="btn-mic" style="display:none" disabled>🎤</button>
 <div id="streak">🔥 <span id="streak-n">3</span> IN A ROW!</div>
+<div id="vosk-status"></div>
 
-<script src="config.js"></script>
 <script>
-const CATS={
-  animals:{label:"ANIMALS",color:"#FF6B6B",preview:["🐶","🐱","🦁"],words:[
-    {w:"dog",e:"🐶",s:["DOG"]},{w:"cat",e:"🐱",s:["CAT"]},{w:"lion",e:"🦁",s:["LI","ON"]},
-    {w:"bird",e:"🐦",s:["BIRD"]},{w:"fish",e:"🐟",s:["FISH"]},{w:"rabbit",e:"🐰",s:["RAB","BIT"]},
-    {w:"elephant",e:"🐘",s:["EL","E","PHANT"]},{w:"monkey",e:"🐒",s:["MON","KEY"]},
-    {w:"frog",e:"🐸",s:["FROG"]},{w:"horse",e:"🐴",s:["HORSE"]},{w:"duck",e:"🦆",s:["DUCK"]},
-    {w:"sheep",e:"🐑",s:["SHEEP"]},{w:"pig",e:"🐷",s:["PIG"]},{w:"cow",e:"🐄",s:["COW"]},{w:"bear",e:"🐻",s:["BEAR"]},
-  ]},
-  food:{label:"FOOD",color:"#FFA94D",preview:["🍎","🍕","🍦"],words:[
-    {w:"apple",e:"🍎",s:["AP","PLE"]},{w:"pizza",e:"🍕",s:["PIZ","ZA"]},{w:"ice cream",e:"🍦",s:["ICE","CREAM"]},
-    {w:"banana",e:"🍌",s:["BA","NA","NA"]},{w:"cake",e:"🎂",s:["CAKE"]},{w:"cookie",e:"🍪",s:["COO","KIE"]},
-    {w:"bread",e:"🍞",s:["BREAD"]},{w:"milk",e:"🥛",s:["MILK"]},{w:"egg",e:"🥚",s:["EGG"]},
-    {w:"cheese",e:"🧀",s:["CHEESE"]},{w:"orange",e:"🍊",s:["OR","ANGE"]},{w:"carrot",e:"🥕",s:["CAR","ROT"]},
-  ]},
-  colors:{label:"COLORS",color:"#CC5DE8",preview:["🟥","🟦","🟨"],words:[
-    {w:"red",e:"🟥",s:["RED"]},{w:"blue",e:"🟦",s:["BLUE"]},{w:"yellow",e:"🟨",s:["YEL","LOW"]},
-    {w:"green",e:"🟩",s:["GREEN"]},{w:"orange",e:"🟧",s:["OR","ANGE"]},{w:"purple",e:"🟪",s:["PUR","PLE"]},
-    {w:"pink",e:"🩷",s:["PINK"]},{w:"white",e:"⬜",s:["WHITE"]},{w:"black",e:"⬛",s:["BLACK"]},{w:"brown",e:"🟫",s:["BROWN"]},
-  ]},
-  numbers:{label:"NUMBERS",color:"#339AF0",preview:["1️⃣","2️⃣","3️⃣"],words:[
-    {w:"one",e:"1️⃣",s:["ONE"]},{w:"two",e:"2️⃣",s:["TWO"]},{w:"three",e:"3️⃣",s:["THREE"]},
-    {w:"four",e:"4️⃣",s:["FOUR"]},{w:"five",e:"5️⃣",s:["FIVE"]},{w:"six",e:"6️⃣",s:["SIX"]},
-    {w:"seven",e:"7️⃣",s:["SEV","EN"]},{w:"eight",e:"8️⃣",s:["EIGHT"]},{w:"nine",e:"9️⃣",s:["NINE"]},{w:"ten",e:"🔟",s:["TEN"]},
-  ]},
-  body:{label:"BODY",color:"#51CF66",preview:["👁️","👂","✋"],words:[
-    {w:"eye",e:"👁️",s:["EYE"]},{w:"ear",e:"👂",s:["EAR"]},{w:"nose",e:"👃",s:["NOSE"]},
-    {w:"mouth",e:"👄",s:["MOUTH"]},{w:"hand",e:"✋",s:["HAND"]},{w:"foot",e:"🦶",s:["FOOT"]},
-    {w:"heart",e:"❤️",s:["HEART"]},{w:"arm",e:"💪",s:["ARM"]},{w:"leg",e:"🦵",s:["LEG"]},{w:"hair",e:"💇",s:["HAIR"]},
-  ]},
-  home:{label:"HOME",color:"#F06595",preview:["🏠","🛏️","📚"],words:[
-    {w:"house",e:"🏠",s:["HOUSE"]},{w:"door",e:"🚪",s:["DOOR"]},{w:"bed",e:"🛏️",s:["BED"]},
-    {w:"book",e:"📚",s:["BOOK"]},{w:"chair",e:"🪑",s:["CHAIR"]},{w:"lamp",e:"💡",s:["LAMP"]},
-    {w:"clock",e:"🕐",s:["CLOCK"]},{w:"key",e:"🔑",s:["KEY"]},{w:"cup",e:"☕",s:["CUP"]},{w:"phone",e:"📱",s:["PHONE"]},
-  ]},
-  nature:{label:"NATURE",color:"#20C997",preview:["☀️","🌳","❄️"],words:[
-    {w:"sun",e:"☀️",s:["SUN"]},{w:"moon",e:"🌙",s:["MOON"]},{w:"tree",e:"🌳",s:["TREE"]},
-    {w:"snow",e:"❄️",s:["SNOW"]},{w:"rain",e:"🌧️",s:["RAIN"]},{w:"star",e:"⭐",s:["STAR"]},
-    {w:"flower",e:"🌸",s:["FLOW","ER"]},{w:"cloud",e:"☁️",s:["CLOUD"]},{w:"fire",e:"🔥",s:["FIRE"]},{w:"leaf",e:"🍃",s:["LEAF"]},
-  ]},
-  clothes:{label:"CLOTHES",color:"#845EF7",preview:["👕","👟","🎩"],words:[
-    {w:"shirt",e:"👕",s:["SHIRT"]},{w:"shoes",e:"👟",s:["SHOES"]},{w:"hat",e:"🎩",s:["HAT"]},
-    {w:"pants",e:"👖",s:["PANTS"]},{w:"socks",e:"🧦",s:["SOCKS"]},{w:"dress",e:"👗",s:["DRESS"]},
-    {w:"jacket",e:"🧥",s:["JACK","ET"]},{w:"gloves",e:"🧤",s:["GLOVES"]},{w:"scarf",e:"🧣",s:["SCARF"]},
-  ]},
-};
+// ── STATE ──
+let stars=0, streak=0, streakTimer=null;
+let deck=[], idx=0, attempts=0, busy=false, listening=false;
+let currentCat=null, currentSub=null;
+let voskModel=null, voskReady=false;
 
-let cat=null,deck=[],idx=0,stars=0,streak=0,streakTimer=null;
-let listening=false,busy=false,attempts=0;
-const synth=window.speechSynthesis;
+// ── TTS ──
+const synth=window.speechSynthesis||null;
 let voices=[];
-function loadVoices(){voices=synth.getVoices();}
-loadVoices();
-if(synth.onvoiceschanged!==undefined)synth.onvoiceschanged=loadVoices;
-function pickVoice(){
-  return voices.find(v=>v.lang==='en-US'&&v.localService)
-      ||voices.find(v=>v.lang.startsWith('en')&&v.localService)
-      ||voices.find(v=>v.lang==='en-US')
-      ||voices.find(v=>v.lang.startsWith('en'))||null;
-}
+if(synth){synth.onvoiceschanged=()=>{voices=synth.getVoices();};}
+function pickVoice(){return voices.find(v=>v.lang==='en-US'&&v.localService)||voices.find(v=>v.lang.startsWith('en')&&v.localService)||voices.find(v=>v.lang==='en-US')||voices.find(v=>v.lang.startsWith('en'))||null;}
 
-/* SPLASH */
-document.getElementById('splash').addEventListener('click',function(){
-  synth.cancel();
-  const u=new SpeechSynthesisUtterance('.');
-  u.volume=0.001;u.rate=10;synth.speak(u);
-  if(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia)
-    navigator.mediaDevices.getUserMedia({audio:true,video:false})
-      .then(s=>s.getTracks().forEach(t=>t.stop())).catch(()=>{});
-  this.style.display='none';
-  buildMenu();
-},{once:true});
-
-/* TTS */
 function speak(text,rate,pitch,onDone){
+  const wave=document.getElementById('wave');
+  const bl=document.getElementById('btn-listen');
+  const cleanup=()=>{wave.classList.remove('on');bl.classList.remove('speaking');};
+  if(window._TTS){
+    wave.classList.add('on');bl.classList.add('speaking');
+    window._TTS.speak({text,lang:'en-US',rate:rate||0.88,pitch:pitch||1.1,volume:1.0})
+      .then(()=>{cleanup();if(onDone)onDone();}).catch(()=>{cleanup();if(onDone)onDone();});
+    return;
+  }
+  if(!synth){if(onDone)setTimeout(onDone,300);return;}
   synth.cancel();
   setTimeout(()=>{
     const u=new SpeechSynthesisUtterance(text);
     u.lang='en-US';u.rate=rate||0.88;u.pitch=pitch||1.1;u.volume=1.0;
     const v=pickVoice();if(v)u.voice=v;
-    const wave=document.getElementById('wave');
-    const bl=document.getElementById('btn-listen');
-    u.onstart=()=>{wave.classList.add('on');bl.classList.add('speaking');};
-    const cleanup=()=>{wave.classList.remove('on');bl.classList.remove('speaking');};
+    wave.classList.add('on');bl.classList.add('speaking');
     u.onend=()=>{cleanup();if(onDone)onDone();};
     u.onerror=()=>{cleanup();if(onDone)onDone();};
-    // safety: force cleanup after 5s max in case onend never fires
-    setTimeout(cleanup, 5000);
+    setTimeout(cleanup,6000);
     synth.speak(u);
   },55);
 }
 
 function speakSyllables(syls,done){
-  synth.cancel();
+  if(synth)synth.cancel();
   let i=0;
   const wave=document.getElementById('wave');
   function next(){
     if(i>=syls.length){renderSyls(syls,-1);setTimeout(done,380);return;}
     renderSyls(syls,i);
     setTimeout(()=>{
+      if(window._TTS){
+        wave.classList.add('on');
+        window._TTS.speak({text:syls[i].toLowerCase(),lang:'en-US',rate:0.52,pitch:1.2,volume:1.0})
+          .then(()=>{wave.classList.remove('on');i++;setTimeout(next,400);})
+          .catch(()=>{wave.classList.remove('on');i++;setTimeout(next,400);});
+        return;
+      }
+      if(!synth){i++;setTimeout(next,200);return;}
       const u=new SpeechSynthesisUtterance(syls[i].toLowerCase());
       u.lang='en-US';u.rate=0.52;u.pitch=1.2;u.volume=1.0;
       const v=pickVoice();if(v)u.voice=v;
@@ -371,304 +223,270 @@ function speakSyllables(syls,done){
   next();
 }
 
-/* SPEECH RECOGNITION — Hugging Face Whisper API */
-// Token loaded from config.js (not in git — see config.example.js)
-let HF_TOKEN = '';
-const HF_URL = 'https://router.huggingface.co/hf-inference/models/openai/whisper-large-v3-turbo/v1/audio/transcriptions';
+// ── VOSK ──
+async function initVosk(){
+  showVoskLoading(true);
+  try{
+    voskModel=await Vosk.createModel('vosk-model-small-en-us-0.15.tar');
+    voskReady=true;
+    console.log('Vosk ready');
+    showVoskStatus('🎤 Voice ready!',2000);
+  }catch(e){
+    console.warn('Vosk failed, will retry on demand:',e.message);
+    // Try CDN fallback
+    try{
+      voskModel=await Vosk.createModel('https://ccoreilly.github.io/vosk-browser/models/vosk-model-small-en-us-0.15.tar.gz');
+      voskReady=true;
+      console.log('Vosk ready (CDN)');
+      showVoskStatus('🎤 Voice ready!',2000);
+    }catch(e2){
+      console.warn('Vosk CDN also failed:',e2.message);
+      showVoskStatus('⚠️ Voice offline mode',3000);
+    }
+  }
+  showVoskLoading(false);
+}
 
-let mediaRecorder = null;
-let audioChunks   = [];
-let recordTimer   = null;
+function showVoskLoading(show){
+  document.getElementById('vosk-loading').classList.toggle('show',show);
+}
+function showVoskStatus(msg,ms){
+  const el=document.getElementById('vosk-status');
+  el.textContent=msg;el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),ms||2000);
+}
+
+// Vosk SR state
+let voskRecognizer=null, voskAudioCtx=null, voskNode=null, voskStream=null;
 
 async function startListening(){
-  if(listening||busy) return;
+  if(listening||busy)return;
+  if(!voskReady){setStatus('VOICE NOT READY YET...');return;}
 
-  // Request mic
-  let stream;
+  listening=true;setMicState('listening');setStatus('LISTENING...');
+  document.getElementById('partial-text').textContent='';
+
+  const wordList=deck.map(w=>w.w).concat(['[unk]']);
+  const vocab=JSON.stringify(wordList);
+
   try{
-    stream = await navigator.mediaDevices.getUserMedia({audio:true, video:false});
-  } catch(e){
-    console.warn('mic error:', e);
-    setStatus('ALLOW MIC IN BROWSER SETTINGS');
-    return;
+    voskRecognizer=new voskModel.KaldiRecognizer(16000,vocab);
+    voskRecognizer.on('result',msg=>{
+      const text=(msg.result.text||'').trim();
+      console.log('VOSK RESULT:',text,'| target:',deck[idx].w);
+      if(text&&text!=='[unk]'&&text!==''){
+        document.getElementById('partial-text').textContent='';
+        stopListening();
+        evaluate([text]);
+      }
+    });
+    voskRecognizer.on('partialresult',msg=>{
+      const p=(msg.result.partial||'').trim();
+      if(p&&p!=='[unk]')document.getElementById('partial-text').textContent='"'+p+'"';
+    });
+
+    voskStream=await navigator.mediaDevices.getUserMedia({video:false,audio:{echoCancellation:true,noiseSuppression:true,channelCount:1}});
+    voskAudioCtx=new AudioContext();
+    const source=voskAudioCtx.createMediaStreamSource(voskStream);
+    voskNode=voskAudioCtx.createScriptProcessor(4096,1,1);
+    voskNode.onaudioprocess=e=>{try{voskRecognizer.acceptWaveform(e.inputBuffer);}catch(err){}};
+    source.connect(voskNode);
+    voskNode.connect(voskAudioCtx.destination);
+
+    // 5s timeout
+    window._voskTimer=setTimeout(()=>{
+      if(listening){
+        const p=document.getElementById('partial-text').textContent;
+        console.log('Vosk timeout, partial:',p);
+        stopListening();
+        if(p&&p!==''){
+          const word=p.replace(/"/g,'').trim();
+          evaluate([word]);
+        } else {
+          attempts++;onWrong(attempts);
+        }
+      }
+    },5000);
+
+  }catch(e){
+    console.warn('Vosk listen error:',e.message);
+    listening=false;setMicState('idle');
+    setStatus('MIC ERROR — TRY AGAIN');
+    enableMic(true);
   }
-
-  listening = true;
-  setMicState('listening');
-  setStatus('LISTENING...');
-
-  audioChunks = [];
-  mediaRecorder = new MediaRecorder(stream, {mimeType: getSupportedMime()});
-
-  mediaRecorder.ondataavailable = e => {
-    if(e.data && e.data.size > 0) audioChunks.push(e.data);
-  };
-
-  mediaRecorder.onstop = async () => {
-    // Stop all tracks to release mic
-    stream.getTracks().forEach(t => t.stop());
-    listening = false;
-    setMicState('idle');
-    setStatus('THINKING...');
-
-    const blob = new Blob(audioChunks, {type: getSupportedMime()});
-    if(blob.size < 1000){
-      console.log('Audio too short, size:', blob.size);
-      attempts++; onWrong(attempts);
-      return;
-    }
-
-    try{
-      const formData = new FormData();
-      formData.append('file', blob, 'audio.webm');
-      formData.append('model', 'openai/whisper-large-v3-turbo');
-      formData.append('language', 'en');
-
-      const res = await fetch(HF_URL, {
-        method: 'POST',
-        headers: {'Authorization': 'Bearer ' + (window.HF_TOKEN || HF_TOKEN)},
-        body: formData
-      });
-
-      if(!res.ok){
-        const err = await res.text();
-        console.warn('HF error:', res.status, err);
-        setStatus('TRY AGAIN!');
-        enableMic(true);
-        return;
-      }
-
-      const data = await res.json();
-      const transcript = (data.text || '').trim().toLowerCase()
-        .replace(/[.,!?]/g,'');  // strip punctuation
-      console.log('Whisper transcript:', transcript, '| target:', deck[idx].w);
-
-      if(transcript){
-        evaluate([transcript]);
-      } else {
-        attempts++; onWrong(attempts);
-      }
-
-    } catch(e){
-      console.warn('Whisper fetch error:', e);
-      setStatus('NEED INTERNET FOR VOICE');
-      enableMic(true);
-    }
-  };
-
-  // Record for up to 3 seconds then auto-stop
-  mediaRecorder.start(100); // collect in 100ms chunks
-  recordTimer = setTimeout(()=>stopListening(), 3000);
 }
 
 function stopListening(){
-  clearTimeout(recordTimer);
-  if(mediaRecorder && mediaRecorder.state !== 'inactive'){
-    mediaRecorder.stop();
-  }
-  listening = false;
+  clearTimeout(window._voskTimer);
+  listening=false;
+  if(voskNode){voskNode.disconnect();voskNode=null;}
+  if(voskAudioCtx){voskAudioCtx.close();voskAudioCtx=null;}
+  if(voskStream){voskStream.getTracks().forEach(t=>t.stop());voskStream=null;}
+  if(voskRecognizer){voskRecognizer.remove();voskRecognizer=null;}
   setMicState('idle');
+  document.getElementById('wave').classList.remove('on');
+  document.getElementById('btn-listen').classList.remove('speaking');
 }
 
-function getSupportedMime(){
-  const types = ['audio/webm;codecs=opus','audio/webm','audio/ogg;codecs=opus','audio/mp4'];
-  for(const t of types){
-    if(MediaRecorder.isTypeSupported(t)) return t;
-  }
-  return '';
-}
-
-
-/* FUZZY MATCH + ALIASES */
-const ALIASES={
-  bee:  ['be','b','v','z','the','see','sea','me','thee','fee','key','tea','free','bea','bi','by','bees','pea','we','he','she'],
-  duck: ['doc','dak','dark','dug','dack','dock','luck','tuck','muck','duc','duk','bug','hug','cluck'],
-  cow:  ['caw','col','how','wow','ko','co','cou','cows','cob','cod'],
-  pig:  ['big','pick','peg','pit','bit','dig','wig','fig','jig','pigs'],
-  egg:  ['eg','eck','ek','ugh','ed','eggs','deck','beck','neck','peck','wreck','leg','beg','get','jet'],
-  frog: ['fog','frock','drug','frag','log','prog','blog','clog'],
-  bird: ['heard','word','bud','bid','bed','bad','beard','birds'],
-  fish: ['dish','wish','fist','miss','this','fizz','swish'],
-  cat:  ['hat','bat','rat','mat','fat','sat','cut','kit','cats','cap'],
-  dog:  ['log','bog','jog','fog','dock','dot','god','blog','dogs','hog'],
-  horse:['hoarse','hawse','force','morse','worse','coarse'],
-  sheep:['ship','cheap','chip','sleep','keep','deep','seep','heap'],
-  bread:['bred','brad','braid','thread','dread','tread','spread'],
-  milk: ['silk','bilk','will','meal','mill','hill','fill','kill'],
-  cake: ['lake','take','bake','fake','make','rake','wake','quake'],
-  red:  ['read','bed','fed','led','said','dead','head','wed','shed','sled'],
-  blue: ['blew','flew','clue','glue','true','brew','crew','drew','grew','knew','new','boo','dew','few'],
-  green:['greed','grain','grin','queen','keen','seen','teen','lean','mean','clean'],
-  pink: ['think','drink','sink','link','rink','wink','blink','brink'],
-  black:['slack','track','crack','back','hack','jack','lack','pack','rack','sack'],
-  white:['wight','quite','kite','bite','fight','light','might','night','right','sight'],
-  brown:['crown','drown','frown','gown','town','down','clown'],
-  one:  ['wan','won','un','an','own','on','gun','nun','run','sun','ton','bun','fun','done','none','son','1','once'],
-  two:  ['to','too','tu','do','who','shoe','through','threw','blew','blue','chew','clue','crew','dew','flew','2','twice'],
-  three:['tree','free','see','flee','glee','knee','me','pee','tee','we','fee','tea','spree','3','free!'],
-  four: ['for','fore','fur','far','floor','more','bore','core','door','gore','poor','score','shore','store','4','fore!'],
-  five: ['hive','live','dive','jive','drive','strive','thrive','5','fine','fife'],
-  six:  ['sex','sicks','sick','sticks','fix','mix','nix','ticks','picks','kicks','6','sax','seeks'],
-  seven:['heaven','leaven','devon','eleven','kevin','7','severn','levin'],
-  eight:['ate','ait','hate','gate','fate','late','rate','wait','bait','date','mate','plate','state','8','8 8','88','eighty'],
-  nine: ['wine','pine','line','mine','fine','dine','vine','brine','shine','spine','twine','whine','9','nein','nye'],
-  ten:  ['tin','tan','hen','den','men','pen','then','when','zen','bin','din','fin','gin','pin','sin','win','10','ten!'],
-  arm:  ['are','bar','car','far','jar','tar','star','charm','farm','harm','art','ark','arc','hard'],
-  foot: ['food','full','fool','pool','cool','tool','book','cook','hook','look','rook','took','wood','good'],
-  ear:  ['here','year','fear','beer','dear','near','tear','we are','were','wear','air','are','era','eer','ir','ur','ears'],
-  eye:  ['i','ai','aye','hi','my','by','die','lie','pie','tie','buy','cry','dry','fly','fry','guy','rye','I','eye!','eyes','the eye'],
-  leg:  ['peg','beg','keg','reg','lake','lick','lid','lip'],
-  hair: ['hare','here','hear','heir','air','bare','care','dare','fair','fare','pair','share','spare','stare'],
-  hand: ['and','band','land','sand','bland','brand','grand','stand'],
-  nose: ['knows','rows','bows','close','chose','flows','goes','grows','hose','pose','rose','those'],
-  mouth:['south','youth','booth','tooth','truth','smooth'],
-  heart:['hard','art','cart','dart','mart','part','smart','start','tart'],
-  bed:  ['bad','bid','bud','dead','fed','head','led','read','red','said','shed','wed'],
-  key:  ['see','fee','free','be','me','tea','tree','we','he','she','pea','glee'],
-  cup:  ['cap','cop','cub','cut','pup','pub','rub','hub','tub','sub','bud','bun'],
-  book: ['hook','cook','look','rook','took','brook','crook','shook','foot','good','hood'],
-  door: ['more','bore','core','floor','for','four','gore','poor','score','shore','store'],
-  lamp: ['camp','damp','ramp','stamp','tramp','clamp','clap','map','cap','rap'],
-  clock:['block','dock','flock','knock','lock','mock','rock','shock','sock','stock'],
-  sun:  ['son','some','sum','bun','done','fun','gun','nun','one','pun','run','ton','won'],
-  moon: ['moan','mon','moo','noon','boon','boom','doom','goon','loom','room','soon','zoom'],
-  rain: ['lane','main','brain','chain','drain','gain','grain','pain','plain','plane','stain','train'],
-  snow: ['so','no','go','low','bow','crow','flow','glow','grow','know','mow','row','show','slow'],
-  star: ['are','bar','car','far','jar','tar','scar'],
-  fire: ['hire','sire','tire','wire','dire','mire'],
-  leaf: ['leave','lief','left','reef','beef','thief','loaf'],
-  cloud:['proud','loud','crowd','allowed','shroud'],
-  tree: ['three','free','see','flee','glee','knee','me','tee','we','fee','tea'],
-  hat:  ['bat','cat','fat','mat','pat','rat','sat','vat','chat','flat','that'],
-  shirt:['short','skirt','hurt','dirt','flirt'],
-  dress:['stress','press','less','mess','bless','chess','guess'],
-  scarf:['sharp','chart','scar','star','scarce'],
-};
-
-function lev(a,b){
-  const m=a.length,n=b.length;
-  const dp=Array.from({length:m+1},(_,i)=>Array.from({length:n+1},(_,j)=>i?j?0:i:j));
-  for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)
-    dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
-  return dp[m][n];
-}
-function sim(a,b){
-  a=a.toLowerCase().trim();b=b.toLowerCase().trim();
-  if(a===b)return 1;
-  const L=Math.max(a.length,b.length);return L?1-lev(a,b)/L:1;
-}
-
-const DIGIT_WORDS={
-  '1':'one','one one':'one','1 1':'one','11':'one',
-  '2':'two','two two':'two','2 2':'two','22':'two',
-  '3':'three','three three':'three','3 3':'three','33':'three',
-  '4':'four','four four':'four','4 4':'four','44':'four',
-  '5':'five','five five':'five','5 5':'five','55':'five',
-  '6':'six','six six':'six','6 6':'six','66':'six',
-  '7':'seven','seven seven':'seven','7 7':'seven','77':'seven','serv en':'seven','serven':'seven',
-  '8':'eight','eight eight':'eight','8 8':'eight','88':'eight','eighty':'eight',
-  '9':'nine','nine nine':'nine','9 9':'nine','99':'nine',
-  '10':'ten','ten ten':'ten','10 10':'ten',
-};
+// ── FUZZY MATCH ──
+function lev(a,b){const m=a.length,n=b.length;const dp=Array.from({length:m+1},(_,i)=>Array.from({length:n+1},(_,j)=>i?j?0:i:j));for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);return dp[m][n];}
+function sim(a,b){a=a.toLowerCase().trim();b=b.toLowerCase().trim();if(a===b)return 1;const L=Math.max(a.length,b.length);return L?1-lev(a,b)/L:1;}
 
 function evaluate(alts){
   if(busy)return;
   const target=deck[idx].w.toLowerCase();
   let best=0;
-  // convert any digit results to word equivalents first
-  alts=alts.map(a=>{
-    const trimmed=a.trim();
-    return DIGIT_WORDS[trimmed]||a;
-  });
-
   alts.forEach(h=>{
     best=Math.max(best,sim(target,h));
     h.split(/\s+/).forEach(t=>{best=Math.max(best,sim(target,t));});
-    const stripped=h.replace(/^(a |an |the )/i,'').trim();
-    best=Math.max(best,sim(target,stripped));
+    best=Math.max(best,sim(target,h.replace(/^(a |an |the )/i,'').trim()));
   });
-
-  if(best<0.8){
-    const al=ALIASES[target]||[];
-    alts.forEach(h=>{
-      const ht=h.trim();
-      if(al.includes(ht))best=1;
-      if(ht.length===1&&ht.toLowerCase()===target[0])best=0.85;
-      h.split(/\s+/).forEach(t=>{if(al.includes(t))best=1;});
-      const stripped=h.replace(/^(a |an |the )/i,'').trim();
-      if(al.includes(stripped))best=1;
-    });
-  }
-
   const charLen=target.replace(/\s/g,'').length;
-  // Numbers category gets extra-low threshold since children mispronounce them
-  const numWords=['one','two','three','four','five','six','seven','eight','nine','ten'];
-  const isNum=numWords.includes(target);
-  const threshold=isNum?0.3:(charLen<=4?0.55:charLen<=6?0.68:0.75);
-
-  console.log('heard:',alts,'| target:',target,'| score:',best.toFixed(2),'| threshold:',threshold);
+  const threshold=charLen<=3?0.6:charLen<=5?0.68:0.75;
+  console.log('heard:',alts,'| target:',target,'| score:',best.toFixed(2),'| need:',threshold);
   best>=threshold?onCorrect():(attempts++,onWrong(attempts));
 }
 
-/* MENU */
-function buildMenu(){
-  const grid=document.getElementById('menu-grid');
+// ── CAPACITOR INIT ──
+async function initCapacitor(){
+  if(window.Capacitor&&window.Capacitor.isNativePlatform()){
+    const P=window.Capacitor.Plugins;
+    if(P.TextToSpeech){window._TTS=P.TextToSpeech;console.log('Native TTS ready');}
+  }
+}
+
+// ── SPLASH ──
+document.getElementById('splash').addEventListener('click',async function(){
+  if(synth){synth.cancel();const u=new SpeechSynthesisUtterance('.');u.volume=0.001;u.rate=10;synth.speak(u);}
+  this.style.display='none';
+  await initCapacitor();
+  buildCatMenu();
+  // Load Vosk in background
+  initVosk();
+},{once:true});
+
+// ── LOAD words.json ──
+let WORDS_DATA={};
+async function loadWords(){
+  try{
+    const r=await fetch('words.json');
+    WORDS_DATA=await r.json();
+    console.log('words.json loaded:',Object.keys(WORDS_DATA).length,'categories');
+  }catch(e){
+    console.warn('words.json failed, using inline data');
+    WORDS_DATA=INLINE_DATA;
+  }
+}
+
+// Inline fallback (minimal)
+const INLINE_DATA={
+  animals:{label:"ANIMALS",icon:"🐾",color:"#FF6B6B",subcategories:{
+    farm:{label:"FARM ANIMALS",icon:"🐄",words:[{w:"cow",e:"🐄",s:["COW"]},{w:"pig",e:"🐷",s:["PIG"]},{w:"horse",e:"🐴",s:["HORSE"]},{w:"sheep",e:"🐑",s:["SHEEP"]},{w:"duck",e:"🦆",s:["DUCK"]}]},
+    wild:{label:"WILD ANIMALS",icon:"🦁",words:[{w:"lion",e:"🦁",s:["LI","ON"]},{w:"elephant",e:"🐘",s:["EL","E","PHANT"]},{w:"monkey",e:"🐒",s:["MON","KEY"]},{w:"bear",e:"🐻",s:["BEAR"]},{w:"frog",e:"🐸",s:["FROG"]}]},
+    pets:{label:"PETS",icon:"🐶",words:[{w:"dog",e:"🐶",s:["DOG"]},{w:"cat",e:"🐱",s:["CAT"]},{w:"rabbit",e:"🐰",s:["RAB","BIT"]},{w:"fish",e:"🐟",s:["FISH"]}]}
+  }},
+  numbers:{label:"NUMBERS",icon:"🔢",color:"#339AF0",subcategories:{
+    "1to10":{label:"1 TO 10",icon:"🔟",words:[{w:"one",e:"1️⃣",s:["ONE"]},{w:"two",e:"2️⃣",s:["TWO"]},{w:"three",e:"3️⃣",s:["THREE"]},{w:"four",e:"4️⃣",s:["FOUR"]},{w:"five",e:"5️⃣",s:["FIVE"]},{w:"six",e:"6️⃣",s:["SIX"]},{w:"seven",e:"7️⃣",s:["SE","VEN"]},{w:"eight",e:"8️⃣",s:["EIGHT"]},{w:"nine",e:"9️⃣",s:["NINE"]},{w:"ten",e:"🔟",s:["TEN"]}]}
+  }}
+};
+
+// ── MENUS ──
+function buildCatMenu(){
+  if(Object.keys(WORDS_DATA).length===0){loadWords().then(buildCatMenu);return;}
+  document.getElementById('topbar').style.display='flex';
+  document.getElementById('cat-screen').style.display='flex';
+  document.getElementById('sub-screen').style.display='none';
+  document.getElementById('game-screen').style.display='none';
+  document.getElementById('btn-listen').style.display='none';
+  document.getElementById('btn-mic').style.display='none';
+
+  const grid=document.getElementById('cat-grid');
   grid.innerHTML='';
-  Object.entries(CATS).forEach(([key,c])=>{
+  Object.entries(WORDS_DATA).forEach(([key,cat])=>{
     const btn=document.createElement('button');
-    btn.className='cat-card';btn.style.background=c.color;
-    btn.innerHTML=`<div class="cc-icons">${c.preview.join('')}</div><div class="cc-title">${c.label}</div>`;
-    btn.onclick=()=>startGame(key);
+    btn.className='cat-card';
+    btn.style.background=cat.color||'#888';
+    const subs=Object.values(cat.subcategories);
+    const totalWords=subs.reduce((s,sub)=>s+sub.words.length,0);
+    btn.innerHTML=`<div class="cc-icon">${cat.icon||'📚'}</div><div class="cc-title">${cat.label}</div><div style="font-size:12px;opacity:.8">${totalWords} words</div>`;
+    btn.onclick=()=>showSubMenu(key);
     grid.appendChild(btn);
   });
 }
 
-/* GAME */
+function showSubMenu(catKey){
+  currentCat=catKey;
+  const cat=WORDS_DATA[catKey];
+  document.getElementById('cat-screen').style.display='none';
+  document.getElementById('sub-screen').style.display='flex';
+  document.getElementById('sub-title').textContent=cat.label;
+
+  const grid=document.getElementById('sub-grid');
+  grid.innerHTML='';
+  Object.entries(cat.subcategories).forEach(([key,sub])=>{
+    const btn=document.createElement('button');
+    btn.className='sub-card';
+    btn.style.background=cat.color||'#888';
+    btn.innerHTML=`<div class="sc-icon">${sub.icon||'📝'}</div><div class="sc-title">${sub.label}</div><div class="sc-count">${sub.words.length} words</div>`;
+    btn.onclick=()=>startGame(catKey,key);
+    grid.appendChild(btn);
+  });
+}
+
+document.getElementById('sub-back').addEventListener('click',()=>{
+  document.getElementById('sub-screen').style.display='none';
+  document.getElementById('cat-screen').style.display='flex';
+});
+
+// ── GAME ──
 function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=0|Math.random()*(i+1);[b[i],b[j]]=[b[j],b[i]];}return b;}
 
-function startGame(key){
-  cat=key;deck=shuffle(CATS[key].words);idx=0;attempts=0;busy=false;
+function startGame(catKey,subKey){
+  currentCat=catKey;currentSub=subKey;
+  const cat=WORDS_DATA[catKey];
+  const sub=cat.subcategories[subKey];
+  deck=shuffle(sub.words);idx=0;attempts=0;busy=false;
+
   document.getElementById('topbar').style.display='none';
-  document.getElementById('menu-screen').style.display='none';
+  document.getElementById('cat-screen').style.display='none';
+  document.getElementById('sub-screen').style.display='none';
   document.getElementById('game-screen').style.display='flex';
-  const color=CATS[key].color;
+  document.getElementById('btn-listen').style.display='flex';
+  document.getElementById('btn-mic').style.display='flex';
+
+  const color=cat.color||'#888';
   document.getElementById('main-card').style.borderTopColor=color;
   document.getElementById('prog-bar').style.background=color;
   document.getElementById('main-word').style.color=color;
   document.querySelectorAll('.wb').forEach(b=>b.style.background=color);
+
   showCard();
 }
 
 function showCard(){
-  stopListening();synth.cancel();hideFeedback();hideTapConfirm();attempts=0;busy=false;
+  stopListening();if(synth)synth.cancel();hideFeedback();attempts=0;busy=false;
   const item=deck[idx];
   document.getElementById('main-emoji').textContent=item.e;
   document.getElementById('main-emoji').style.transform='scale(1)';
   document.getElementById('main-word').textContent=item.w.toUpperCase();
-  renderSyls(item.s,-1);
-  updateProg();
+  document.getElementById('partial-text').textContent='';
+  renderSyls(item.s,-1);updateProg();
   setMicState('idle');enableMic(false);
   setStatus('LISTEN FIRST! 🔊');
-  setTimeout(()=>speak(item.w,0.88,1.1,()=>{
-    enableMic(true);
-    setStatus('NOW SAY THE WORD! 🎤');
-  }),500);
+  setTimeout(()=>speak(item.w,0.88,1.1,()=>{enableMic(true);setStatus('NOW SAY THE WORD! 🎤');startListening();}),500);
 }
 
-function navPrev(){if(busy)return;synth.cancel();stopListening();idx=(idx-1+deck.length)%deck.length;showCard();}
-function navNext(){if(busy)return;synth.cancel();stopListening();idx=(idx+1)%deck.length;showCard();}
+function navPrev(){if(busy)return;if(synth)synth.cancel();stopListening();idx=(idx-1+deck.length)%deck.length;showCard();}
+function navNext(){if(busy)return;if(synth)synth.cancel();stopListening();idx=(idx+1)%deck.length;showCard();}
 
 function renderSyls(syls,lit){
   const row=document.getElementById('syl-row');
-  if(syls.length<=1){row.innerHTML='';return;}
+  if(!syls||syls.length<=1){row.innerHTML='';return;}
   row.innerHTML=syls.map((s,i)=>`<span class="syl${i===lit?' lit':''}">${s}</span>`).join('');
 }
-function updateProg(){
-  document.getElementById('prog-bar').style.width=(deck.length?(idx+1)/deck.length*100:0)+'%';
-}
+function updateProg(){document.getElementById('prog-bar').style.width=(deck.length?(idx+1)/deck.length*100:0)+'%';}
 function enableMic(on){document.getElementById('btn-mic').disabled=!on;}
 
-/* CORRECT */
 function onCorrect(){
   if(busy)return;busy=true;
   streak++;stars+=10;
@@ -683,90 +501,48 @@ function onCorrect(){
   setTimeout(()=>{hideFeedback();idx++;if(idx>=deck.length)finishGame();else showCard();},1900);
 }
 
-/* TAP CONFIRM — shown after 2 failed attempts on numbers */
-const NUMBER_WORDS=['one','two','three','four','five','six','seven','eight','nine','ten'];
-const NUMBER_COLORS=['#FF6B6B','#FFA94D','#CC5DE8','#339AF0','#51CF66','#F06595','#20C997','#845EF7','#FF6B6B','#FFA94D'];
-
-function showTapConfirm(){
-  const grid=document.getElementById('tc-grid');
-  grid.innerHTML='';
-  NUMBER_WORDS.forEach((word,i)=>{
-    const btn=document.createElement('button');
-    btn.className='tc-btn';
-    btn.style.background=NUMBER_COLORS[i];
-    btn.textContent=i+1;
-    btn.onclick=()=>{
-      hideTapConfirm();
-      if(word===deck[idx].w.toLowerCase()){
-        onCorrect();
-      } else {
-        attempts++;
-        onWrong(attempts);
-      }
-    };
-    grid.appendChild(btn);
-  });
-  document.getElementById('tap-confirm').classList.add('show');
-}
-function hideTapConfirm(){
-  document.getElementById('tap-confirm').classList.remove('show');
-}
-
-/* WRONG */
 function onWrong(n){
-  streak=0; document.getElementById('streak').classList.remove('on');
+  streak=0;document.getElementById('streak').classList.remove('on');
+  busy=false;
   const item=deck[idx];
   enableMic(false);
   console.log('onWrong attempt:',n,'word:',item.w);
-
   if(n===1){
     setStatus('LISTEN CAREFULLY!');
     showFeedback('👂','LISTEN AGAIN!','#FFA94D');
-    setTimeout(()=>{
-      hideFeedback();
-      speak(item.w,0.6,1.1,()=>{ enableMic(true); setStatus('TRY AGAIN! 🎤'); });
-    },700);
-
+    setTimeout(()=>{hideFeedback();speak(item.w,0.6,1.1,()=>{enableMic(true);setStatus('TRY AGAIN! 🎤');});},700);
   } else if(n===2){
     setStatus('LISTEN TO EACH PART!');
     showFeedback('🔤','SAY EACH PART!','#CC5DE8');
-    setTimeout(()=>{
-      hideFeedback();
-      speakSyllables(item.s,()=>{
-        speak(item.w,0.65,1.1,()=>{
-          enableMic(true);
-          setStatus('TRY AGAIN! 🎤');
-          // For numbers: show tap buttons as fallback after syllable breakdown
-          if(NUMBER_WORDS.includes(item.w.toLowerCase())){
-            setTimeout(()=>{ if(!busy) showTapConfirm(); }, 4000);
-          }
-        });
-      });
-    },700);
-
+    setTimeout(()=>{hideFeedback();speakSyllables(item.s,()=>{speak(item.w,0.65,1.1,()=>{enableMic(true);setStatus('TRY AGAIN! 🎤');});});},700);
   } else {
-    // 3rd fail: push word to back of deck and move on
-    console.log('3 fails, moving to back:',item.w);
     deck.push(item);
     showFeedback('⏭️','GOOD TRY! NEXT ONE!','#888');
-    setTimeout(()=>{
-      hideFeedback();
-      busy=false;
-      idx++;
-      if(idx>=deck.length) finishGame();
-      else showCard();
-    },1800);
+    setTimeout(()=>{hideFeedback();busy=false;idx++;if(idx>=deck.length)finishGame();else showCard();},1800);
   }
 }
 
-/* FINISH */
 function finishGame(){
   showFeedback('🏆','YOU DID IT! 🎉','#FFA94D');
   confetti();confetti();
   setTimeout(()=>{hideFeedback();goMenu();},3000);
 }
 
-/* UI HELPERS */
+function goMenu(){
+  stopListening();if(synth)synth.cancel();busy=false;hideFeedback();
+  document.getElementById('game-screen').style.display='none';
+  document.getElementById('btn-listen').style.display='none';
+  document.getElementById('btn-mic').style.display='none';
+  document.getElementById('topbar').style.display='flex';
+  // Go back to subcategory menu if we came from one
+  if(currentCat&&currentSub){
+    showSubMenu(currentCat);
+  } else {
+    buildCatMenu();
+  }
+}
+
+// ── UI HELPERS ──
 function setStatus(t){document.getElementById('status-text').textContent=t;}
 function setMicState(s){
   const b=document.getElementById('btn-mic');
@@ -778,8 +554,7 @@ function setMicState(s){
 function showFeedback(emoji,text,color){
   document.getElementById('fb-emoji').textContent=emoji;
   document.getElementById('fb-text').textContent=text;
-  const fb=document.getElementById('feedback');
-  fb.style.background=color+'EE';fb.classList.add('show');
+  const fb=document.getElementById('feedback');fb.style.background=color+'EE';fb.classList.add('show');
 }
 function hideFeedback(){document.getElementById('feedback').classList.remove('show');}
 function showStreak(){
@@ -797,39 +572,30 @@ function confetti(){
     document.body.appendChild(el);setTimeout(()=>el.remove(),2300);
   },i*42);
 }
-function goMenu(){
-  stopListening();synth.cancel();busy=false;hideFeedback();
-  document.getElementById('game-screen').style.display='none';
-  document.getElementById('topbar').style.display='flex';
-  document.getElementById('menu-screen').style.display='flex';
-}
 
-/* EVENTS */
+// ── EVENTS ──
+let _micLastTap=0;
 document.getElementById('btn-listen').addEventListener('click',()=>{
-  if(!deck.length)return;
-  enableMic(false);
+  if(!deck.length)return;enableMic(false);
   speak(deck[idx].w,0.88,1.1,()=>{enableMic(true);setStatus('NOW SAY THE WORD! 🎤');});
 });
-let _micLastTap=0;
 document.getElementById('btn-mic').addEventListener('click',()=>{
-  const now=Date.now();
-  if(now-_micLastTap<800)return; // debounce 800ms
-  _micLastTap=now;
+  const now=Date.now();if(now-_micLastTap<800)return;_micLastTap=now;
   if(listening){stopListening();return;}
   startListening();
 });
-document.getElementById('btn-back').addEventListener('click',()=>{synth.cancel();goMenu();});
+document.getElementById('btn-back-game').addEventListener('click',()=>{if(synth)synth.cancel();goMenu();});
 document.getElementById('btn-prev').addEventListener('click',navPrev);
 document.getElementById('btn-next').addEventListener('click',navNext);
 document.addEventListener('keydown',e=>{
   if(document.getElementById('game-screen').style.display==='none')return;
   if(e.key===' '){e.preventDefault();listening?stopListening():startListening();}
-  if(e.key==='ArrowRight')navNext();
-  if(e.key==='ArrowLeft')navPrev();
+  if(e.key==='ArrowRight')navNext();if(e.key==='ArrowLeft')navPrev();
   if(e.key==='r'||e.key==='R'){enableMic(false);speak(deck[idx].w,0.88,1.1,()=>enableMic(true));}
 });
+
+// ── INIT ──
+loadWords();
 </script>
-<div id="debug-panel"></div>
-<button id="debug-toggle" onclick="document.getElementById('debug-panel').classList.toggle('on')">🔍 DEBUG</button>
 </body>
 </html>
