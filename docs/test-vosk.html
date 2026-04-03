@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Vosk Speech Test v0.1</title>
+<script src="vosk.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:sans-serif;background:#1a1a2e;color:#fff;display:flex;flex-direction:column;align-items:center;min-height:100vh;padding:20px;}
+h1{font-size:24px;margin:20px 0 8px;color:#51CF66;}
+#subtitle{font-size:13px;color:#888;margin-bottom:16px;}
+#status-bar{width:100%;max-width:400px;background:#16213e;border-radius:12px;padding:12px 16px;margin-bottom:16px;font-size:14px;color:#90c8ff;text-align:center;}
+#card{background:#16213e;border-radius:24px;padding:24px;width:100%;max-width:400px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.4);}
+#emoji{font-size:90px;margin-bottom:8px;}
+#word{font-size:48px;font-weight:900;text-transform:uppercase;color:#51CF66;margin-bottom:4px;}
+#progress{font-size:13px;color:#666;margin-bottom:12px;}
+#partial{font-size:13px;color:#aaa;min-height:20px;margin-bottom:8px;font-style:italic;}
+#result{font-size:17px;font-weight:700;padding:10px 16px;border-radius:12px;min-height:44px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;}
+.pass{background:#2d6a4f;color:#95d5b2;}
+.fail{background:#6b2d2d;color:#ffb3b3;}
+.info{background:#1e3a5f;color:#90c8ff;}
+.btn-row{display:flex;gap:12px;justify-content:center;margin-bottom:12px;}
+button{border:none;border-radius:50px;padding:14px 28px;font-size:22px;cursor:pointer;transition:transform .15s,opacity .15s;}
+button:active{transform:scale(.92);}
+button:disabled{opacity:.3;cursor:not-allowed;}
+#btn-speak{background:#FFA94D;color:#fff;}
+#btn-listen{background:#51CF66;color:#fff;}
+#btn-listen.active{background:#339AF0;animation:pulse .9s ease-out infinite;}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(51,154,240,.6)}70%{box-shadow:0 0 0 18px rgba(51,154,240,0)}100%{box-shadow:0 0 0 0 rgba(51,154,240,0)}}
+#nav{display:flex;gap:10px;justify-content:center;}
+#nav button{padding:10px 20px;font-size:16px;background:#333;color:#fff;}
+#log{width:100%;max-width:400px;margin-top:14px;background:#0d1117;border-radius:12px;padding:10px;font-family:monospace;font-size:11px;color:#58a6ff;max-height:180px;overflow-y:auto;}
+#log div{border-bottom:1px solid #21262d;padding:3px 0;}
+</style>
+</head>
+<body>
+<h1>🎤 Vosk Speech Test</h1>
+<div id="subtitle">147 single-syllable words · Offline Vosk recognition</div>
+<div id="status-bar">⏳ Loading Vosk model...</div>
+
+<div id="card">
+  <div id="emoji">🐜</div>
+  <div id="word">ANT</div>
+  <div id="progress">Word 1 of 147</div>
+  <div id="partial"></div>
+  <div id="result" class="info">Waiting for model...</div>
+  <div class="btn-row">
+    <button id="btn-speak" disabled>🔊</button>
+    <button id="btn-listen" disabled>🎤</button>
+  </div>
+  <div id="nav">
+    <button id="btn-prev">◀</button>
+    <button id="btn-next">▶</button>
+  </div>
+</div>
+
+<div id="log"><div>Initializing...</div></div>
+
+<script>
+const WORDS=[
+  {w:"ant",e:"🐜"},{w:"arm",e:"💪"},{w:"aunt",e:"👩"},{w:"back",e:"🔙"},
+  {w:"bag",e:"🎒"},{w:"bath",e:"🛁"},{w:"beach",e:"🏖️"},{w:"bear",e:"🐻"},
+  {w:"bed",e:"🛏️"},{w:"bee",e:"🐝"},{w:"belt",e:"👔"},{w:"big",e:"🔵"},
+  {w:"bike",e:"🚲"},{w:"bird",e:"🐦"},{w:"black",e:"⬛"},{w:"blue",e:"🟦"},
+  {w:"boat",e:"⛵"},{w:"book",e:"📚"},{w:"boots",e:"👢"},{w:"bored",e:"😑"},
+  {w:"bread",e:"🍞"},{w:"brown",e:"🟫"},{w:"bus",e:"🚌"},{w:"bush",e:"🌿"},
+  {w:"cake",e:"🎂"},{w:"car",e:"🚗"},{w:"cat",e:"🐱"},{w:"chair",e:"🪑"},
+  {w:"cheek",e:"😊"},{w:"cheese",e:"🧀"},{w:"chest",e:"👕"},{w:"chin",e:"🫦"},
+  {w:"clock",e:"🕐"},{w:"cloud",e:"☁️"},{w:"coat",e:"🧥"},{w:"corn",e:"🌽"},
+  {w:"cow",e:"🐄"},{w:"crab",e:"🦀"},{w:"cup",e:"☕"},{w:"dad",e:"👨"},
+  {w:"dog",e:"🐶"},{w:"door",e:"🚪"},{w:"dress",e:"👗"},{w:"duck",e:"🦆"},
+  {w:"ear",e:"👂"},{w:"earth",e:"🌍"},{w:"egg",e:"🥚"},{w:"eight",e:"8️⃣"},
+  {w:"eye",e:"👁️"},{w:"fall",e:"🍂"},{w:"fish",e:"🐟"},{w:"five",e:"5️⃣"},
+  {w:"foot",e:"🦶"},{w:"fork",e:"🍴"},{w:"four",e:"4️⃣"},{w:"fridge",e:"🧊"},
+  {w:"friend",e:"🤝"},{w:"frog",e:"🐸"},{w:"glue",e:"🫙"},{w:"goat",e:"🐐"},
+  {w:"grape",e:"🍇"},{w:"grass",e:"🌿"},{w:"gray",e:"🩶"},{w:"green",e:"🟩"},
+  {w:"gym",e:"🏋️"},{w:"hair",e:"💇"},{w:"hand",e:"✋"},{w:"hat",e:"🎩"},
+  {w:"head",e:"🗣️"},{w:"heart",e:"❤️"},{w:"hip",e:"🕺"},{w:"horse",e:"🐴"},
+  {w:"juice",e:"🧃"},{w:"knee",e:"🦵"},{w:"knife",e:"🔪"},{w:"lake",e:"🏞️"},
+  {w:"lamp",e:"💡"},{w:"leaf",e:"🍃"},{w:"leg",e:"🦵"},{w:"light",e:"🪶"},
+  {w:"long",e:"📏"},{w:"mars",e:"🔴"},{w:"milk",e:"🥛"},{w:"mom",e:"👩"},
+  {w:"moon",e:"🌙"},{w:"mouth",e:"👄"},{w:"neck",e:"🦒"},{w:"nine",e:"9️⃣"},
+  {w:"nose",e:"👃"},{w:"one",e:"1️⃣"},{w:"owl",e:"🦉"},{w:"pants",e:"👖"},
+  {w:"pea",e:"🫛"},{w:"peach",e:"🍑"},{w:"pear",e:"🍐"},{w:"phone",e:"📱"},
+  {w:"pig",e:"🐷"},{w:"pink",e:"🩷"},{w:"plane",e:"✈️"},{w:"plate",e:"🍽️"},
+  {w:"pot",e:"🫕"},{w:"rain",e:"🌧️"},{w:"red",e:"🟥"},{w:"rose",e:"🌹"},
+  {w:"sad",e:"😢"},{w:"scarf",e:"🧣"},{w:"shark",e:"🦈"},{w:"sheep",e:"🐑"},
+  {w:"ship",e:"🚢"},{w:"shirt",e:"👕"},{w:"shoes",e:"👟"},{w:"short",e:"🏠"},
+  {w:"sick",e:"🤒"},{w:"six",e:"6️⃣"},{w:"small",e:"🔹"},{w:"snow",e:"❄️"},
+  {w:"soap",e:"🧼"},{w:"socks",e:"🧦"},{w:"spoon",e:"🥄"},{w:"spring",e:"🌸"},
+  {w:"square",e:"🟥"},{w:"star",e:"⭐"},{w:"storm",e:"⛈️"},{w:"stove",e:"🍳"},
+  {w:"sun",e:"☀️"},{w:"swan",e:"🦢"},{w:"tall",e:"🏢"},{w:"tea",e:"🍵"},
+  {w:"teeth",e:"🦷"},{w:"ten",e:"🔟"},{w:"thin",e:"📄"},{w:"three",e:"3️⃣"},
+  {w:"tired",e:"😴"},{w:"toast",e:"🍞"},{w:"toe",e:"🦶"},{w:"tongue",e:"👅"},
+  {w:"train",e:"🚂"},{w:"tree",e:"🌳"},{w:"truck",e:"🚚"},{w:"twelve",e:"1️⃣2️⃣"},
+  {w:"two",e:"2️⃣"},{w:"watch",e:"⌚"},{w:"whale",e:"🐋"},{w:"white",e:"⬜"},
+  {w:"wide",e:"↔️"},{w:"wind",e:"💨"},{w:"winter",e:"❄️"}
+];
+
+const VOCAB=JSON.stringify(WORDS.map(w=>w.w).concat(['[unk]']));
+
+let idx=0,model=null,recognizer=null,audioContext=null,recognizerNode=null,mediaStream=null,isListening=false,lastPartial='';
+
+function log(msg){
+  const el=document.getElementById('log');
+  const d=document.createElement('div');d.textContent=msg;
+  el.insertBefore(d,el.firstChild);
+  if(el.children.length>100)el.removeChild(el.lastChild);
+  console.log('[VOSK]',msg);
+}
+function setStatus(t){document.getElementById('status-bar').textContent=t;}
+function setResult(t,c){const el=document.getElementById('result');el.textContent=t;el.className=c;}
+function setPartial(t){document.getElementById('partial').textContent=t?'Hearing: "'+t+'"':'';}
+
+async function initVosk(){
+  try{
+    setStatus('⏳ Loading model (39MB, first time only)...');
+    log('Loading Vosk model...');
+
+    // Try different paths for the model
+    const paths = [
+      'vosk-model-small-en-us-0.15.tar',
+      '/vosk-model-small-en-us-0.15.tar',
+      'https://localhost/vosk-model-small-en-us-0.15.tar',
+      'https://ccoreilly.github.io/vosk-browser/models/vosk-model-small-en-us-0.15.tar'
+    ];
+
+    let loaded = false;
+    for(const path of paths){
+      try{
+        log('Trying: '+path);
+        model = await Vosk.createModel(path);
+        log('✅ Loaded from: '+path);
+        loaded = true;
+        break;
+      }catch(e){
+        log('❌ Failed: '+path+' — '+e.message);
+      }
+    }
+    if(!loaded) throw new Error('All paths failed');
+    log('✅ Model loaded!');
+    setStatus('✅ Ready! Tap 🎤 and say the word');
+    document.getElementById('btn-speak').disabled=false;
+    document.getElementById('btn-listen').disabled=false;
+    setResult('Tap 🎤 and say "'+WORDS[idx].w+'"','info');
+  }catch(e){
+    log('❌ Failed: '+e.message);
+    setStatus('❌ Model load failed: '+e.message);
+  }
+}
+
+async function startListening(){
+  if(!model){setResult('Model not ready','fail');return;}
+  try{
+    recognizer=new model.KaldiRecognizer(16000,VOCAB);
+    recognizer.on('result',msg=>{
+      const text=(msg.result.text||'').trim();
+      console.log('VOSK RESULT:',text,'| target:',WORDS[idx].w);
+      log('RESULT: "'+text+'" | target: "'+WORDS[idx].w+'"');
+      setPartial('');
+      if(text){
+        const match=text===WORDS[idx].w;
+        setResult(match?'✅ CORRECT! "'+text+'"':'❌ HEARD: "'+text+'" | wanted: "'+WORDS[idx].w+'"',match?'pass':'fail');
+        stopListening();
+      }
+    });
+    recognizer.on('partialresult',msg=>{
+      const p=(msg.result.partial||'').trim();
+      if(p){setPartial(p);lastPartial=p;}
+    });
+
+    mediaStream=await navigator.mediaDevices.getUserMedia({
+      video:false,
+      audio:{echoCancellation:true,noiseSuppression:true,channelCount:1,sampleRate:16000}
+    });
+    audioContext=new AudioContext();
+    const source=audioContext.createMediaStreamSource(mediaStream);
+    recognizerNode=audioContext.createScriptProcessor(4096,1,1);
+    recognizerNode.onaudioprocess=e=>{try{recognizer.acceptWaveform(e.inputBuffer);}catch(err){}};
+    source.connect(recognizerNode);
+    recognizerNode.connect(audioContext.destination);
+
+    isListening=true;
+    document.getElementById('btn-listen').classList.add('active');
+    document.getElementById('btn-listen').textContent='⏹';
+    setResult('Listening...','info');
+    setStatus('🎤 Say "'+WORDS[idx].w+'"');
+
+    // 4s auto-stop
+    setTimeout(()=>{
+      if(isListening){
+        const p=lastPartial;
+        log('Timeout. partial: "'+p+'"');
+        if(p){
+          const match=p===WORDS[idx].w;
+          setResult(match?'✅ CORRECT! "'+p+'"':'❌ HEARD: "'+p+'" | wanted: "'+WORDS[idx].w+'"',match?'pass':'fail');
+        } else {
+          setResult('❌ Nothing heard','fail');
+        }
+        stopListening();
+      }
+    },4000);
+  }catch(e){
+    log('❌ Mic error: '+e.message);
+    setResult('❌ '+e.message,'fail');
+    isListening=false;
+  }
+}
+
+function stopListening(){
+  isListening=false;lastPartial='';
+  if(recognizerNode){recognizerNode.disconnect();recognizerNode=null;}
+  if(audioContext){audioContext.close();audioContext=null;}
+  if(mediaStream){mediaStream.getTracks().forEach(t=>t.stop());mediaStream=null;}
+  if(recognizer){recognizer.remove();recognizer=null;}
+  document.getElementById('btn-listen').classList.remove('active');
+  document.getElementById('btn-listen').textContent='🎤';
+  setStatus('✅ Ready! Tap 🎤 to try again');
+}
+
+function showWord(){
+  const item=WORDS[idx];
+  document.getElementById('emoji').textContent=item.e;
+  document.getElementById('word').textContent=item.w.toUpperCase();
+  document.getElementById('progress').textContent='Word '+(idx+1)+' of '+WORDS.length;
+  setPartial('');
+  if(model)setResult('Tap 🎤 and say "'+item.w+'"','info');
+  if(isListening)stopListening();
+}
+
+const synth=window.speechSynthesis||null;
+let voices=[];
+if(synth){synth.onvoiceschanged=()=>{voices=synth.getVoices();};}
+function speakWord(){
+  if(!synth)return;
+  synth.cancel();
+  setTimeout(()=>{
+    const u=new SpeechSynthesisUtterance(WORDS[idx].w);
+    u.lang='en-US';u.rate=0.85;u.pitch=1.1;
+    const v=voices.find(v=>v.lang==='en-US')||voices.find(v=>v.lang.startsWith('en'))||null;
+    if(v)u.voice=v;
+    synth.speak(u);
+  },50);
+}
+
+document.getElementById('btn-speak').addEventListener('click',speakWord);
+document.getElementById('btn-listen').addEventListener('click',()=>{isListening?stopListening():startListening();});
+document.getElementById('btn-prev').addEventListener('click',()=>{idx=(idx-1+WORDS.length)%WORDS.length;showWord();});
+document.getElementById('btn-next').addEventListener('click',()=>{idx=(idx+1)%WORDS.length;showWord();});
+
+showWord();
+initVosk();
+</script>
+</body>
+</html>

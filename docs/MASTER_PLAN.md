@@ -1,193 +1,180 @@
-# English Flashcards 4 Kids — Master Plan
-*Last updated: April 2, 2026*
+# ENGLISH FLASHCARDS 4 KIDS — MASTER PLAN
+**Version:** v4.0.0  
+**Last updated:** 2025-04-03  
+**Repo:** https://github.com/mirceadaneliuc/audio-flashcards-4-kids  
+**Live web:** https://mirceadaneliuc.github.io/audio-flashcards-4-kids/  
+**APK ID:** com.elzorab.flashcards
 
 ---
 
-## Vision
-A vocabulary learning app for children aged 3–8, non-native English speakers.
-Audio-first: emoji + TTS + voice recognition. No reading required at entry level.
-Grows with the child from single words → subcategories → sentences.
-Target: 1000+ users, universal device support, offline-capable.
+## ARCHITECTURE
 
----
-
-## Current State
-- **Version:** v3.7.0
-- **Platform:** Android APK via Capacitor + GitHub Pages (web testing)
-- **Repo:** https://github.com/mirceadaneliuc/audio-flashcards-4-kids
-- **Live URL:** https://mirceadaneliuc.github.io/audio-flashcards-4-kids/
-- **Local path:** ~/Github/audio-flashcards-4-kids/
-- **Structure:** docs/index.html served by GitHub Pages + Capacitor APK
-
----
-
-## Architecture
-
-### App Structure
 ```
 audio-flashcards-4-kids/
 ├── docs/
-│   ├── index.html          ← single-file app
-│   ├── words.json          ← master word database
-│   ├── fingerprints.json   ← auto-generated MFCC fingerprints (DTW)
-│   ├── config.js           ← API tokens (gitignored)
-│   └── config.example.js   ← token template
-├── android/                ← Capacitor Android project
-├── capacitor.config.json
-├── package.json
-└── .gitignore
+│   ├── index.html              ← main app (v4.0.0) — Vosk SR + two-level nav
+│   ├── words.json              ← 335 words, 16 categories, 60 subcategories
+│   ├── test-vosk.html          ← Vosk speech test (WORKING, confirmed on tablet)
+│   ├── vosk.js                 ← vosk-browser library (5.6MB)
+│   ├── vosk-model-small-en-us-0.15.tar.gz  ← 40MB Vosk model (original)
+│   ├── MASTER_PLAN.md          ← this file
+│   └── config.js               ← HF token (gitignored)
+├── android/
+│   ├── app/src/main/java/com/elzorab/flashcards/MainActivity.java
+│   │   └── COOP/COEP headers → enables SharedArrayBuffer for Vosk WASM
+│   └── local.properties        ← sdk.dir=/home/elzorab/Android/Sdk
+├── capacitor.config.json       ← appId: com.elzorab.flashcards, webDir: docs
+└── package.json
 ```
 
-### Navigation Flow
-```
-Splash → Category Menu → Subcategory Menu → Flashcard Game → Back
-```
-- Child can go back to subcategory menu or all the way to category menu
-- Each subcategory is playable independently
-
-### Flashcard Game Flow
-1. Card appears (emoji + word)
-2. TTS plays the word automatically
-3. Mic activates → child speaks
-4. Recognition engine evaluates
-5. Correct → confetti + stars + next word
-6. Wrong attempt 1 → slow TTS replay
-7. Wrong attempt 2 → syllable breakdown + TTS
-8. Wrong attempt 3 → word pushed to back of deck, advance
+**Critical Android note:** The model is stored in APK assets as  
+`vosk-model-small-en-us-0.15.tar` (WITHOUT .gz — Android asset packager  
+decompresses .gz files automatically, making it 70MB uncompressed).  
+Code must reference `.tar` not `.tar.gz`.
 
 ---
 
-## Speech Recognition — Roadmap
+## NAVIGATION FLOW
 
-### Current (v3.7.0) — Capacitor Native Android SR
-- Uses `@capacitor-community/speech-recognition` plugin
-- Works for most words, fails on very short words (numbers)
-- `partialResults:true` mode gives best results
-- 5 second timeout safety net
+```
+Splash → Category Menu → Subcategory Menu → Game → back to Subcategory Menu
+```
 
-### Next Phase — DTW (Dynamic Time Warping) Engine
-**Goal:** 100% offline, no API keys, works on any device, 500+ word vocabulary
-
-**How it works:**
-1. **Reference samples:** TTS speaks each word → audio recorded → MFCC features extracted → saved to `fingerprints.json`
-2. **Recognition:** Child speaks → record 2-3 seconds → extract MFCC → DTW compare against all fingerprints → best match wins
-3. **Adding new words:** Add to `words.json` → run `build-fingerprints.html` → rebuild APK
-
-**Tools to build:**
-- `build-fingerprints.html` — browser tool: iterates all words, speaks via TTS, records audio, extracts MFCC, saves fingerprints.json
-- DTW engine in JavaScript (~300 lines) embedded in index.html
-- Accuracy: 90%+ for adult voices, 80%+ for children with tolerance tuning
-
-**Short word strategy:**
-- Numbers and very short words (one, two, six) may need lower DTW threshold
-- Tune per-word thresholds based on testing
-- 3-strike system gives 3 attempts before advancing
+- **Splash screen:** tap to start, triggers TTS unlock + Vosk load in background
+- **Category Menu:** grid of 16 category cards with icon, label, word count
+- **Subcategory Menu:** grid of subcategory cards for selected category; ⬅️ back to categories
+- **Game:** audio flashcard loop; ⬅️ back to subcategory menu
+- **Finish:** confetti + trophy, auto-returns to subcategory menu after 3s
 
 ---
 
-## Word Database — words.json
+## SPEECH RECOGNITION — VOSK-BROWSER ✅ CONFIRMED WORKING
 
-### Current: 335 words / 16 categories / 60 subcategories
+**Decision:** Vosk-browser replaces native Android Speech Recognition.  
+Native Android SR failed on short single-syllable words (numbers).  
+Vosk tested on Lenovo TB311FU tablet with **100% accuracy** on all numbers  
+and all single-syllable words tested.
 
-### Categories & Subcategories
+**How it works in the APK:**
+1. `vosk.js` loaded via `<script src="vosk.js">`
+2. Model loaded at startup: `Vosk.createModel('vosk-model-small-en-us-0.15.tar')`
+3. COOP/COEP headers in `MainActivity.java` enable `SharedArrayBuffer` (required by WASM)
+4. Per-session `KaldiRecognizer` created with vocabulary grammar (only current deck words)
+5. `ScriptProcessorNode` feeds mic audio chunks to Vosk at 48kHz (Vosk auto-corrects to 16kHz)
+6. `result` event fires with final text → fuzzy-matched against target word
+7. `partialresult` event shows real-time "hearing" feedback
+8. 5-second timeout: if partial exists → evaluate it; if empty → count as miss
 
-| Category | Subcategories | Words |
-|---|---|---|
-| 🐾 Animals | Farm, Wild, Pets, Birds, Sea Animals, Insects | ~65 |
-| 🍎 Food | Fruits, Vegetables, Dairy, Bakery, Drinks, Sweets | ~55 |
-| 🎨 Colors | Basic Colors | 11 |
-| 🔢 Numbers | 1-10, 11-20, Tens | 30 |
-| 🔷 Shapes | Basic Shapes | 8 |
-| 📏 Sizes | Basic Sizes | 10 |
-| 😊 Feelings | Basic Feelings | 10 |
-| 💪 Body | Face, Upper Body, Lower Body | ~23 |
-| 🏠 Home | Bedroom, Kitchen, Living Room, Bathroom | ~28 |
-| 🌿 Nature | Weather, Plants, Space, Solar System, Landforms | ~40 |
-| 🍂 Seasons | Spring, Summer, Fall, Winter | 20 |
-| 👕 Clothes | Everyday, Accessories, Seasonal | ~19 |
-| 👨‍👩‍👧 Family | Immediate, Extended | 10 |
-| 🚗 Transport | Land, Air, Water | ~16 |
-| 🏫 School | Supplies, People, Places | ~17 |
+**Known acceptable limitation:** "sheep" ↔ "ship" confusion (acoustically identical in Vosk small model)
 
-### Future Categories (approved for next expansion)
-- 🔤 Letters (A-Z)
-- 🗣️ Greetings (hello, goodbye, please, thank you, sorry)
-- ⏰ Time (morning, night, today, yesterday, now, later)
-- 🎭 Actions/Verbs (run, jump, eat, sleep, play, read, swim)
-- 🏥 Health (doctor, medicine, hurt, sick, better, hospital)
-
-### Special: Solar System Visual
-- Planets displayed on orbits around the sun (separate visual subcategory)
-- Tap planet → hear name → say name
-- Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune
+**MainActivity.java headers required:**
+```java
+response.setHeader("Cross-Origin-Opener-Policy", "same-origin");
+response.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
+```
 
 ---
 
-## Packaging — Capacitor
+## GAME LOOP
 
-### Build Commands
+1. Card shown → TTS speaks word automatically at 88% rate
+2. Mic button enabled → child taps mic → Vosk listens (max 5s)
+3. Match evaluation via fuzzy Levenshtein similarity:
+   - 1–3 char words: threshold 0.60
+   - 4–5 char words: threshold 0.68
+   - 6+ char words: threshold 0.75
+4. **Correct:** +10 stars, confetti, streak counter, advance to next card
+5. **Miss 1:** replay word at 60% rate, try again
+6. **Miss 2:** speak syllables individually + full word, try again
+7. **Miss 3:** card pushed to end of deck ("try again later"), advance
+
+---
+
+## WORD DATABASE — words.json
+
+**335 words / 16 categories / 60 subcategories**
+
+| Category | Icon | Subcategories |
+|----------|------|---------------|
+| Animals | 🐾 | Farm, Wild, Pets, Birds, Sea, Insects |
+| Food | 🍎 | Fruits, Vegetables, Dairy, Bakery, Drinks, Sweets |
+| Colors | 🌈 | (single group) |
+| Numbers | 🔢 | 1–10, 11–20, Tens |
+| Shapes | 🔷 | (single group) |
+| Sizes | 📏 | (single group) |
+| Feelings | 💙 | (single group) |
+| Body | 🫀 | Face, Upper Body, Lower Body |
+| Home | 🏠 | Bedroom, Kitchen, Living Room, Bathroom |
+| Nature | 🌿 | Weather, Plants, Space, Solar System, Landforms |
+| Seasons | 🍂 | Spring, Summer, Fall, Winter |
+| Clothes | 👕 | (single group) |
+| Family | 👨‍👩‍👧 | (single group) |
+| Transport | 🚗 | (single group) |
+| School | 🎒 | (single group) |
+
+**Future categories approved:** Letters, Greetings, Time, Actions/Verbs, Health  
+**Special:** Solar System visual subcategory (planets on orbits) — planned separately
+
+---
+
+## BUILD COMMANDS
+
 ```bash
-# After updating docs/index.html or words.json:
+# Environment
+export CAPACITOR_ANDROID_STUDIO_PATH=/snap/android-studio/209/bin/studio.sh
+
+# Full build & deploy
 cd ~/Github/audio-flashcards-4-kids
 npx cap sync android
-cd android
-./gradlew assembleDebug
+cd android && ./gradlew assembleDebug
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 adb shell am start -n com.elzorab.flashcards/.MainActivity
+
+# Quick deploy (no JS changes)
+cd ~/Github/audio-flashcards-4-kids/android
+./gradlew assembleDebug
+adb install -r app/build/outputs/apk/debug/app-debug.apk
+
+# Git commit
+cd ~/Github/audio-flashcards-4-kids
+git add -A && git commit -m "v4.0.0 - Vosk SR + two-level navigation" && git push
 ```
 
-### Key Files
-- `capacitor.config.json` — app ID: `com.elzorab.flashcards`
-- `android/local.properties` — SDK path: `/home/elzorab/Android/Sdk`
-- Capacitor plugins: `@capacitor-community/speech-recognition@7.0.1`, `@capacitor-community/text-to-speech@8.0.0`
+---
 
-### Environment
-```bash
-export CAPACITOR_ANDROID_STUDIO_PATH=/snap/android-studio/209/bin/studio.sh
-```
+## PENDING
+
+1. **[NEXT]** Fix `sampleRate` warning — pass `audioContext.sampleRate` to `KaldiRecognizer` instead of hardcoded `16000` (Vosk auto-corrects anyway, low priority)
+2. **[NEXT]** Fix Android status bar black bar overlapping app top
+3. **[PLANNED]** Solar System visual subcategory — planets on orbital paths
+4. **[PLANNED]** Signed release APK, app icon, splash screen
+5. **[PLANNED]** Add word categories: Letters, Greetings, Time, Actions/Verbs, Health
+6. **[PLANNED]** Migrate ScriptProcessorNode → AudioWorkletNode (currently deprecated but functional)
 
 ---
 
-## UI/UX Principles
-- No reading required — emoji + audio only at entry level
-- All text UPPERCASE for easy visual recognition
-- 🔊 hear button: fixed to LEFT screen edge (portrait + landscape)
-- 🎤 mic button: fixed to RIGHT screen edge (portrait + landscape)
-- ◀ ▶ arrows: inside card, child can skip words
-- Black bar at top (Android status bar) — to be addressed in production build
-- Debug panel (🔍 button) — visible during development, remove before production release
+## COMPLETED
+
+- ✅ v4.0.0 — Vosk-browser SR replaces native Android SR
+- ✅ v4.0.0 — Two-level category/subcategory navigation
+- ✅ v4.0.0 — All 335 words loaded dynamically from words.json
+- ✅ Vosk confirmed working on tablet (100% accuracy on numbers + all tested words)
+- ✅ COOP/COEP headers in MainActivity.java for SharedArrayBuffer
+- ✅ Model served from APK assets as `.tar` (not `.tar.gz`)
+- ✅ words.json — 335 words, 16 categories, 60 subcategories
+- ✅ 3-strike progressive hint system (replay → syllables → skip)
+- ✅ Native TTS via Capacitor plugin (TextToSpeech)
+- ✅ Fuzzy Levenshtein matching with per-word-length thresholds
+- ✅ Confetti, streak counter, star system
+- ✅ Inline fallback data if words.json fails to load
+- ✅ DTW approach tested and abandoned (voice-to-TTS mismatch)
 
 ---
 
-## Testing Setup
-- **Tablet:** Lenovo TB311FU, Android, Chrome v146
-- **USB debugging:** enabled, connected via USB to desktop
-- **DevTools:** brave://inspect/#devices on desktop Brave browser
-- **Local server:** `python3 -m http.server 8766` in docs/ folder
-- **Version visible:** top-left logo shows current version number
+## VERSION HISTORY
 
----
-
-## Version History (key milestones)
-- v1.0.0 — Initial release, 8 categories, 100+ words
-- v1.5.0 — Fixed edge buttons, arrows inside card
-- v2.0.0 — Digit recognition for numbers, fixed infinite loop
-- v2.5.0 — 3-strike system with word pushed to back of deck
-- v2.8.0 — Mic debounce 800ms (tablet multi-tap fix)
-- v3.0.0 — Fixed empty final result bug, number threshold 0.3
-- v3.3.0 — Tap-to-confirm number fallback
-- v3.5.0 — Replaced Web Speech API with Hugging Face Whisper (blocked by GitHub secret scanning)
-- v3.6.x — Capacitor APK, native Android TTS + SR, dual-mode recognition
-- v3.7.0 — Clean architecture, partialResults SR, 5s timeout, stable 3-strike flow
-
----
-
-## Known Issues / Next Steps
-1. **Numbers recognition** — Android SR still struggles with short words (one, two, six, ten). **Fix: DTW engine** (next phase)
-2. **Black bar at top** — Android status bar overlapping app. Fix: add `android:windowFullscreen` or use Capacitor status bar plugin
-3. **Debug panel** — remove 🔍 button before production release
-4. **Fingerprint generator** — build `build-fingerprints.html` tool
-5. **DTW engine** — implement MFCC extraction + DTW matching in JavaScript
-6. **Category/subcategory navigation** — update index.html to use words.json and two-level menu
-7. **Solar System visual** — special interactive subcategory with planet orbits
-8. **Production APK** — signed release build, app icon, splash screen
+| Version | Changes |
+|---------|---------|
+| v4.0.0 | Vosk-browser SR + two-level navigation + words.json 335 words |
+| v3.7.0 | Native Android SR (failed on short words) |
+| v1.5.0 | Web-only, fuzzy matching, 8 categories |
