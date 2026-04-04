@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#FF6B6B">
-<title>English Flashcards 4 Kids v4.2.2</title>
-<meta name="version" content="4.2.2">
+<title>English Flashcards 4 Kids v4.3.1</title>
+<meta name="version" content="4.3.1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <script src="vosk.js"></script>
@@ -103,7 +103,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 <!-- SPLASH -->
 <div id="splash">
   <div class="sp-emoji">🌍</div>
-  <div class="sp-title"><span>ENGLISH v4.2.2</span>FLASHCARDS 4 KIDS</div>
+  <div class="sp-title"><span>ENGLISH v4.3.1</span>FLASHCARDS 4 KIDS</div>
   <div class="sp-sub">👆 TAP TO START!</div>
 </div>
 
@@ -116,7 +116,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 
 <!-- TOPBAR -->
 <div id="topbar">
-  <div id="logo"><span>ENGLISH v4.2.2</span>FLASHCARDS 4 KIDS</div>
+  <div id="logo"><span>ENGLISH v4.3.1</span>FLASHCARDS 4 KIDS</div>
   <div id="stars-box">⭐ <span id="stars">0</span></div>
 </div>
 
@@ -295,6 +295,7 @@ async function startListening(){
     voskNode.connect(voskAudioCtx.destination);
 
     // 5s timeout
+    const _voskTimeoutMs=deck[idx].w.length>6?7000:5000;
     window._voskTimer=setTimeout(()=>{
       if(listening){
         const p=document.getElementById('partial-text').textContent;
@@ -307,7 +308,7 @@ async function startListening(){
           attempts++;onWrong(attempts);
         }
       }
-    },5000);
+    },_voskTimeoutMs);
 
   }catch(e){
     console.warn('Vosk listen error:',e.message);
@@ -342,6 +343,11 @@ function evaluate(alts){
     h.split(/\s+/).forEach(t=>{best=Math.max(best,sim(target,t));});
     best=Math.max(best,sim(target,h.replace(/^(a |an |the )/i,'').trim()));
   });
+  // Special case: pink is often misheard as gray by Vosk
+  if(target==='pink'){
+    const heard=alts.join(' ').toLowerCase();
+    if(/ink|think|ping|pink/.test(heard))best=1.0;
+  }
   const charLen=target.replace(/\s/g,'').length;
   const threshold=charLen<=3?0.6:charLen<=5?0.68:0.75;
   console.log('heard:',alts,'| target:',target,'| score:',best.toFixed(2),'| need:',threshold);
@@ -419,6 +425,9 @@ function buildCatMenu(){
 function showSubMenu(catKey){
   currentCat=catKey;
   const cat=WORDS_DATA[catKey];
+  // If only one subcategory, skip sub menu and go straight to game
+  const subKeys=Object.keys(cat.subcategories);
+  if(subKeys.length===1){startGame(catKey,subKeys[0]);return;}
   document.getElementById('cat-screen').style.display='none';
   document.getElementById('sub-screen').style.display='flex';
   document.getElementById('sub-title').textContent=cat.label;
@@ -449,6 +458,24 @@ function startGame(catKey,subKey){
   const cat=WORDS_DATA[catKey];
   const sub=cat.subcategories[subKey];
   deck=shuffle(sub.words);idx=0;attempts=0;busy=false;
+  // Keep opposite pairs consecutive
+  const PAIRS=[
+    ['big','small',null,null],
+    ['long','short',null,'img/short_long.jpg'],
+    ['tall','short',null,'img/short.jpg'],
+    ['fat','thin',null,null],
+    ['heavy','light',null,null],
+    ['old','young',null,null]
+  ];
+  PAIRS.forEach(([a,b,aImg,bImg])=>{
+    const ai=deck.findIndex(w=>w.w===a&&(!aImg||w.img===aImg));
+    const bi=deck.findIndex(w=>w.w===b&&(!bImg||w.img===bImg));
+    if(ai<0||bi<0)return;
+    const first=Math.min(ai,bi),second=Math.max(ai,bi);
+    const pairWords=[deck[ai],deck[bi]];
+    deck.splice(second,1);deck.splice(first,1);
+    deck.splice(first,0,...pairWords);
+  });
 
   document.getElementById('topbar').style.display='none';
   document.getElementById('cat-screen').style.display='none';
@@ -472,7 +499,8 @@ function showCard(){
   // Image or emoji
   const mediaEl=document.getElementById('main-emoji');
   if(item.img){
-    mediaEl.innerHTML=`<img src="${item.img}" alt="${item.w}" style="width:180px;height:180px;object-fit:contain;border-radius:12px;" onerror="this.parentNode.textContent='${item.e}'">`;
+    const imgSize=currentCat==='sizes'?'360px':'180px';
+    mediaEl.innerHTML=`<img src="${item.img}" alt="${item.w}" style="width:${imgSize};height:${imgSize};object-fit:contain;border-radius:12px;" onerror="this.parentNode.textContent='${item.e}'">`;
   } else {
     mediaEl.textContent=item.e;
   }

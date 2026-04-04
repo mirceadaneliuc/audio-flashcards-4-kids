@@ -1421,7 +1421,8 @@
             "e": "🟥",
             "s": [
               "SQUARE"
-            ]
+            ],
+            "img": "img/square.png"
           },
           {
             "w": "triangle",
@@ -1439,7 +1440,8 @@
               "REC",
               "TAN",
               "GLE"
-            ]
+            ],
+            "img": "img/rectangle.png"
           },
           {
             "w": "star",
@@ -1469,7 +1471,8 @@
             "s": [
               "O",
               "VAL"
-            ]
+            ],
+            "img": "img/oval.png"
           }
         ]
       }
@@ -1489,49 +1492,64 @@
             "e": "🐘",
             "s": [
               "BIG"
-            ]
+            ],
+            "img": "img/big.jpg"
           },
           {
             "w": "small",
             "e": "🐭",
             "s": [
               "SMALL"
-            ]
+            ],
+            "img": "img/small.jpg"
           },
           {
             "w": "tall",
             "e": "🦒",
             "s": [
               "TALL"
-            ]
+            ],
+            "img": "img/tall.jpg"
           },
           {
             "w": "short",
             "e": "🐢",
             "s": [
               "SHORT"
-            ]
+            ],
+            "img": "img/short.jpg"
           },
           {
             "w": "long",
             "e": "📏",
             "s": [
               "LONG"
-            ]
+            ],
+            "img": "img/long.jpg"
           },
           {
-            "w": "wide",
-            "e": "↔️",
+            "w": "short",
+            "e": "📏",
             "s": [
-              "WIDE"
-            ]
+              "SHORT"
+            ],
+            "img": "img/short_long.jpg"
+          },
+          {
+            "w": "fat",
+            "e": "🐷",
+            "s": [
+              "FAT"
+            ],
+            "img": "img/fat.jpg"
           },
           {
             "w": "thin",
             "e": "💡",
             "s": [
               "THIN"
-            ]
+            ],
+            "img": "img/thin.jpg"
           },
           {
             "w": "heavy",
@@ -1539,14 +1557,32 @@
             "s": [
               "HEAV",
               "Y"
-            ]
+            ],
+            "img": "img/heavy.jpg"
           },
           {
             "w": "light",
             "e": "🪶",
             "s": [
               "LIGHT"
-            ]
+            ],
+            "img": "img/light.jpg"
+          },
+          {
+            "w": "old",
+            "e": "👴",
+            "s": [
+              "OLD"
+            ],
+            "img": "img/old.jpg"
+          },
+          {
+            "w": "young",
+            "e": "👦",
+            "s": [
+              "YOUNG"
+            ],
+            "img": "img/young.jpg"
           }
         ]
       }
