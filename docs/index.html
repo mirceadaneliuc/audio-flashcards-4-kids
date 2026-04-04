@@ -581,9 +581,15 @@ function goMenu(){
   document.getElementById('btn-listen').style.display='none';
   document.getElementById('btn-mic').style.display='none';
   document.getElementById('topbar').style.display='flex';
-  // Go back to subcategory menu if we came from one
+  // Go back to subcategory menu, unless category has only one subcategory (skip sub menu)
   if(currentCat&&currentSub){
-    showSubMenu(currentCat);
+    const cat=WORDS_DATA[currentCat];
+    const subKeys=Object.keys(cat.subcategories);
+    if(subKeys.length===1){
+      buildCatMenu();
+    } else {
+      showSubMenu(currentCat);
+    }
   } else {
     buildCatMenu();
   }
