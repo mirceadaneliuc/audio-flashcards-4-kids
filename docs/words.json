@@ -1590,7 +1590,7 @@
   },
   "feelings": {
     "label": "FEELINGS",
-    "icon": "💙",
+    "icon": "❤️",
     "color": "#339AF0",
     "subcategories": {
       "basic": {
@@ -1603,7 +1603,8 @@
             "s": [
               "HAP",
               "PY"
-            ]
+            ],
+            "img": "img/happy.png"
           },
           {
             "w": "sad",
@@ -1625,11 +1626,12 @@
             "e": "😨",
             "s": [
               "SCARED"
-            ]
+            ],
+            "img": "img/scared.png"
           },
           {
             "w": "surprised",
-            "e": "😲",
+            "e": "😯",
             "s": [
               "SUR",
               "PRISED"
@@ -1637,7 +1639,7 @@
           },
           {
             "w": "tired",
-            "e": "😴",
+            "e": "🥱",
             "s": [
               "TIRED"
             ]
@@ -1651,7 +1653,7 @@
           },
           {
             "w": "bored",
-            "e": "😑",
+            "e": "🙄",
             "s": [
               "BORED"
             ]
@@ -1663,14 +1665,16 @@
               "EX",
               "CI",
               "TED"
-            ]
+            ],
+            "img": "img/excited.png"
           },
           {
             "w": "proud",
-            "e": "😤",
+            "e": "😏",
             "s": [
               "PROUD"
-            ]
+            ],
+            "img": "img/proud.png"
           }
         ]
       }
