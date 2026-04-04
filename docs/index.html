@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#FF6B6B">
-<title>English Flashcards 4 Kids v4.2.0</title>
-<meta name="version" content="4.2.0">
+<title>English Flashcards 4 Kids v4.2.1</title>
+<meta name="version" content="4.2.1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <script src="vosk.js"></script>
@@ -103,7 +103,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 <!-- SPLASH -->
 <div id="splash">
   <div class="sp-emoji">🌍</div>
-  <div class="sp-title"><span>ENGLISH v4.2.0</span>FLASHCARDS 4 KIDS</div>
+  <div class="sp-title"><span>ENGLISH v4.2.1</span>FLASHCARDS 4 KIDS</div>
   <div class="sp-sub">👆 TAP TO START!</div>
 </div>
 
@@ -116,7 +116,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 
 <!-- TOPBAR -->
 <div id="topbar">
-  <div id="logo"><span>ENGLISH v4.2.0</span>FLASHCARDS 4 KIDS</div>
+  <div id="logo"><span>ENGLISH v4.2.1</span>FLASHCARDS 4 KIDS</div>
   <div id="stars-box">⭐ <span id="stars">0</span></div>
 </div>
 
@@ -403,14 +403,15 @@ function buildCatMenu(){
 
   const grid=document.getElementById('cat-grid');
   grid.innerHTML='';
-  Object.entries(WORDS_DATA).forEach(([key,cat])=>{
+  Object.entries(WORDS_DATA).forEach(([catKey,cat])=>{
     const btn=document.createElement('button');
     btn.className='cat-card';
     btn.style.background=cat.color||'#888';
     const subs=Object.values(cat.subcategories);
     const totalWords=subs.reduce((s,sub)=>s+sub.words.length,0);
+    const capturedLabel=cat.label;
     btn.innerHTML=`<div class="cc-icon">${cat.icon||'📚'}</div><div class="cc-title">${cat.label}</div><div style="font-size:12px;opacity:.8">${totalWords} words</div>`;
-    btn.onclick=()=>{speak(cat.label,1.0,1.1,null);setTimeout(()=>showSubMenu(key),600);};
+    btn.onclick=()=>{speak(capturedLabel,1.0,1.1,null);setTimeout(()=>showSubMenu(catKey),600);};
     grid.appendChild(btn);
   });
 }
@@ -424,12 +425,13 @@ function showSubMenu(catKey){
 
   const grid=document.getElementById('sub-grid');
   grid.innerHTML='';
-  Object.entries(cat.subcategories).forEach(([key,sub])=>{
+  Object.entries(cat.subcategories).forEach(([subKey,sub])=>{
     const btn=document.createElement('button');
     btn.className='sub-card';
     btn.style.background=cat.color||'#888';
     btn.innerHTML=`<div class="sc-icon">${sub.icon||'📝'}</div><div class="sc-title">${sub.label}</div><div class="sc-count">${sub.words.length} words</div>`;
-    btn.onclick=()=>{speak(sub.label,1.0,1.1,null);setTimeout(()=>startGame(catKey,key),700);};
+    const capturedLabel=sub.label;
+    btn.onclick=()=>{speak(capturedLabel,1.0,1.1,null);setTimeout(()=>startGame(catKey,subKey),700);};
     grid.appendChild(btn);
   });
 }
