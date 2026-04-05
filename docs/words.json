@@ -1888,21 +1888,24 @@
             "e": "🫀",
             "s": [
               "HEART"
-            ]
+            ],
+            "img": "img/heart.png"
           },
           {
             "w": "brain",
             "e": "🧠",
             "s": [
               "BRAIN"
-            ]
+            ],
+            "img": "img/brain.png"
           },
           {
             "w": "lungs",
             "e": "🫁",
             "s": [
               "LUNGS"
-            ]
+            ],
+            "img": "img/lungs.png"
           },
           {
             "w": "stomach",
@@ -1910,7 +1913,8 @@
             "s": [
               "STO",
               "MACH"
-            ]
+            ],
+            "img": "img/stomach.png"
           },
           {
             "w": "liver",
@@ -1918,15 +1922,17 @@
             "s": [
               "LI",
               "VER"
-            ]
+            ],
+            "img": "img/liver.png"
           },
           {
-            "w": "kidney",
+            "w": "kidneys",
             "e": "🫘",
             "s": [
               "KID",
-              "NEY"
-            ]
+              "NEYS"
+            ],
+            "img": "img/kidney.png"
           }
         ]
       }
@@ -1954,14 +1960,16 @@
             "s": [
               "PIL",
               "LOW"
-            ]
+            ],
+            "img": "img/pillow.png"
           },
           {
             "w": "lamp",
             "e": "🪔",
             "s": [
               "LAMP"
-            ]
+            ],
+            "img": "img/lamp.png"
           },
           {
             "w": "clock",
@@ -1984,6 +1992,15 @@
               "WIN",
               "DOW"
             ]
+          },
+          {
+            "w": "dresser",
+            "e": "🪞",
+            "s": [
+              "DRESS",
+              "ER"
+            ],
+            "img": "img/dresser.png"
           }
         ]
       },

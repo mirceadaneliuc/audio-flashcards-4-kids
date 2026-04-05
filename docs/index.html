@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#FF6B6B">
-<title>English Flashcards 4 Kids v4.3.4</title>
-<meta name="version" content="4.3.4">
+<title>English Flashcards 4 Kids v4.3.6</title>
+<meta name="version" content="4.3.6">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <script src="vosk.js"></script>
@@ -103,7 +103,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 <!-- SPLASH -->
 <div id="splash">
   <div class="sp-emoji">🌍</div>
-  <div class="sp-title"><span>ENGLISH v4.3.4</span>FLASHCARDS 4 KIDS</div>
+  <div class="sp-title"><span>ENGLISH v4.3.6</span>FLASHCARDS 4 KIDS</div>
   <div class="sp-sub">👆 TAP TO START!</div>
 </div>
 
@@ -116,7 +116,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 
 <!-- TOPBAR -->
 <div id="topbar">
-  <div id="logo"><span>ENGLISH v4.3.4</span>FLASHCARDS 4 KIDS</div>
+  <div id="logo"><span>ENGLISH v4.3.6</span>FLASHCARDS 4 KIDS</div>
   <div id="stars-box">⭐ <span id="stars">0</span></div>
 </div>
 
@@ -143,7 +143,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
   <div id="main-card">
     <button class="btn-arrow" id="btn-prev">◀</button>
     <button class="btn-arrow" id="btn-next">▶</button>
-    <div id="main-emoji">🐶</div>
+    <div id="main-emoji"></div>
     <div id="main-word">DOG</div>
     <div id="syl-row"></div>
     <div id="wave"><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div></div>
@@ -232,8 +232,7 @@ async function initVosk(){
     voskReady=true;
     console.log('Vosk ready');
     showVoskStatus('🎤 Voice ready!',2000);
-    // Warm up TTS engine to avoid silent first word
-    speak(' ',1.0,1.0,null);
+
   }catch(e){
     console.warn('Vosk failed, will retry on demand:',e.message);
     // Try CDN fallback
@@ -493,6 +492,11 @@ function startGame(catKey,subKey){
   document.querySelectorAll('.wb').forEach(b=>b.style.background=color);
 
   // Warm up TTS then show first card after a short delay
+  // Clear stale content immediately before delay
+  const _me=document.getElementById('main-emoji');
+  _me.innerHTML='';_me.textContent='';_me.style.opacity='0';
+  document.getElementById('main-word').textContent='';
+  document.getElementById('syl-row').innerHTML='';
   setStatus('GET READY... 🎯');
   if(window._TTS){
     window._TTS.speak({text:' ',rate:1.0,pitch:1.0,lang:'en-US'}).catch(()=>{});
@@ -505,13 +509,20 @@ function startGame(catKey,subKey){
 function showCard(){
   stopListening();if(synth)synth.cancel();hideFeedback();attempts=0;busy=false;
   const item=deck[idx];
-  // Image or emoji
+  // Clear media immediately to avoid stale image flash
   const mediaEl=document.getElementById('main-emoji');
+  mediaEl.innerHTML='';mediaEl.textContent='';mediaEl.style.opacity='0';
   if(item.img){
     const imgSize='360px';
-    mediaEl.innerHTML=`<img src="${item.img}" alt="${item.w}" style="width:${imgSize};height:${imgSize};object-fit:contain;border-radius:12px;" onerror="this.parentNode.textContent='${item.e}'">`;
+    const _img=new Image();
+    _img.style.cssText=`width:${imgSize};height:${imgSize};object-fit:contain;border-radius:12px;`;
+    _img.alt=item.w;
+    _img.onload=()=>{mediaEl.innerHTML='';mediaEl.appendChild(_img);mediaEl.style.opacity='1';};
+    _img.onerror=()=>{mediaEl.innerHTML='';mediaEl.textContent=item.e;mediaEl.style.opacity='1';};
+    _img.src=item.img;
   } else {
     mediaEl.textContent=item.e;
+    mediaEl.style.opacity='1';
   }
   mediaEl.style.transform='scale(1)';
   document.getElementById('main-word').textContent=item.w.toUpperCase();
@@ -529,7 +540,7 @@ function showCard(){
 }
 function _playCard(item){
   setStatus('LISTEN FIRST! 🔊');
-  setTimeout(()=>speak(item.w,0.88,1.1,()=>{enableMic(true);setStatus('NOW SAY THE WORD! 🎤');setTimeout(startListening,150);}),600);
+  setTimeout(()=>speak(item.w,0.88,1.1,()=>{enableMic(true);setStatus('NOW SAY THE WORD! 🎤');setTimeout(startListening,800);}),600);
 }
 
 function navPrev(){if(busy)return;if(synth)synth.cancel();stopListening();idx=(idx-1+deck.length)%deck.length;setTimeout(showCard,200);}
