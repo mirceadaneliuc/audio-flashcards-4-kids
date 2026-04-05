@@ -232,6 +232,8 @@ async function initVosk(){
     voskReady=true;
     console.log('Vosk ready');
     showVoskStatus('🎤 Voice ready!',2000);
+    // Warm up TTS engine to avoid silent first word
+    speak(' ',1.0,1.0,null);
   }catch(e){
     console.warn('Vosk failed, will retry on demand:',e.message);
     // Try CDN fallback
@@ -490,7 +492,14 @@ function startGame(catKey,subKey){
   document.getElementById('main-word').style.color=color;
   document.querySelectorAll('.wb').forEach(b=>b.style.background=color);
 
-  showCard();
+  // Warm up TTS then show first card after a short delay
+  setStatus('GET READY... 🎯');
+  if(window._TTS){
+    window._TTS.speak({text:' ',rate:1.0,pitch:1.0,lang:'en-US'}).catch(()=>{});
+  } else if(synth){
+    const u=new SpeechSynthesisUtterance(' ');u.volume=0.001;synth.speak(u);
+  }
+  setTimeout(showCard, 1500);
 }
 
 function showCard(){
