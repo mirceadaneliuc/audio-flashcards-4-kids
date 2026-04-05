@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#FF6B6B">
-<title>English Flashcards 4 Kids v4.3.7</title>
-<meta name="version" content="4.3.7">
+<title>English Flashcards 4 Kids v4.3.8</title>
+<meta name="version" content="4.3.8">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <script src="vosk.js"></script>
@@ -103,7 +103,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 <!-- SPLASH -->
 <div id="splash">
   <div class="sp-emoji">🌍</div>
-  <div class="sp-title"><span>ENGLISH v4.3.7</span>FLASHCARDS 4 KIDS</div>
+  <div class="sp-title"><span>ENGLISH v4.3.8</span>FLASHCARDS 4 KIDS</div>
   <div class="sp-sub">👆 TAP TO START!</div>
 </div>
 
@@ -116,7 +116,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 
 <!-- TOPBAR -->
 <div id="topbar">
-  <div id="logo"><span>ENGLISH v4.3.7</span>FLASHCARDS 4 KIDS</div>
+  <div id="logo"><span>ENGLISH v4.3.8</span>FLASHCARDS 4 KIDS</div>
   <div id="stars-box">⭐ <span id="stars">0</span></div>
 </div>
 
@@ -500,6 +500,7 @@ function startGame(catKey,subKey){
   _me.innerHTML='';_me.textContent='';_me.style.opacity='0';
   document.getElementById('main-word').textContent='';
   document.getElementById('syl-row').innerHTML='';
+  document.getElementById('main-card').style.visibility='hidden';
   setStatus('GET READY... 🎯');
   if(window._TTS){
     window._TTS.speak({text:' ',rate:1.0,pitch:1.0,lang:'en-US'}).catch(()=>{});
@@ -511,6 +512,7 @@ function startGame(catKey,subKey){
 
 function showCard(){
   stopListening();if(synth)synth.cancel();hideFeedback();attempts=0;busy=false;
+  document.getElementById('main-card').style.visibility='visible';
   const item=deck[idx];
   // Clear media immediately to avoid stale image flash
   const mediaEl=document.getElementById('main-emoji');

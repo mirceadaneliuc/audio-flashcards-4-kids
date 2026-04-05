@@ -1,6 +1,6 @@
 # ENGLISH FLASHCARDS 4 KIDS — MASTER PLAN
-**Version:** v4.0.0  
-**Last updated:** 2025-04-03  
+**Version:** v4.3.8  
+**Last updated:** 2026-04-05  
 **Repo:** https://github.com/mirceadaneliuc/audio-flashcards-4-kids  
 **Live web:** https://mirceadaneliuc.github.io/audio-flashcards-4-kids/  
 **APK ID:** com.elzorab.flashcards
@@ -12,8 +12,8 @@
 ```
 audio-flashcards-4-kids/
 ├── docs/
-│   ├── index.html              ← main app (v4.0.0) — Vosk SR + two-level nav
-│   ├── words.json              ← 335 words, 16 categories, 60 subcategories
+│   ├── index.html              ← main app (v4.3.0) — Vosk SR + two-level nav
+│   ├── words.json              ← 15 categories, sizes updated with images and opposites
 │   ├── test-vosk.html          ← Vosk speech test (WORKING, confirmed on tablet)
 │   ├── vosk.js                 ← vosk-browser library (5.6MB)
 │   ├── vosk-model-small-en-us-0.15.tar.gz  ← 40MB Vosk model (original)
@@ -123,22 +123,22 @@ response.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
 # Environment
 export CAPACITOR_ANDROID_STUDIO_PATH=/snap/android-studio/209/bin/studio.sh
 
-# Full build & deploy
+# Full build & deploy (ALWAYS use this — clean ensures all files are synced)
 cd ~/Github/audio-flashcards-4-kids
 npx cap sync android
-cd android && ./gradlew assembleDebug
+cd android
+./gradlew clean assembleDebug
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 adb shell am start -n com.elzorab.flashcards/.MainActivity
 
-# Quick deploy (no JS changes)
-cd ~/Github/audio-flashcards-4-kids/android
-./gradlew assembleDebug
-adb install -r app/build/outputs/apk/debug/app-debug.apk
-
 # Git commit
 cd ~/Github/audio-flashcards-4-kids
-git add -A && git commit -m "v4.0.0 - Vosk SR + two-level navigation" && git push
+git add docs/index.html docs/words.json docs/MASTER_PLAN.md
+git commit -m "vX.X.X - description"
+git push
 ```
+
+> ⚠️ Never use `./gradlew assembleDebug` without `clean` — Capacitor caches old files and the tablet will run a stale version.
 
 ---
 
@@ -175,6 +175,17 @@ git add -A && git commit -m "v4.0.0 - Vosk SR + two-level navigation" && git pus
 
 | Version | Changes |
 |---------|---------|
+| v4.3.8 | Hide blank card during GET READY — no empty flash on category start |
+| v4.3.7 | kitchen images (fridge, pot, plate, cup, fork, stove), new words bowl+pan, bedroom closet added |
+| v4.3.6 | home/bedroom images (pillow, lamp, dresser added) |
+| v4.3.5 | all organs images (heart, brain, lungs, stomach, liver, kidneys) |
+| v4.3.4 | body images, organs subcategory, hip→hips, stale image fixes, TTS timing |
+| v4.3.3 | insects icon 🐞, turtle in sea, body/face images, TTS warm-up fixes |
+| v4.3.2 | feelings updates (emojis, images), global 2x image size, back button fix |
+| v4.3.1 | long/short images, sizes skip subcategory screen, sizes 2x |
+| v4.3.0 | pink fix, long word timeout, opposite pairs, shape/size images, fat/old/young |
+| v4.2.2 | AudioContext race condition fix, stale grammar on card transition |
+| v4.2.1 | Hotfix: closure bug causing wrong subcategory words |
 | v4.0.0 | Vosk-browser SR + two-level navigation + words.json 335 words |
 | v3.7.0 | Native Android SR (failed on short words) |
 | v1.5.0 | Web-only, fuzzy matching, 8 categories |
