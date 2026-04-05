@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#FF6B6B">
-<title>English Flashcards 4 Kids v4.3.8</title>
-<meta name="version" content="4.3.8">
+<title>English Flashcards 4 Kids v4.3.9</title>
+<meta name="version" content="4.3.9">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <script src="vosk.js"></script>
@@ -103,7 +103,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 <!-- SPLASH -->
 <div id="splash">
   <div class="sp-emoji">🌍</div>
-  <div class="sp-title"><span>ENGLISH v4.3.8</span>FLASHCARDS 4 KIDS</div>
+  <div class="sp-title"><span>ENGLISH v4.3.9</span>FLASHCARDS 4 KIDS</div>
   <div class="sp-sub">👆 TAP TO START!</div>
 </div>
 
@@ -116,7 +116,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 
 <!-- TOPBAR -->
 <div id="topbar">
-  <div id="logo"><span>ENGLISH v4.3.8</span>FLASHCARDS 4 KIDS</div>
+  <div id="logo"><span>ENGLISH v4.3.9</span>FLASHCARDS 4 KIDS</div>
   <div id="stars-box">⭐ <span id="stars">0</span></div>
 </div>
 
@@ -444,7 +444,7 @@ function showSubMenu(catKey){
     btn.style.background=cat.color||'#888';
     btn.innerHTML=`<div class="sc-icon">${sub.icon||'📝'}</div><div class="sc-title">${sub.label}</div><div class="sc-count">${sub.words.length} words</div>`;
     const capturedLabel=sub.label;
-    btn.onclick=()=>{speak(capturedLabel,1.0,1.1,null);setTimeout(()=>startGame(catKey,subKey),700);};
+    btn.onclick=()=>startGame(catKey,subKey);
     grid.appendChild(btn);
   });
 }
@@ -502,12 +502,7 @@ function startGame(catKey,subKey){
   document.getElementById('syl-row').innerHTML='';
   document.getElementById('main-card').style.visibility='hidden';
   setStatus('GET READY... 🎯');
-  if(window._TTS){
-    window._TTS.speak({text:' ',rate:1.0,pitch:1.0,lang:'en-US'}).catch(()=>{});
-  } else if(synth){
-    const u=new SpeechSynthesisUtterance(' ');u.volume=0.001;synth.speak(u);
-  }
-  setTimeout(showCard, 1500);
+  speak(sub.label, 1.0, 1.1, ()=>{ setTimeout(showCard, 300); });
 }
 
 function showCard(){

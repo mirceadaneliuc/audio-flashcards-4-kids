@@ -2001,15 +2001,6 @@
               "ER"
             ],
             "img": "img/dresser.png"
-          },
-          {
-            "w": "closet",
-            "e": "🚪",
-            "s": [
-              "CLOS",
-              "ET"
-            ],
-            "img": "img/closet.png"
           }
         ]
       },
@@ -2022,40 +2013,35 @@
             "e": "🧊",
             "s": [
               "FRIDGE"
-            ],
-            "img": "img/fridge.png"
+            ]
           },
           {
             "w": "stove",
             "e": "🍳",
             "s": [
               "STOVE"
-            ],
-            "img": "img/stove.png"
+            ]
           },
           {
             "w": "cup",
             "e": "☕",
             "s": [
               "CUP"
-            ],
-            "img": "img/cup.png"
+            ]
           },
           {
             "w": "plate",
             "e": "🍽️",
             "s": [
               "PLATE"
-            ],
-            "img": "img/plate.png"
+            ]
           },
           {
             "w": "fork",
             "e": "🍴",
             "s": [
               "FORK"
-            ],
-            "img": "img/fork.png"
+            ]
           },
           {
             "w": "spoon",
@@ -2076,24 +2062,7 @@
             "e": "🫕",
             "s": [
               "POT"
-            ],
-            "img": "img/pot.png"
-          },
-          {
-            "w": "bowl",
-            "e": "🥣",
-            "s": [
-              "BOWL"
-            ],
-            "img": "img/bowl.png"
-          },
-          {
-            "w": "pan",
-            "e": "🍳",
-            "s": [
-              "PAN"
-            ],
-            "img": "img/pan.png"
+            ]
           }
         ]
       },
@@ -2111,31 +2080,26 @@
           },
           {
             "w": "table",
-            "e": "🪑",
+            "e": "🪵",
             "s": [
               "TA",
               "BLE"
-            ]
+            ],
+            "img": "img/table.png"
           },
           {
             "w": "tv",
             "e": "📺",
             "s": [
               "TV"
-            ]
+            ],
+            "img": "img/tv.png"
           },
           {
-            "w": "book",
+            "w": "books",
             "e": "📚",
             "s": [
-              "BOOK"
-            ]
-          },
-          {
-            "w": "phone",
-            "e": "📱",
-            "s": [
-              "PHONE"
+              "BOOKS"
             ]
           },
           {
@@ -2144,6 +2108,24 @@
             "s": [
               "LIGHT"
             ]
+          },
+          {
+            "w": "armchair",
+            "e": "🪑",
+            "s": [
+              "ARM",
+              "CHAIR"
+            ],
+            "img": "img/armchair.png"
+          },
+          {
+            "w": "painting",
+            "e": "🖼️",
+            "s": [
+              "PAINT",
+              "ING"
+            ],
+            "img": "img/painting.png"
           }
         ]
       },
@@ -2152,10 +2134,11 @@
         "icon": "🛁",
         "words": [
           {
-            "w": "bath",
+            "w": "bathtub",
             "e": "🛁",
             "s": [
-              "BATH"
+              "BATH",
+              "TUB"
             ]
           },
           {
@@ -2171,7 +2154,8 @@
             "s": [
               "TOW",
               "EL"
-            ]
+            ],
+            "img": "img/towel.png"
           },
           {
             "w": "toothbrush",
