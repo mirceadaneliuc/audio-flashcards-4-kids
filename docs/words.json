@@ -455,12 +455,21 @@
               "LOB",
               "STER"
             ]
+          },
+          {
+            "w": "turtle",
+            "e": "🐢",
+            "s": [
+              "TUR",
+              "TLE"
+            ],
+            "img": "img/turtle.png"
           }
         ]
       },
       "insects": {
         "label": "INSECTS",
-        "icon": "🐛",
+        "icon": "🐞",
         "words": [
           {
             "w": "bee",
@@ -1729,21 +1738,24 @@
             "e": "🦷",
             "s": [
               "TEETH"
-            ]
+            ],
+            "img": "img/teeth.png"
           },
           {
             "w": "cheek",
             "e": "😊",
             "s": [
               "CHEEK"
-            ]
+            ],
+            "img": "img/cheek.png"
           },
           {
             "w": "chin",
-            "e": "🫦",
+            "e": "🤔",
             "s": [
               "CHIN"
-            ]
+            ],
+            "img": "img/chin.png"
           },
           {
             "w": "tongue",
