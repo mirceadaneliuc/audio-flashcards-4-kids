@@ -1775,14 +1775,16 @@
             "e": "🗣️",
             "s": [
               "HEAD"
-            ]
+            ],
+            "img": "img/head.png"
           },
           {
             "w": "neck",
             "e": "🦒",
             "s": [
               "NECK"
-            ]
+            ],
+            "img": "img/neck.png"
           },
           {
             "w": "shoulder",
@@ -1790,7 +1792,8 @@
             "s": [
               "SHOUL",
               "DER"
-            ]
+            ],
+            "img": "img/shoulder.png"
           },
           {
             "w": "arm",
@@ -1816,17 +1819,19 @@
           },
           {
             "w": "chest",
-            "e": "🫀",
+            "e": "👕",
             "s": [
               "CHEST"
-            ]
+            ],
+            "img": "img/chest.png"
           },
           {
             "w": "back",
             "e": "🔙",
             "s": [
               "BACK"
-            ]
+            ],
+            "img": "img/back.png"
           }
         ]
       },
@@ -1835,11 +1840,12 @@
         "icon": "🦵",
         "words": [
           {
-            "w": "hip",
+            "w": "hips",
             "e": "🕺",
             "s": [
-              "HIP"
-            ]
+              "HIPS"
+            ],
+            "img": "img/hips.png"
           },
           {
             "w": "leg",
@@ -1853,7 +1859,8 @@
             "e": "🦵",
             "s": [
               "KNEE"
-            ]
+            ],
+            "img": "img/knee.png"
           },
           {
             "w": "foot",
@@ -1867,6 +1874,58 @@
             "e": "🦶",
             "s": [
               "TOE"
+            ],
+            "img": "img/toe.png"
+          }
+        ]
+      },
+      "organs": {
+        "label": "ORGANS",
+        "icon": "🫀",
+        "words": [
+          {
+            "w": "heart",
+            "e": "🫀",
+            "s": [
+              "HEART"
+            ]
+          },
+          {
+            "w": "brain",
+            "e": "🧠",
+            "s": [
+              "BRAIN"
+            ]
+          },
+          {
+            "w": "lungs",
+            "e": "🫁",
+            "s": [
+              "LUNGS"
+            ]
+          },
+          {
+            "w": "stomach",
+            "e": "🫃",
+            "s": [
+              "STO",
+              "MACH"
+            ]
+          },
+          {
+            "w": "liver",
+            "e": "🟤",
+            "s": [
+              "LI",
+              "VER"
+            ]
+          },
+          {
+            "w": "kidney",
+            "e": "🫘",
+            "s": [
+              "KID",
+              "NEY"
             ]
           }
         ]
