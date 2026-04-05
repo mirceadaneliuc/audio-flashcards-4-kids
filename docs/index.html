@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#FF6B6B">
-<title>English Flashcards 4 Kids v4.3.6</title>
-<meta name="version" content="4.3.6">
+<title>English Flashcards 4 Kids v4.3.7</title>
+<meta name="version" content="4.3.7">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <script src="vosk.js"></script>
@@ -103,7 +103,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 <!-- SPLASH -->
 <div id="splash">
   <div class="sp-emoji">🌍</div>
-  <div class="sp-title"><span>ENGLISH v4.3.6</span>FLASHCARDS 4 KIDS</div>
+  <div class="sp-title"><span>ENGLISH v4.3.7</span>FLASHCARDS 4 KIDS</div>
   <div class="sp-sub">👆 TAP TO START!</div>
 </div>
 
@@ -116,7 +116,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 
 <!-- TOPBAR -->
 <div id="topbar">
-  <div id="logo"><span>ENGLISH v4.3.6</span>FLASHCARDS 4 KIDS</div>
+  <div id="logo"><span>ENGLISH v4.3.7</span>FLASHCARDS 4 KIDS</div>
   <div id="stars-box">⭐ <span id="stars">0</span></div>
 </div>
 
@@ -177,9 +177,12 @@ function speak(text,rate,pitch,onDone){
   const cleanup=()=>{wave.classList.remove('on');bl.classList.remove('speaking');};
   if(window._TTS){
     wave.classList.add('on');bl.classList.add('speaking');
-    const estMs=Math.max(900,text.length*90);
-    window._TTS.speak({text,lang:'en-US',rate:rate||0.88,pitch:pitch||1.1,volume:1.0}).catch(()=>{});
-    setTimeout(()=>{cleanup();if(onDone)onDone();},estMs);
+    const estMs=Math.max(1200,text.length*120);
+    window._TTS.stop().catch(()=>{});
+    setTimeout(()=>{
+      window._TTS.speak({text,lang:'en-US',rate:rate||0.88,pitch:pitch||1.1,volume:1.0}).catch(()=>{});
+      setTimeout(()=>{cleanup();if(onDone)onDone();},estMs);
+    },100);
     return;
   }
   if(!synth){if(onDone)setTimeout(onDone,300);return;}

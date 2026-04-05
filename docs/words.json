@@ -2001,6 +2001,15 @@
               "ER"
             ],
             "img": "img/dresser.png"
+          },
+          {
+            "w": "closet",
+            "e": "🚪",
+            "s": [
+              "CLOS",
+              "ET"
+            ],
+            "img": "img/closet.png"
           }
         ]
       },
@@ -2013,35 +2022,40 @@
             "e": "🧊",
             "s": [
               "FRIDGE"
-            ]
+            ],
+            "img": "img/fridge.png"
           },
           {
             "w": "stove",
             "e": "🍳",
             "s": [
               "STOVE"
-            ]
+            ],
+            "img": "img/stove.png"
           },
           {
             "w": "cup",
             "e": "☕",
             "s": [
               "CUP"
-            ]
+            ],
+            "img": "img/cup.png"
           },
           {
             "w": "plate",
             "e": "🍽️",
             "s": [
               "PLATE"
-            ]
+            ],
+            "img": "img/plate.png"
           },
           {
             "w": "fork",
             "e": "🍴",
             "s": [
               "FORK"
-            ]
+            ],
+            "img": "img/fork.png"
           },
           {
             "w": "spoon",
@@ -2062,7 +2076,24 @@
             "e": "🫕",
             "s": [
               "POT"
-            ]
+            ],
+            "img": "img/pot.png"
+          },
+          {
+            "w": "bowl",
+            "e": "🥣",
+            "s": [
+              "BOWL"
+            ],
+            "img": "img/bowl.png"
+          },
+          {
+            "w": "pan",
+            "e": "🍳",
+            "s": [
+              "PAN"
+            ],
+            "img": "img/pan.png"
           }
         ]
       },
