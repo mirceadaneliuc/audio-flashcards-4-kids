@@ -2001,6 +2001,15 @@
               "ER"
             ],
             "img": "img/dresser.png"
+          },
+          {
+            "w": "closet",
+            "e": "🚪",
+            "s": [
+              "CLOS",
+              "ET"
+            ],
+            "img": "img/closet.png"
           }
         ]
       },
@@ -2013,35 +2022,40 @@
             "e": "🧊",
             "s": [
               "FRIDGE"
-            ]
+            ],
+            "img": "img/fridge.png"
           },
           {
             "w": "stove",
             "e": "🍳",
             "s": [
               "STOVE"
-            ]
+            ],
+            "img": "img/stove.png"
           },
           {
             "w": "cup",
             "e": "☕",
             "s": [
               "CUP"
-            ]
+            ],
+            "img": "img/cup.png"
           },
           {
             "w": "plate",
             "e": "🍽️",
             "s": [
               "PLATE"
-            ]
+            ],
+            "img": "img/plate.png"
           },
           {
             "w": "fork",
             "e": "🍴",
             "s": [
               "FORK"
-            ]
+            ],
+            "img": "img/fork.png"
           },
           {
             "w": "spoon",
@@ -2062,7 +2076,24 @@
             "e": "🫕",
             "s": [
               "POT"
-            ]
+            ],
+            "img": "img/pot.png"
+          },
+          {
+            "w": "bowl",
+            "e": "🥣",
+            "s": [
+              "BOWL"
+            ],
+            "img": "img/bowl.png"
+          },
+          {
+            "w": "pan",
+            "e": "🍳",
+            "s": [
+              "PAN"
+            ],
+            "img": "img/pan.png"
           }
         ]
       },
@@ -2126,6 +2157,14 @@
               "ING"
             ],
             "img": "img/painting.png"
+          },
+          {
+            "w": "couch",
+            "e": "🛋️",
+            "s": [
+              "COUCH"
+            ],
+            "img": "img/couch.png"
           }
         ]
       },
@@ -2205,7 +2244,8 @@
             "e": "❄️",
             "s": [
               "SNOW"
-            ]
+            ],
+            "img": "img/snow.png"
           },
           {
             "w": "wind",
@@ -2226,7 +2266,8 @@
             "e": "⛈️",
             "s": [
               "STORM"
-            ]
+            ],
+            "img": "img/storm.png"
           },
           {
             "w": "rainbow",
@@ -2237,11 +2278,21 @@
             ]
           },
           {
+            "w": "cloudy",
+            "e": "☁️",
+            "s": [
+              "CLOUD",
+              "Y"
+            ],
+            "img": "img/cloudy.png"
+          },
+          {
             "w": "fog",
             "e": "🌫️",
             "s": [
               "FOG"
-            ]
+            ],
+            "img": "img/fog.png"
           }
         ]
       },
@@ -2269,7 +2320,8 @@
             "e": "🌿",
             "s": [
               "GRASS"
-            ]
+            ],
+            "img": "img/grass.png"
           },
           {
             "w": "leaf",
@@ -2283,7 +2335,8 @@
             "e": "🌿",
             "s": [
               "BUSH"
-            ]
+            ],
+            "img": "img/bush.png"
           },
           {
             "w": "rose",
@@ -2310,9 +2363,85 @@
           }
         ]
       },
+      "landforms": {
+        "label": "LANDFORMS",
+        "icon": "🏔️",
+        "words": [
+          {
+            "w": "mountain",
+            "e": "🏔️",
+            "s": [
+              "MOUN",
+              "TAIN"
+            ]
+          },
+          {
+            "w": "river",
+            "e": "🏞️",
+            "s": [
+              "RIV",
+              "ER"
+            ]
+          },
+          {
+            "w": "beach",
+            "e": "🏖️",
+            "s": [
+              "BEACH"
+            ]
+          },
+          {
+            "w": "forest",
+            "e": "🌲",
+            "s": [
+              "FOR",
+              "EST"
+            ]
+          },
+          {
+            "w": "lake",
+            "e": "🏞️",
+            "s": [
+              "LAKE"
+            ]
+          },
+          {
+            "w": "island",
+            "e": "🏝️",
+            "s": [
+              "IS",
+              "LAND"
+            ]
+          },
+          {
+            "w": "desert",
+            "e": "🏜️",
+            "s": [
+              "DES",
+              "ERT"
+            ]
+          },
+          {
+            "w": "volcano",
+            "e": "🌋",
+            "s": [
+              "VOL",
+              "CA",
+              "NO"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "space": {
+    "label": "SPACE",
+    "icon": "🚀",
+    "color": "#3D3D8F",
+    "subcategories": {
       "space": {
         "label": "SPACE",
-        "icon": "🌙",
+        "icon": "🌌",
         "words": [
           {
             "w": "moon",
@@ -2357,7 +2486,8 @@
               "AS",
               "TER",
               "OID"
-            ]
+            ],
+            "img": "img/asteroid.png"
           },
           {
             "w": "galaxy",
@@ -2366,7 +2496,8 @@
               "GAL",
               "AX",
               "Y"
-            ]
+            ],
+            "img": "img/galaxy.png"
           },
           {
             "w": "telescope",
@@ -2376,6 +2507,25 @@
               "E",
               "SCOPE"
             ]
+          },
+          {
+            "w": "astronaut",
+            "e": "👨‍🚀",
+            "s": [
+              "AS",
+              "TRO",
+              "NAUT"
+            ],
+            "img": "img/astronaut.png"
+          },
+          {
+            "w": "comet",
+            "e": "☄️",
+            "s": [
+              "COM",
+              "ET"
+            ],
+            "img": "img/comet.png"
           }
         ]
       },
@@ -2446,75 +2596,6 @@
             "s": [
               "NEP",
               "TUNE"
-            ]
-          }
-        ]
-      },
-      "landforms": {
-        "label": "LANDFORMS",
-        "icon": "🏔️",
-        "words": [
-          {
-            "w": "mountain",
-            "e": "🏔️",
-            "s": [
-              "MOUN",
-              "TAIN"
-            ]
-          },
-          {
-            "w": "river",
-            "e": "🏞️",
-            "s": [
-              "RIV",
-              "ER"
-            ]
-          },
-          {
-            "w": "beach",
-            "e": "🏖️",
-            "s": [
-              "BEACH"
-            ]
-          },
-          {
-            "w": "forest",
-            "e": "🌲",
-            "s": [
-              "FOR",
-              "EST"
-            ]
-          },
-          {
-            "w": "lake",
-            "e": "🏞️",
-            "s": [
-              "LAKE"
-            ]
-          },
-          {
-            "w": "island",
-            "e": "🏝️",
-            "s": [
-              "IS",
-              "LAND"
-            ]
-          },
-          {
-            "w": "desert",
-            "e": "🏜️",
-            "s": [
-              "DES",
-              "ERT"
-            ]
-          },
-          {
-            "w": "volcano",
-            "e": "🌋",
-            "s": [
-              "VOL",
-              "CA",
-              "NO"
             ]
           }
         ]
@@ -2675,7 +2756,8 @@
             "e": "🌨️",
             "s": [
               "SNOW"
-            ]
+            ],
+            "img": "img/snow.png"
           },
           {
             "w": "snowflake",

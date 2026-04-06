@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#FF6B6B">
-<title>English Flashcards 4 Kids v4.3.9</title>
-<meta name="version" content="4.3.9">
+<title>English Flashcards 4 Kids v4.4.0</title>
+<meta name="version" content="4.4.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <script src="vosk.js"></script>
@@ -96,6 +96,21 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 /* VOSK STATUS */
 #vosk-status{position:fixed;bottom:8px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.6);color:#fff;font-family:'Fredoka One',cursive;font-size:13px;border-radius:20px;padding:4px 14px;z-index:50;pointer-events:none;opacity:0;transition:opacity .3s;}
 #vosk-status.show{opacity:1;}
+
+/* SOLAR SYSTEM MODE */
+#solar-screen{width:100%;max-width:100%;display:none;flex-direction:column;align-items:center;min-height:100dvh;background:#1a1a2e;position:relative;}
+#solar-top-row{width:100%;display:flex;align-items:center;gap:10px;padding:8px 12px;position:relative;z-index:10;}
+#solar-map-wrap{position:relative;width:100%;max-width:900px;margin:0 auto;}
+#solar-map-img{width:100%;height:auto;display:block;border-radius:12px;}
+.solar-hotspot{position:absolute;border-radius:50%;cursor:pointer;background:rgba(255,255,255,0);border:3px solid transparent;transition:border-color .2s, background .2s;transform:translate(-50%,-50%);}
+.solar-hotspot:active, .solar-hotspot.active{background:rgba(255,255,255,0.25);border-color:rgba(255,255,255,0.8);}
+#solar-feedback{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;pointer-events:none;opacity:0;transition:opacity .25s;z-index:50;}
+#solar-feedback.show{opacity:1;}
+#solar-fb-bubble{background:rgba(0,0,0,0.75);border-radius:28px;padding:16px 32px;display:flex;flex-direction:column;align-items:center;gap:8px;}
+#solar-fb-emoji{font-size:60px;}
+#solar-fb-word{font-family:'Fredoka One',cursive;font-size:36px;color:#fff;text-transform:uppercase;}
+#solar-fb-text{font-family:'Fredoka One',cursive;font-size:22px;color:#fff;}
+#solar-status{font-family:'Fredoka One',cursive;font-size:16px;color:rgba(255,255,255,0.7);text-align:center;padding:6px 0;text-transform:uppercase;}
 </style>
 </head>
 <body>
@@ -103,7 +118,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 <!-- SPLASH -->
 <div id="splash">
   <div class="sp-emoji">🌍</div>
-  <div class="sp-title"><span>ENGLISH v4.3.9</span>FLASHCARDS 4 KIDS</div>
+  <div class="sp-title"><span>ENGLISH v4.4.0</span>FLASHCARDS 4 KIDS</div>
   <div class="sp-sub">👆 TAP TO START!</div>
 </div>
 
@@ -116,7 +131,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 
 <!-- TOPBAR -->
 <div id="topbar">
-  <div id="logo"><span>ENGLISH v4.3.9</span>FLASHCARDS 4 KIDS</div>
+  <div id="logo"><span>ENGLISH v4.4.0</span>FLASHCARDS 4 KIDS</div>
   <div id="stars-box">⭐ <span id="stars">0</span></div>
 </div>
 
@@ -151,6 +166,26 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
     <div id="feedback"><div id="fb-emoji"></div><div id="fb-text"></div></div>
   </div>
   <div id="status-text">LISTEN FIRST! 🔊</div>
+</div>
+
+<!-- SOLAR SYSTEM SCREEN -->
+<div id="solar-screen">
+  <div id="solar-top-row">
+    <button id="btn-back-solar" style="background:none;border:none;font-size:28px;cursor:pointer;padding:2px 4px;color:#fff;">⬅️</button>
+    <div style="flex:1;font-family:'Fredoka One',cursive;font-size:18px;color:#fff;text-align:center;">SOLAR SYSTEM 🪐</div>
+    <div style="display:flex;align-items:center;gap:5px;background:rgba(255,255,255,0.15);border-radius:50px;padding:5px 12px;font-weight:900;font-size:17px;color:#fff;">⭐ <span id="stars-solar">0</span></div>
+  </div>
+  <div id="solar-status">TAP A PLANET!</div>
+  <div id="solar-map-wrap">
+    <img id="solar-map-img" src="img/solar_system.png" alt="Solar System">
+  </div>
+  <div id="solar-feedback">
+    <div id="solar-fb-bubble">
+      <div id="solar-fb-emoji"></div>
+      <div id="solar-fb-word"></div>
+      <div id="solar-fb-text"></div>
+    </div>
+  </div>
 </div>
 
 <button id="btn-listen" style="display:none">🔊</button>
@@ -459,6 +494,7 @@ function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=0|Math.
 
 function startGame(catKey,subKey){
   currentCat=catKey;currentSub=subKey;
+  if(subKey==='solar'){startSolarGame();return;}
   const cat=WORDS_DATA[catKey];
   const sub=cat.subcategories[subKey];
   deck=shuffle(sub.words);idx=0;attempts=0;busy=false;
@@ -502,7 +538,7 @@ function startGame(catKey,subKey){
   document.getElementById('syl-row').innerHTML='';
   document.getElementById('main-card').style.visibility='hidden';
   setStatus('GET READY... 🎯');
-  speak(sub.label, 1.0, 1.1, ()=>{ setTimeout(showCard, 300); });
+  speak(sub.label, 1.0, 1.1, ()=>{ setTimeout(showCard, 600); });
 }
 
 function showCard(){
@@ -556,6 +592,18 @@ function enableMic(on){document.getElementById('btn-mic').disabled=!on;}
 
 function onCorrect(){
   if(busy)return;busy=true;
+  if(document.getElementById('solar-screen').style.display==='flex'){
+    streak++;stars+=10;
+    document.getElementById('stars').textContent=stars;
+    document.getElementById('stars-solar').textContent=stars;
+    setMicState('success');
+    showSolarFeedback('✅',solarItem?solarItem.w.toUpperCase():'','AMAZING! +10 ⭐','#51CF66');
+    confetti();showStreak();
+    solarBusy=false;solarItem=null;attempts=0;busy=false;
+    document.querySelectorAll('.solar-hotspot').forEach(h=>h.classList.remove('active'));
+    setTimeout(()=>{ setSolarStatus('TAP A PLANET! 🪐'); },1800);
+    return;
+  }
   streak++;stars+=10;
   document.getElementById('stars').textContent=stars;
   document.getElementById('stars-game').textContent=stars;
@@ -571,7 +619,9 @@ function onCorrect(){
 function onWrong(n){
   streak=0;document.getElementById('streak').classList.remove('on');
   busy=false;
-  const item=deck[idx];
+  const isSolar=document.getElementById('solar-screen').style.display==='flex';
+  const item=isSolar?solarItem:deck[idx];
+  if(isSolar){ solarAttempts=n; }
   enableMic(false);
   console.log('onWrong attempt:',n,'word:',item.w);
   if(n===1){
@@ -645,6 +695,105 @@ function confetti(){
     document.body.appendChild(el);setTimeout(()=>el.remove(),2300);
   },i*42);
 }
+
+
+// ── SOLAR SYSTEM MODE ──
+const SOLAR_HOTSPOTS = [
+  {w:'sun',      e:'☀️', s:['SUN'],              cx:11.5, cy:29.5, r:7.5},
+  {w:'mercury',  e:'🪨', s:['MER','CU','RY'],    cx:18.7, cy:22.0, r:3.5},
+  {w:'venus',    e:'🟠', s:['VE','NUS'],          cx:24.3, cy:30.5, r:4.0},
+  {w:'moon',     e:'🌙', s:['MOON'],              cx:28.4, cy:20.0, r:3.5},
+  {w:'earth',    e:'🌍', s:['EARTH'],             cx:34.0, cy:32.5, r:5.0},
+  {w:'jupiter',  e:'🪐', s:['JU','PI','TER'],     cx:42.0, cy:37.5, r:5.5},
+  {w:'mars',     e:'🔴', s:['MARS'],              cx:49.0, cy:41.5, r:4.0},
+  {w:'saturn',   e:'🪐', s:['SAT','URN'],         cx:51.5, cy:49.0, r:6.0},
+  {w:'uranus',   e:'🔵', s:['U','RA','NUS'],      cx:57.5, cy:50.0, r:4.5},
+  {w:'neptune',  e:'💙', s:['NEP','TUNE'],        cx:64.0, cy:55.0, r:5.0},
+  {w:'pluto',    e:'⚪', s:['PLU','TO'],          cx:67.0, cy:64.0, r:2.5},
+];
+
+let solarItem=null, solarAttempts=0, solarBusy=false;
+
+function startSolarGame(){
+  stopListening();if(synth)synth.cancel();
+  solarItem=null;solarAttempts=0;solarBusy=false;
+
+  document.getElementById('topbar').style.display='none';
+  document.getElementById('cat-screen').style.display='none';
+  document.getElementById('sub-screen').style.display='none';
+  document.getElementById('game-screen').style.display='none';
+  document.getElementById('btn-listen').style.display='none';
+  document.getElementById('btn-mic').style.display='none';
+  document.getElementById('solar-screen').style.display='flex';
+  document.getElementById('stars-solar').textContent=stars;
+
+  // Build hotspots after image loads
+  const img=document.getElementById('solar-map-img');
+  const buildHotspots=()=>{
+    const wrap=document.getElementById('solar-map-wrap');
+    wrap.querySelectorAll('.solar-hotspot').forEach(h=>h.remove());
+    const iw=img.offsetWidth, ih=img.offsetHeight;
+    SOLAR_HOTSPOTS.forEach(planet=>{
+      const btn=document.createElement('button');
+      btn.className='solar-hotspot';
+      const sz=Math.max(iw,ih)*(planet.r/100);
+      btn.style.cssText=`left:${planet.cx}%;top:${planet.cy}%;width:${sz}px;height:${sz}px;`;
+      btn.setAttribute('data-word', planet.w);
+      btn.addEventListener('click',()=>solarTap(planet));
+      wrap.appendChild(btn);
+    });
+  };
+  if(img.complete&&img.naturalWidth>0) buildHotspots();
+  else img.onload=buildHotspots;
+
+  speak('SOLAR SYSTEM', 1.0, 1.1, ()=>{ setSolarStatus('TAP A PLANET! 🪐'); });
+}
+
+function solarTap(planet){
+  if(solarBusy)return;
+  if(solarItem&&solarItem.w===planet.w&&solarAttempts>0)return; // already active, ignore re-tap
+  stopListening();if(synth)synth.cancel();
+  solarItem=planet;solarAttempts=0;solarBusy=false;
+  // Highlight tapped hotspot
+  document.querySelectorAll('.solar-hotspot').forEach(h=>h.classList.remove('active'));
+  document.querySelector(`.solar-hotspot[data-word="${planet.w}"]`)?.classList.add('active');
+  // Build single-word deck for evaluate/onWrong to work
+  deck=[{w:planet.w,e:planet.e,s:planet.s}];idx=0;attempts=0;busy=false;
+  setSolarStatus('LISTEN FIRST! 🔊');
+  speak(planet.w, 0.88, 1.1, ()=>{
+    setSolarStatus('NOW SAY IT! 🎤');
+    setTimeout(startListening, 800);
+  });
+}
+
+function setSolarStatus(t){
+  const el=document.getElementById('solar-status');
+  if(el)el.textContent=t;
+}
+
+function showSolarFeedback(emoji,word,text,color){
+  document.getElementById('solar-fb-emoji').textContent=emoji;
+  document.getElementById('solar-fb-word').textContent=word;
+  document.getElementById('solar-fb-text').textContent=text;
+  const fb=document.getElementById('solar-feedback');
+  document.getElementById('solar-fb-bubble').style.borderLeft=`6px solid ${color}`;
+  fb.classList.add('show');
+  setTimeout(()=>fb.classList.remove('show'),1600);
+}
+
+function hideSolarFeedback(){
+  document.getElementById('solar-feedback').classList.remove('show');
+}
+
+function goMenuFromSolar(){
+  stopListening();if(synth)synth.cancel();
+  solarBusy=false;solarItem=null;
+  document.getElementById('solar-screen').style.display='none';
+  document.getElementById('topbar').style.display='flex';
+  showSubMenu(currentCat);
+}
+
+document.getElementById('btn-back-solar').addEventListener('click', goMenuFromSolar);
 
 // ── EVENTS ──
 let _micLastTap=0;

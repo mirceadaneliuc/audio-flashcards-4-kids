@@ -1,5 +1,5 @@
 # ENGLISH FLASHCARDS 4 KIDS — MASTER PLAN
-**Version:** v4.3.8  
+**Version:** v4.4.0  
 **Last updated:** 2026-04-05  
 **Repo:** https://github.com/mirceadaneliuc/audio-flashcards-4-kids  
 **Live web:** https://mirceadaneliuc.github.io/audio-flashcards-4-kids/  
@@ -175,15 +175,18 @@ git push
 
 | Version | Changes |
 |---------|---------|
+| v4.4.0 | Interactive solar system map — tap planets, TTS speaks name, Vosk listens, same 3-miss hint system, free exploration mode |
+| v4.3.10 | Nature/weather images: snow, storm; fog renamed to cloudy + image; fog added as separate word |
+| v4.3.9 | Speak category name during GET READY, hide blank card, first word plays correctly; living room (table img, book→books, tv img, remove phone, add armchair+painting+couch); bathroom (bath→bathtub, towel img) |
 | v4.3.8 | Hide blank card during GET READY — no empty flash on category start |
-| v4.3.7 | kitchen images (fridge, pot, plate, cup, fork, stove), new words bowl+pan, bedroom closet added |
-| v4.3.6 | home/bedroom images (pillow, lamp, dresser added) |
-| v4.3.5 | all organs images (heart, brain, lungs, stomach, liver, kidneys) |
-| v4.3.4 | body images, organs subcategory, hip→hips, stale image fixes, TTS timing |
-| v4.3.3 | insects icon 🐞, turtle in sea, body/face images, TTS warm-up fixes |
-| v4.3.2 | feelings updates (emojis, images), global 2x image size, back button fix |
-| v4.3.1 | long/short images, sizes skip subcategory screen, sizes 2x |
-| v4.3.0 | pink fix, long word timeout, opposite pairs, shape/size images, fat/old/young |
+| v4.3.7 | Kitchen images (fridge, pot, plate, cup, fork, stove), new words bowl+pan, bedroom closet added |
+| v4.3.6 | home/bedroom images (pillow, lamp, dresser) |
+| v4.3.5 | All organs images (heart, brain, lungs, stomach, liver, kidneys) |
+| v4.3.4 | Body images, organs subcategory, hip→hips, stale image fixes, TTS timing |
+| v4.3.3 | Insects icon 🐞, turtle in sea, body/face images, TTS warm-up fixes |
+| v4.3.2 | Feelings updates (emojis, images), global 2x image size, back button fix |
+| v4.3.1 | Long/short images, sizes skip subcategory screen, sizes 2x |
+| v4.3.0 | Pink fix, long word timeout, opposite pairs, shape/size images, fat/old/young |
 | v4.2.2 | AudioContext race condition fix, stale grammar on card transition |
 | v4.2.1 | Hotfix: closure bug causing wrong subcategory words |
 | v4.0.0 | Vosk-browser SR + two-level navigation + words.json 335 words |
