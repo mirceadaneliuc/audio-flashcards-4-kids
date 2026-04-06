@@ -2811,7 +2811,8 @@
             "e": "🧥",
             "s": [
               "COAT"
-            ]
+            ],
+            "img": "img/coat.png"
           },
           {
             "w": "fireplace",
@@ -2819,7 +2820,8 @@
             "s": [
               "FIRE",
               "PLACE"
-            ]
+            ],
+            "img": "img/fireplace.png"
           },
           {
             "w": "snowman",
@@ -2936,7 +2938,16 @@
             "e": "👔",
             "s": [
               "BELT"
-            ]
+            ],
+            "img": "img/belt.png"
+          },
+          {
+            "w": "tie",
+            "e": "👔",
+            "s": [
+              "TIE"
+            ],
+            "img": "img/tie.png"
           },
           {
             "w": "bag",
@@ -2973,7 +2984,8 @@
             "s": [
               "RAIN",
               "COAT"
-            ]
+            ],
+            "img": "img/raincoat.png"
           },
           {
             "w": "boots",
@@ -2988,7 +3000,8 @@
             "s": [
               "SWIM",
               "SUIT"
-            ]
+            ],
+            "img": "img/swimsuit.png"
           },
           {
             "w": "sweater",
@@ -2996,7 +3009,8 @@
             "s": [
               "SWEAT",
               "ER"
-            ]
+            ],
+            "img": "img/sweater.png"
           },
           {
             "w": "sandals",
@@ -3004,7 +3018,8 @@
             "s": [
               "SAN",
               "DALS"
-            ]
+            ],
+            "img": "img/sandals.png"
           },
           {
             "w": "umbrella",
