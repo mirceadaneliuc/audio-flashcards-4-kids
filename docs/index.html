@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#FF6B6B">
-<title>English Flashcards 4 Kids v4.4.3</title>
-<meta name="version" content="4.4.3">
+<title>English Flashcards 4 Kids v4.4.5</title>
+<meta name="version" content="4.4.5">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <script src="vosk.js"></script>
@@ -119,7 +119,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 <!-- SPLASH -->
 <div id="splash">
   <div class="sp-emoji">🌍</div>
-  <div class="sp-title"><span>ENGLISH v4.4.3</span>FLASHCARDS 4 KIDS</div>
+  <div class="sp-title"><span>ENGLISH v4.4.5</span>FLASHCARDS 4 KIDS</div>
   <div class="sp-sub">👆 TAP TO START!</div>
 </div>
 
@@ -132,7 +132,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 
 <!-- TOPBAR -->
 <div id="topbar">
-  <div id="logo"><span>ENGLISH v4.4.3</span>FLASHCARDS 4 KIDS</div>
+  <div id="logo"><span>ENGLISH v4.4.5</span>FLASHCARDS 4 KIDS</div>
   <div id="stars-box">⭐ <span id="stars">0</span></div>
 </div>
 
@@ -702,17 +702,19 @@ function confetti(){
 
 // ── SOLAR SYSTEM MODE ──
 const SOLAR_HOTSPOTS = [
-  {w:'sun',      e:'☀️', s:['SUN'],              cx:11.5, cy:24.8, r:7.5},
-  {w:'mercury',  e:'🪨', s:['MER','CU','RY'],    cx:18.8, cy:20.7, r:3.0},
-  {w:'venus',    e:'🟠', s:['VE','NUS'],          cx:24.2, cy:32.0, r:3.5},
-  {w:'moon',     e:'🌙', s:['MOON'],              cx:28.1, cy:20.5, r:3.0},
-  {w:'earth',    e:'🌍', s:['EARTH'],             cx:33.5, cy:36.5, r:4.5},
-  {w:'jupiter',  e:'🪐', s:['JU','PI','TER'],     cx:41.5, cy:38.5, r:5.5},
-  {w:'mars',     e:'🔴', s:['MARS'],              cx:48.5, cy:43.5, r:3.5},
-  {w:'saturn',   e:'🪐', s:['SAT','URN'],         cx:52.5, cy:50.5, r:6.0},
-  {w:'uranus',   e:'🔵', s:['U','RA','NUS'],      cx:55.2, cy:48.0, r:4.0},
-  {w:'neptune',  e:'💙', s:['NEP','TUNE'],        cx:60.9, cy:51.7, r:5.0},
-  {w:'pluto',    e:'⚪', s:['PLU','TO'],          cx:63.0, cy:59.6, r:2.0},
+  {w:'sun',       e:'☀️',  s:['SUN'],              cx:14.9, cy:21.8, r:7.1},
+  {w:'mercury',   e:'🪨',  s:['MER','CU','RY'],    cx:28.3, cy:33.2, r:1.6},
+  {w:'venus',     e:'🟠',  s:['VE','NUS'],          cx:34.8, cy:37.8, r:1.9},
+  {w:'moon',      e:'🌙',  s:['MOON'],              cx:40.2, cy:32.4, r:1.5},
+  {w:'earth',     e:'🌍',  s:['EARTH'],             cx:42.4, cy:43.6, r:3.0},
+  {w:'jupiter',   e:'🪐',  s:['JU','PI','TER'],     cx:52.0, cy:49.8, r:4.4},
+  {w:'mars',      e:'🔴',  s:['MARS'],              cx:59.8, cy:58.0, r:2.8},
+  {w:'saturn',    e:'🪐',  s:['SAT','URN'],         cx:67.9, cy:64.5, r:3.2},
+  {w:'uranus',    e:'🔵',  s:['U','RA','NUS'],      cx:78.2, cy:71.6, r:3.4},
+  {w:'neptune',   e:'💙',  s:['NEP','TUNE'],        cx:86.8, cy:79.5, r:3.6},
+  {w:'pluto',     e:'⚪',  s:['PLU','TO'],          cx:93.7, cy:86.5, r:1.4},
+  {w:'comet',     e:'☄️',  s:['COM','ET'],          cx:15.0, cy:54.7, r:3.5},
+  {w:'asteroids', e:'🪨',  s:['AS','TER','OIDS'],   cx:93.7, cy: 9.9, r:3.8},
 ];
 
 let solarItem=null, solarAttempts=0, solarBusy=false;

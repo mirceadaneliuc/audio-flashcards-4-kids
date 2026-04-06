@@ -2526,6 +2526,15 @@
               "ET"
             ],
             "img": "img/comet.png"
+          },
+          {
+            "w": "asteroids",
+            "e": "🪨",
+            "s": [
+              "AS",
+              "TER",
+              "OIDS"
+            ]
           }
         ]
       },
