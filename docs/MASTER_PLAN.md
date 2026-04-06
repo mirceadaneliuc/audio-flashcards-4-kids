@@ -1,5 +1,5 @@
 # ENGLISH FLASHCARDS 4 KIDS — MASTER PLAN
-**Version:** v4.4.5  
+**Version:** v4.4.6  
 **Last updated:** 2026-04-05  
 **Repo:** https://github.com/mirceadaneliuc/audio-flashcards-4-kids  
 **Live web:** https://mirceadaneliuc.github.io/audio-flashcards-4-kids/  
@@ -175,6 +175,7 @@ git push
 
 | Version | Changes |
 |---------|---------|
+| v4.4.6 | Nature images: forest, island, lake; new landforms: valley, hills; asteroids removed from space words |
 | v4.4.5 | Solar system: pixel-perfect hotspots from user annotation, comet + asteroids added as clickable |
 | v4.4.4 | Solar system: hotspot radii match exact planet sizes, no overlap |
 | v4.4.3 | Solar system: fine-tuned planet hotspot positions (venus, moon, earth, jupiter, mars, saturn) |
