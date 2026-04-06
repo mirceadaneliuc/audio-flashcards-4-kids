@@ -1,5 +1,5 @@
 # ENGLISH FLASHCARDS 4 KIDS — MASTER PLAN
-**Version:** v4.4.0  
+**Version:** v4.4.2  
 **Last updated:** 2026-04-05  
 **Repo:** https://github.com/mirceadaneliuc/audio-flashcards-4-kids  
 **Live web:** https://mirceadaneliuc.github.io/audio-flashcards-4-kids/  
@@ -175,6 +175,8 @@ git push
 
 | Version | Changes |
 |---------|---------|
+| v4.4.2 | Solar system: SVG hotspots fix planet tap accuracy, zoom scales correctly with image |
+| v4.4.1 | Solar system fixes: corrected planet hotspots, mic/speaker buttons restored, pinch-to-zoom + double-tap reset |
 | v4.4.0 | Interactive solar system map — tap planets, TTS speaks name, Vosk listens, same 3-miss hint system, free exploration mode |
 | v4.3.10 | Nature/weather images: snow, storm; fog renamed to cloudy + image; fog added as separate word |
 | v4.3.9 | Speak category name during GET READY, hide blank card, first word plays correctly; living room (table img, book→books, tv img, remove phone, add armchair+painting+couch); bathroom (bath→bathtub, towel img) |

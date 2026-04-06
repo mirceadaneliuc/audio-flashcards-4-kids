@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#FF6B6B">
-<title>English Flashcards 4 Kids v4.4.0</title>
-<meta name="version" content="4.4.0">
+<title>English Flashcards 4 Kids v4.4.2</title>
+<meta name="version" content="4.4.2">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <script src="vosk.js"></script>
@@ -100,8 +100,9 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 /* SOLAR SYSTEM MODE */
 #solar-screen{width:100%;max-width:100%;display:none;flex-direction:column;align-items:center;min-height:100dvh;background:#1a1a2e;position:relative;}
 #solar-top-row{width:100%;display:flex;align-items:center;gap:10px;padding:8px 12px;position:relative;z-index:10;}
-#solar-map-wrap{position:relative;width:100%;max-width:900px;margin:0 auto;}
-#solar-map-img{width:100%;height:auto;display:block;border-radius:12px;}
+#solar-map-wrap{position:relative;width:100%;max-width:900px;margin:0 auto;touch-action:none;overflow:hidden;border-radius:12px;}
+#solar-map-img{width:100%;height:auto;display:block;border-radius:12px;transform-origin:0 0;will-change:transform;}
+#solar-svg{position:absolute;inset:0;width:100%;height:100%;transform-origin:0 0;}
 .solar-hotspot{position:absolute;border-radius:50%;cursor:pointer;background:rgba(255,255,255,0);border:3px solid transparent;transition:border-color .2s, background .2s;transform:translate(-50%,-50%);}
 .solar-hotspot:active, .solar-hotspot.active{background:rgba(255,255,255,0.25);border-color:rgba(255,255,255,0.8);}
 #solar-feedback{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;pointer-events:none;opacity:0;transition:opacity .25s;z-index:50;}
@@ -118,7 +119,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 <!-- SPLASH -->
 <div id="splash">
   <div class="sp-emoji">🌍</div>
-  <div class="sp-title"><span>ENGLISH v4.4.0</span>FLASHCARDS 4 KIDS</div>
+  <div class="sp-title"><span>ENGLISH v4.4.2</span>FLASHCARDS 4 KIDS</div>
   <div class="sp-sub">👆 TAP TO START!</div>
 </div>
 
@@ -131,7 +132,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 
 <!-- TOPBAR -->
 <div id="topbar">
-  <div id="logo"><span>ENGLISH v4.4.0</span>FLASHCARDS 4 KIDS</div>
+  <div id="logo"><span>ENGLISH v4.4.2</span>FLASHCARDS 4 KIDS</div>
   <div id="stars-box">⭐ <span id="stars">0</span></div>
 </div>
 
@@ -178,6 +179,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
   <div id="solar-status">TAP A PLANET!</div>
   <div id="solar-map-wrap">
     <img id="solar-map-img" src="img/solar_system.png" alt="Solar System">
+    <svg id="solar-svg" viewBox="0 0 1920 1209" preserveAspectRatio="xMidYMid meet" style="position:absolute;inset:0;width:100%;height:100%;transform-origin:0 0;"></svg>
   </div>
   <div id="solar-feedback">
     <div id="solar-fb-bubble">
@@ -600,7 +602,8 @@ function onCorrect(){
     showSolarFeedback('✅',solarItem?solarItem.w.toUpperCase():'','AMAZING! +10 ⭐','#51CF66');
     confetti();showStreak();
     solarBusy=false;solarItem=null;attempts=0;busy=false;
-    document.querySelectorAll('.solar-hotspot').forEach(h=>h.classList.remove('active'));
+    enableMic(false);
+    document.querySelectorAll('#solar-svg circle').forEach(c=>{c.setAttribute('fill','rgba(255,255,255,0)');c.setAttribute('stroke','rgba(255,255,255,0)');});
     setTimeout(()=>{ setSolarStatus('TAP A PLANET! 🪐'); },1800);
     return;
   }
@@ -699,17 +702,17 @@ function confetti(){
 
 // ── SOLAR SYSTEM MODE ──
 const SOLAR_HOTSPOTS = [
-  {w:'sun',      e:'☀️', s:['SUN'],              cx:11.5, cy:29.5, r:7.5},
-  {w:'mercury',  e:'🪨', s:['MER','CU','RY'],    cx:18.7, cy:22.0, r:3.5},
-  {w:'venus',    e:'🟠', s:['VE','NUS'],          cx:24.3, cy:30.5, r:4.0},
-  {w:'moon',     e:'🌙', s:['MOON'],              cx:28.4, cy:20.0, r:3.5},
-  {w:'earth',    e:'🌍', s:['EARTH'],             cx:34.0, cy:32.5, r:5.0},
-  {w:'jupiter',  e:'🪐', s:['JU','PI','TER'],     cx:42.0, cy:37.5, r:5.5},
-  {w:'mars',     e:'🔴', s:['MARS'],              cx:49.0, cy:41.5, r:4.0},
-  {w:'saturn',   e:'🪐', s:['SAT','URN'],         cx:51.5, cy:49.0, r:6.0},
-  {w:'uranus',   e:'🔵', s:['U','RA','NUS'],      cx:57.5, cy:50.0, r:4.5},
-  {w:'neptune',  e:'💙', s:['NEP','TUNE'],        cx:64.0, cy:55.0, r:5.0},
-  {w:'pluto',    e:'⚪', s:['PLU','TO'],          cx:67.0, cy:64.0, r:2.5},
+  {w:'sun',      e:'☀️', s:['SUN'],              cx:11.5, cy:24.8, r:7.5},
+  {w:'mercury',  e:'🪨', s:['MER','CU','RY'],    cx:18.8, cy:20.7, r:3.0},
+  {w:'venus',    e:'🟠', s:['VE','NUS'],          cx:24.2, cy:29.8, r:3.5},
+  {w:'moon',     e:'🌙', s:['MOON'],              cx:28.1, cy:19.0, r:3.0},
+  {w:'earth',    e:'🌍', s:['EARTH'],             cx:33.1, cy:31.8, r:4.5},
+  {w:'jupiter',  e:'🪐', s:['JU','PI','TER'],     cx:40.6, cy:36.0, r:5.5},
+  {w:'mars',     e:'🔴', s:['MARS'],              cx:45.3, cy:39.7, r:3.5},
+  {w:'saturn',   e:'🪐', s:['SAT','URN'],         cx:49.5, cy:46.3, r:6.0},
+  {w:'uranus',   e:'🔵', s:['U','RA','NUS'],      cx:55.2, cy:48.0, r:4.0},
+  {w:'neptune',  e:'💙', s:['NEP','TUNE'],        cx:60.9, cy:51.7, r:5.0},
+  {w:'pluto',    e:'⚪', s:['PLU','TO'],          cx:63.0, cy:59.6, r:2.0},
 ];
 
 let solarItem=null, solarAttempts=0, solarBusy=false;
@@ -722,31 +725,92 @@ function startSolarGame(){
   document.getElementById('cat-screen').style.display='none';
   document.getElementById('sub-screen').style.display='none';
   document.getElementById('game-screen').style.display='none';
-  document.getElementById('btn-listen').style.display='none';
-  document.getElementById('btn-mic').style.display='none';
+  document.getElementById('btn-listen').style.display='flex';
+  document.getElementById('btn-mic').style.display='flex';
+  document.getElementById('btn-mic').disabled=true;
   document.getElementById('solar-screen').style.display='flex';
   document.getElementById('stars-solar').textContent=stars;
 
   // Build hotspots after image loads
   const img=document.getElementById('solar-map-img');
   const buildHotspots=()=>{
-    const wrap=document.getElementById('solar-map-wrap');
-    wrap.querySelectorAll('.solar-hotspot').forEach(h=>h.remove());
-    const iw=img.offsetWidth, ih=img.offsetHeight;
+    const svg=document.getElementById('solar-svg');
+    svg.innerHTML='';
+    // SVG viewBox matches image natural size (1920x1209)
+    // cx/cy/r are percentages of 1920x1209
     SOLAR_HOTSPOTS.forEach(planet=>{
-      const btn=document.createElement('button');
-      btn.className='solar-hotspot';
-      const sz=Math.max(iw,ih)*(planet.r/100);
-      btn.style.cssText=`left:${planet.cx}%;top:${planet.cy}%;width:${sz}px;height:${sz}px;`;
-      btn.setAttribute('data-word', planet.w);
-      btn.addEventListener('click',()=>solarTap(planet));
-      wrap.appendChild(btn);
+      const cx=planet.cx/100*1920;
+      const cy=planet.cy/100*1209;
+      const r=planet.r/100*1920;
+      const circle=document.createElementNS('http://www.w3.org/2000/svg','circle');
+      circle.setAttribute('cx', cx);
+      circle.setAttribute('cy', cy);
+      circle.setAttribute('r', r);
+      circle.setAttribute('fill','rgba(255,255,255,0)');
+      circle.setAttribute('stroke','rgba(255,255,255,0)');
+      circle.setAttribute('data-word', planet.w);
+      circle.style.cursor='pointer';
+      circle.addEventListener('click',()=>solarTap(planet));
+      svg.appendChild(circle);
     });
+    initSolarZoom();
   };
   if(img.complete&&img.naturalWidth>0) buildHotspots();
   else img.onload=buildHotspots;
 
   speak('SOLAR SYSTEM', 1.0, 1.1, ()=>{ setSolarStatus('TAP A PLANET! 🪐'); });
+}
+
+function initSolarZoom(){
+  const wrap=document.getElementById('solar-map-wrap');
+  const img=document.getElementById('solar-map-img');
+  const layer=document.getElementById('solar-svg');
+  let scale=1, lastScale=1, originX=0, originY=0, lastX=0, lastY=0;
+  let startDist=0, startScale=1;
+
+  function applyTransform(){
+    const t=`translate(${originX}px,${originY}px) scale(${scale})`;
+    img.style.transform=t;
+    layer.style.transform=t;
+  }
+
+  wrap.addEventListener('touchstart', e=>{
+    if(e.touches.length===2){
+      e.preventDefault();
+      startDist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX, e.touches[0].clientY-e.touches[1].clientY);
+      startScale=scale;
+    }
+  },{passive:false});
+
+  wrap.addEventListener('touchmove', e=>{
+    if(e.touches.length===2){
+      e.preventDefault();
+      const dist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX, e.touches[0].clientY-e.touches[1].clientY);
+      scale=Math.min(4, Math.max(1, startScale*(dist/startDist)));
+      // Zoom toward center of pinch
+      const cx=((e.touches[0].clientX+e.touches[1].clientX)/2)-wrap.getBoundingClientRect().left;
+      const cy=((e.touches[0].clientY+e.touches[1].clientY)/2)-wrap.getBoundingClientRect().top;
+      originX=cx-(cx-originX)*(scale/lastScale);
+      originY=cy-(cy-originY)*(scale/lastScale);
+      lastScale=scale;
+      // Clamp pan
+      const maxX=wrap.offsetWidth*(scale-1);
+      const maxY=wrap.offsetHeight*(scale-1);
+      originX=Math.min(0,Math.max(-maxX,originX));
+      originY=Math.min(0,Math.max(-maxY,originY));
+      applyTransform();
+    }
+  },{passive:false});
+
+  // Double-tap to reset zoom
+  let lastTap=0;
+  wrap.addEventListener('touchend', e=>{
+    if(e.touches.length===0&&e.changedTouches.length===1){
+      const now=Date.now();
+      if(now-lastTap<300){scale=1;originX=0;originY=0;lastScale=1;applyTransform();}
+      lastTap=now;
+    }
+  });
 }
 
 function solarTap(planet){
@@ -755,13 +819,15 @@ function solarTap(planet){
   stopListening();if(synth)synth.cancel();
   solarItem=planet;solarAttempts=0;solarBusy=false;
   // Highlight tapped hotspot
-  document.querySelectorAll('.solar-hotspot').forEach(h=>h.classList.remove('active'));
-  document.querySelector(`.solar-hotspot[data-word="${planet.w}"]`)?.classList.add('active');
+  document.querySelectorAll('#solar-svg circle').forEach(c=>{c.setAttribute('fill','rgba(255,255,255,0)');c.setAttribute('stroke','rgba(255,255,255,0)');});
+  const activeCircle=document.querySelector(`#solar-svg circle[data-word="${planet.w}"]`);
+  if(activeCircle){activeCircle.setAttribute('fill','rgba(255,255,255,0.2)');activeCircle.setAttribute('stroke','rgba(255,255,255,0.9)');}
   // Build single-word deck for evaluate/onWrong to work
   deck=[{w:planet.w,e:planet.e,s:planet.s}];idx=0;attempts=0;busy=false;
   setSolarStatus('LISTEN FIRST! 🔊');
   speak(planet.w, 0.88, 1.1, ()=>{
     setSolarStatus('NOW SAY IT! 🎤');
+    enableMic(true);
     setTimeout(startListening, 800);
   });
 }
@@ -789,6 +855,8 @@ function goMenuFromSolar(){
   stopListening();if(synth)synth.cancel();
   solarBusy=false;solarItem=null;
   document.getElementById('solar-screen').style.display='none';
+  document.getElementById('btn-listen').style.display='none';
+  document.getElementById('btn-mic').style.display='none';
   document.getElementById('topbar').style.display='flex';
   showSubMenu(currentCat);
 }
