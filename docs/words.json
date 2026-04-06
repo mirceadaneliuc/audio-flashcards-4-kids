@@ -2731,14 +2731,16 @@
             "e": "🍂",
             "s": [
               "FALL"
-            ]
+            ],
+            "img": "img/fall.png"
           },
           {
-            "w": "leaf",
+            "w": "leaves",
             "e": "🍁",
             "s": [
-              "LEAF"
-            ]
+              "LEAVES"
+            ],
+            "img": "img/leaves.png"
           },
           {
             "w": "wind",
@@ -2761,7 +2763,17 @@
             "s": [
               "A",
               "CORN"
-            ]
+            ],
+            "img": "img/acorn.png"
+          },
+          {
+            "w": "harvest",
+            "e": "🧺",
+            "s": [
+              "HAR",
+              "VEST"
+            ],
+            "img": "img/harvest.png"
           }
         ]
       },
@@ -2775,7 +2787,8 @@
             "s": [
               "WIN",
               "TER"
-            ]
+            ],
+            "img": "img/winter.png"
           },
           {
             "w": "snow",
@@ -2807,6 +2820,33 @@
               "FIRE",
               "PLACE"
             ]
+          },
+          {
+            "w": "snowman",
+            "e": "⛄",
+            "s": [
+              "SNOW",
+              "MAN"
+            ],
+            "img": "img/snowman.png"
+          },
+          {
+            "w": "skiing",
+            "e": "⛷️",
+            "s": [
+              "SKI",
+              "ING"
+            ],
+            "img": "img/skiing.png"
+          },
+          {
+            "w": "skating",
+            "e": "⛸️",
+            "s": [
+              "SKAT",
+              "ING"
+            ],
+            "img": "img/skating.png"
           }
         ]
       }

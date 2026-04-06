@@ -1,5 +1,5 @@
 # ENGLISH FLASHCARDS 4 KIDS — MASTER PLAN
-**Version:** v4.4.7  
+**Version:** v4.4.9  
 **Last updated:** 2026-04-05  
 **Repo:** https://github.com/mirceadaneliuc/audio-flashcards-4-kids  
 **Live web:** https://mirceadaneliuc.github.io/audio-flashcards-4-kids/  
@@ -175,6 +175,8 @@ git push
 
 | Version | Changes |
 |---------|---------|
+| v4.4.9 | Seasons: fall (image, acorn, leaves, harvest); winter (image, snowman, fireplace, skiing, skating); spring snowdrops; fix mic/layout bugs |
+| v4.4.8 | Fix: partial text height stable (no arrow jump), mic shows listening immediately after TTS |
 | v4.4.7 | Seasons: spring image, snowdrops added, flower/rain/bird removed; summer image; landforms: ocean+sea+valley+hills added |
 | v4.4.6 | Nature images: forest, island, lake; new landforms: valley, hills; asteroids removed from space words |
 | v4.4.5 | Solar system: pixel-perfect hotspots from user annotation, comet + asteroids added as clickable |
