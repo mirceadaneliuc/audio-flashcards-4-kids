@@ -2449,6 +2449,23 @@
               "HILLS"
             ],
             "img": "img/hills.png"
+          },
+          {
+            "w": "ocean",
+            "e": "🌊",
+            "s": [
+              "O",
+              "CEAN"
+            ],
+            "img": "img/ocean.png"
+          },
+          {
+            "w": "sea",
+            "e": "🌊",
+            "s": [
+              "SEA"
+            ],
+            "img": "img/sea.png"
           }
         ]
       }
@@ -2636,29 +2653,8 @@
             "e": "🌸",
             "s": [
               "SPRING"
-            ]
-          },
-          {
-            "w": "flower",
-            "e": "🌺",
-            "s": [
-              "FLOW",
-              "ER"
-            ]
-          },
-          {
-            "w": "rain",
-            "e": "🌧️",
-            "s": [
-              "RAIN"
-            ]
-          },
-          {
-            "w": "bird",
-            "e": "🐦",
-            "s": [
-              "BIRD"
-            ]
+            ],
+            "img": "img/spring.png"
           },
           {
             "w": "rainbow",
@@ -2667,6 +2663,15 @@
               "RAIN",
               "BOW"
             ]
+          },
+          {
+            "w": "snowdrops",
+            "e": "🌸",
+            "s": [
+              "SNOW",
+              "DROPS"
+            ],
+            "img": "img/snowdrops.png"
           }
         ]
       },
@@ -2680,7 +2685,8 @@
             "s": [
               "SUM",
               "MER"
-            ]
+            ],
+            "img": "img/summer.png"
           },
           {
             "w": "sun",
