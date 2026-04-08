@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#FF6B6B">
-<title>English Flashcards 4 Kids v4.5.3</title>
-<meta name="version" content="4.5.3">
+<title>English Flashcards 4 Kids v4.5.5</title>
+<meta name="version" content="4.5.5">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <script src="vosk.js"></script>
@@ -22,7 +22,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 @keyframes bob{from{transform:translateY(0)}to{transform:translateY(-16px)}}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.5}}
 /* LOADING VOSK */
-#vosk-loading{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:998;}
+#vosk-loading{position:fixed;bottom:0;left:0;right:0;background:rgba(0,0,0,.85);display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px;z-index:998;padding:16px;pointer-events:none;}
 #vosk-loading.show{display:flex;}
 .vl-text{font-family:'Fredoka One',cursive;font-size:22px;color:#fff;text-align:center;padding:0 24px;}
 .vl-bar{width:260px;height:12px;background:rgba(255,255,255,.2);border-radius:8px;overflow:hidden;}
@@ -122,19 +122,19 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
   <div class="sp-emoji">🌍</div>
   <div class="sp-title"><span>ENGLISH</span>FLASHCARDS 4 KIDS</div>
   <div class="sp-sub">👆 TAP TO START!</div>
-  <div class="sp-version">v4.5.3</div>
+  <div class="sp-version">v4.5.5</div>
 </div>
 
 <!-- VOSK LOADING -->
 <div id="vosk-loading">
   <div class="sp-emoji" style="font-size:60px;">🎤</div>
-  <div class="vl-text">Loading voice recognition...<br><span style="font-size:16px;opacity:.7">First time only — ~40MB</span></div>
+  <div class="vl-text">Loading voice recognition...<br><span style="font-size:16px;opacity:.7">First time only — ~40MB download</span><br><span style="font-size:14px;opacity:.5">This may take 1-3 min on mobile</span><br><span style="font-size:14px;opacity:.5">You can browse categories meanwhile</span></div>
   <div class="vl-bar"><div class="vl-fill"></div></div>
 </div>
 
 <!-- TOPBAR -->
 <div id="topbar">
-  <div id="logo"><span>ENGLISH v4.5.3</span>FLASHCARDS 4 KIDS</div>
+  <div id="logo"><span>ENGLISH v4.5.5</span>FLASHCARDS 4 KIDS</div>
   <div id="stars-box">⭐ <span id="stars">0</span></div>
 </div>
 

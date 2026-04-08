@@ -1,5 +1,5 @@
 # ENGLISH FLASHCARDS 4 KIDS — MASTER PLAN
-**Version:** v4.5.3  
+**Version:** v4.5.5  
 **Last updated:** 2026-04-05  
 **Repo:** https://github.com/mirceadaneliuc/audio-flashcards-4-kids  
 **Live web:** https://mirceadaneliuc.github.io/audio-flashcards-4-kids/  
@@ -175,6 +175,8 @@ git push
 
 | Version | Changes |
 |---------|---------|
+| v4.5.5 | Image optimization: 36 images reduced to under 100KB |
+| v4.5.4 | Fix: Vosk loading overlay non-blocking on web, better loading message for mobile |
 | v4.5.3 | School/transport images (submarine, eraser, principal, friend, gym, library, classroom, playground, glue), backpack rename, cafeteria removed |
 | v4.5.2 | Version shown on splash screen, debug logs removed, production-ready |
 | v4.5.1 | Transport: hot air balloon image added |
