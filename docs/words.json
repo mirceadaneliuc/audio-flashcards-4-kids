@@ -543,7 +543,7 @@
           {
             "w": "fly",
             "e": "🪰",
-            "img": "img/fly.png",
+            "img": "img/fly.jpg",
             "s": [
               "FLY"
             ]
@@ -1739,7 +1739,7 @@
             "s": [
               "TEETH"
             ],
-            "img": "img/teeth.png"
+            "img": "img/teeth.jpg"
           },
           {
             "w": "cheek",
@@ -2009,7 +2009,7 @@
               "CLOS",
               "ET"
             ],
-            "img": "img/closet.png"
+            "img": "img/closet.jpg"
           }
         ]
       },
@@ -2023,7 +2023,7 @@
             "s": [
               "FRIDGE"
             ],
-            "img": "img/fridge.png"
+            "img": "img/fridge.jpg"
           },
           {
             "w": "stove",
@@ -2077,7 +2077,7 @@
             "s": [
               "POT"
             ],
-            "img": "img/pot.png"
+            "img": "img/pot.jpg"
           },
           {
             "w": "bowl",
@@ -2147,7 +2147,7 @@
               "ARM",
               "CHAIR"
             ],
-            "img": "img/armchair.png"
+            "img": "img/armchair.jpg"
           },
           {
             "w": "painting",
@@ -2164,7 +2164,7 @@
             "s": [
               "COUCH"
             ],
-            "img": "img/couch.png"
+            "img": "img/couch.jpg"
           }
         ]
       },
@@ -2267,7 +2267,7 @@
             "s": [
               "STORM"
             ],
-            "img": "img/storm.png"
+            "img": "img/storm.jpg"
           },
           {
             "w": "rainbow",
@@ -2336,7 +2336,7 @@
             "s": [
               "BUSH"
             ],
-            "img": "img/bush.png"
+            "img": "img/bush.jpg"
           },
           {
             "w": "rose",
@@ -2397,7 +2397,7 @@
               "FOR",
               "EST"
             ],
-            "img": "img/forest.png"
+            "img": "img/forest.jpg"
           },
           {
             "w": "lake",
@@ -2457,7 +2457,7 @@
               "O",
               "CEAN"
             ],
-            "img": "img/ocean.png"
+            "img": "img/ocean.jpg"
           },
           {
             "w": "sea",
@@ -2465,7 +2465,7 @@
             "s": [
               "SEA"
             ],
-            "img": "img/sea.png"
+            "img": "img/sea.jpg"
           }
         ]
       }
@@ -2534,7 +2534,7 @@
               "AX",
               "Y"
             ],
-            "img": "img/galaxy.png"
+            "img": "img/galaxy.jpg"
           },
           {
             "w": "telescope",
@@ -2553,7 +2553,7 @@
               "TRO",
               "NAUT"
             ],
-            "img": "img/astronaut.png"
+            "img": "img/astronaut.jpg"
           },
           {
             "w": "comet",
@@ -2562,7 +2562,7 @@
               "COM",
               "ET"
             ],
-            "img": "img/comet.png"
+            "img": "img/comet.jpg"
           }
         ]
       },
@@ -2654,7 +2654,7 @@
             "s": [
               "SPRING"
             ],
-            "img": "img/spring.png"
+            "img": "img/spring.jpg"
           },
           {
             "w": "rainbow",
@@ -2671,7 +2671,7 @@
               "SNOW",
               "DROPS"
             ],
-            "img": "img/snowdrops.png"
+            "img": "img/snowdrops.jpg"
           }
         ]
       },
@@ -2686,7 +2686,7 @@
               "SUM",
               "MER"
             ],
-            "img": "img/summer.png"
+            "img": "img/summer.jpg"
           },
           {
             "w": "sun",
@@ -2732,7 +2732,7 @@
             "s": [
               "FALL"
             ],
-            "img": "img/fall.png"
+            "img": "img/fall.jpg"
           },
           {
             "w": "leaves",
@@ -2740,7 +2740,7 @@
             "s": [
               "LEAVES"
             ],
-            "img": "img/leaves.png"
+            "img": "img/leaves.jpg"
           },
           {
             "w": "wind",
@@ -2764,7 +2764,7 @@
               "A",
               "CORN"
             ],
-            "img": "img/acorn.png"
+            "img": "img/acorn.jpg"
           },
           {
             "w": "harvest",
@@ -2788,7 +2788,7 @@
               "WIN",
               "TER"
             ],
-            "img": "img/winter.png"
+            "img": "img/winter.jpg"
           },
           {
             "w": "snow",
@@ -2812,7 +2812,7 @@
             "s": [
               "COAT"
             ],
-            "img": "img/coat.png"
+            "img": "img/coat.jpg"
           },
           {
             "w": "fireplace",
@@ -2821,7 +2821,7 @@
               "FIRE",
               "PLACE"
             ],
-            "img": "img/fireplace.png"
+            "img": "img/fireplace.jpg"
           },
           {
             "w": "snowman",
@@ -2839,7 +2839,7 @@
               "SKI",
               "ING"
             ],
-            "img": "img/skiing.png"
+            "img": "img/skiing.jpg"
           },
           {
             "w": "skating",
@@ -2848,7 +2848,7 @@
               "SKAT",
               "ING"
             ],
-            "img": "img/skating.png"
+            "img": "img/skating.jpg"
           }
         ]
       }
@@ -2939,7 +2939,7 @@
             "s": [
               "BELT"
             ],
-            "img": "img/belt.png"
+            "img": "img/belt.jpg"
           },
           {
             "w": "tie",
@@ -2947,7 +2947,7 @@
             "s": [
               "TIE"
             ],
-            "img": "img/tie.png"
+            "img": "img/tie.jpg"
           },
           {
             "w": "bag",
@@ -2985,7 +2985,7 @@
               "RAIN",
               "COAT"
             ],
-            "img": "img/raincoat.png"
+            "img": "img/raincoat.jpg"
           },
           {
             "w": "boots",
@@ -3001,7 +3001,7 @@
               "SWIM",
               "SUIT"
             ],
-            "img": "img/swimsuit.png"
+            "img": "img/swimsuit.jpg"
           },
           {
             "w": "sweater",
@@ -3224,7 +3224,7 @@
               "BAL",
               "LOON"
             ],
-            "img": "img/hot_air_balloon.png"
+            "img": "img/hot_air_balloon.jpg"
           }
         ]
       },
@@ -3254,7 +3254,7 @@
               "MA",
               "RINE"
             ],
-            "img": "img/submarine.png"
+            "img": "img/submarine.jpg"
           },
           {
             "w": "canoe",
@@ -3395,7 +3395,7 @@
               "CLASS",
               "ROOM"
             ],
-            "img": "img/classroom.png"
+            "img": "img/classroom.jpg"
           },
           {
             "w": "library",
@@ -3405,7 +3405,7 @@
               "BRA",
               "RY"
             ],
-            "img": "img/library.png"
+            "img": "img/library.jpg"
           },
           {
             "w": "playground",
@@ -3422,7 +3422,7 @@
             "s": [
               "GYM"
             ],
-            "img": "img/gym.png"
+            "img": "img/gym.jpg"
           }
         ]
       }
