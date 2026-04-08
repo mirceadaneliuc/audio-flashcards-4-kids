@@ -3253,7 +3253,8 @@
               "SUB",
               "MA",
               "RINE"
-            ]
+            ],
+            "img": "img/submarine.png"
           },
           {
             "w": "canoe",
@@ -3285,17 +3286,18 @@
             ]
           },
           {
-            "w": "book",
+            "w": "books",
             "e": "📚",
             "s": [
-              "BOOK"
+              "BOOKS"
             ]
           },
           {
-            "w": "bag",
+            "w": "backpack",
             "e": "🎒",
             "s": [
-              "BAG"
+              "BACK",
+              "PACK"
             ]
           },
           {
@@ -3313,7 +3315,8 @@
               "E",
               "RA",
               "SER"
-            ]
+            ],
+            "img": "img/eraser.png"
           },
           {
             "w": "scissors",
@@ -3336,7 +3339,8 @@
             "e": "🫙",
             "s": [
               "GLUE"
-            ]
+            ],
+            "img": "img/glue.png"
           }
         ]
       },
@@ -3367,14 +3371,16 @@
               "PRIN",
               "CI",
               "PAL"
-            ]
+            ],
+            "img": "img/principal.png"
           },
           {
             "w": "friend",
             "e": "🤝",
             "s": [
               "FRIEND"
-            ]
+            ],
+            "img": "img/friend.png"
           }
         ]
       },
@@ -3388,7 +3394,8 @@
             "s": [
               "CLASS",
               "ROOM"
-            ]
+            ],
+            "img": "img/classroom.png"
           },
           {
             "w": "library",
@@ -3397,7 +3404,8 @@
               "LI",
               "BRA",
               "RY"
-            ]
+            ],
+            "img": "img/library.png"
           },
           {
             "w": "playground",
@@ -3405,25 +3413,16 @@
             "s": [
               "PLAY",
               "GROUND"
-            ]
-          },
-          {
-            "w": "cafeteria",
-            "e": "🍽️",
-            "s": [
-              "CAF",
-              "E",
-              "TE",
-              "RI",
-              "A"
-            ]
+            ],
+            "img": "img/playground.png"
           },
           {
             "w": "gym",
             "e": "🏋️",
             "s": [
               "GYM"
-            ]
+            ],
+            "img": "img/gym.png"
           }
         ]
       }

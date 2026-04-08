@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#FF6B6B">
-<title>English Flashcards 4 Kids v4.5.1</title>
-<meta name="version" content="4.5.1">
+<title>English Flashcards 4 Kids v4.5.2</title>
+<meta name="version" content="4.5.2">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <script src="vosk.js"></script>
@@ -18,6 +18,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 .sp-title{font-family:'Fredoka One',cursive;font-size:36px;color:#fff;text-align:center;line-height:1.2;}
 .sp-title span{font-size:48px;display:block;}
 .sp-sub{font-family:'Fredoka One',cursive;font-size:22px;color:rgba(255,255,255,.85);text-align:center;padding:0 24px;animation:blink 1.4s ease-in-out infinite;}
+.sp-version{font-family:'Fredoka One',cursive;font-size:13px;color:rgba(255,255,255,.5);text-align:center;margin-top:4px;}
 @keyframes bob{from{transform:translateY(0)}to{transform:translateY(-16px)}}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.5}}
 /* LOADING VOSK */
@@ -119,8 +120,9 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 <!-- SPLASH -->
 <div id="splash">
   <div class="sp-emoji">🌍</div>
-  <div class="sp-title"><span>ENGLISH v4.5.1</span>FLASHCARDS 4 KIDS</div>
+  <div class="sp-title"><span>ENGLISH</span>FLASHCARDS 4 KIDS</div>
   <div class="sp-sub">👆 TAP TO START!</div>
+  <div class="sp-version">v4.5.2</div>
 </div>
 
 <!-- VOSK LOADING -->
@@ -132,7 +134,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
 
 <!-- TOPBAR -->
 <div id="topbar">
-  <div id="logo"><span>ENGLISH v4.5.1</span>FLASHCARDS 4 KIDS</div>
+  <div id="logo"><span>ENGLISH v4.5.2</span>FLASHCARDS 4 KIDS</div>
   <div id="stars-box">⭐ <span id="stars">0</span></div>
 </div>
 
@@ -270,8 +272,7 @@ async function initVosk(){
   try{
     voskModel=await Vosk.createModel('vosk-model-small-en-us-0.15.tar');
     voskReady=true;
-    console.log('Vosk ready');
-    showVoskStatus('🎤 Voice ready!',2000);
+        showVoskStatus('🎤 Voice ready!',2000);
 
   }catch(e){
     console.warn('Vosk failed, will retry on demand:',e.message);
@@ -279,8 +280,7 @@ async function initVosk(){
     try{
       voskModel=await Vosk.createModel('https://ccoreilly.github.io/vosk-browser/models/vosk-model-small-en-us-0.15.tar.gz');
       voskReady=true;
-      console.log('Vosk ready (CDN)');
-      showVoskStatus('🎤 Voice ready!',2000);
+            showVoskStatus('🎤 Voice ready!',2000);
     }catch(e2){
       console.warn('Vosk CDN also failed:',e2.message);
       showVoskStatus('⚠️ Voice offline mode',3000);
@@ -315,7 +315,6 @@ async function startListening(){
     voskRecognizer=new voskModel.KaldiRecognizer(16000,vocab);
     voskRecognizer.on('result',msg=>{
       const text=(msg.result.text||'').trim();
-      console.log('VOSK RESULT:',text,'| target:',deck[idx].w);
       if(text&&text!=='[unk]'&&text!==''){
         document.getElementById('partial-text').textContent='';
         stopListening();
@@ -340,7 +339,6 @@ async function startListening(){
     window._voskTimer=setTimeout(()=>{
       if(listening){
         const p=document.getElementById('partial-text').textContent;
-        console.log('Vosk timeout, partial:',p);
         stopListening();
         if(p&&p!==''){
           const word=p.replace(/"/g,'').trim();
@@ -391,7 +389,6 @@ function evaluate(alts){
   }
   const charLen=target.replace(/\s/g,'').length;
   const threshold=charLen<=3?0.6:charLen<=5?0.68:0.75;
-  console.log('heard:',alts,'| target:',target,'| score:',best.toFixed(2),'| need:',threshold);
   best>=threshold?onCorrect():(attempts++,onWrong(attempts));
 }
 
@@ -419,8 +416,7 @@ async function loadWords(){
   try{
     const r=await fetch('words.json');
     WORDS_DATA=await r.json();
-    console.log('words.json loaded:',Object.keys(WORDS_DATA).length,'categories');
-  }catch(e){
+      }catch(e){
     console.warn('words.json failed, using inline data');
     WORDS_DATA=INLINE_DATA;
   }
@@ -631,7 +627,6 @@ function onWrong(n){
   const item=isSolar?solarItem:deck[idx];
   if(isSolar){ solarAttempts=n; }
   enableMic(false);
-  console.log('onWrong attempt:',n,'word:',item.w);
   if(n===1){
     setStatus('LISTEN CAREFULLY!');
     showFeedback('👂','LISTEN AGAIN!','#FFA94D');

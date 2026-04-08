@@ -1,5 +1,5 @@
 # ENGLISH FLASHCARDS 4 KIDS — AI AGENT HANDOFF
-> Last updated: 2026-04-05 | Version: v4.3.6
+> Last updated: 2026-04-08 | Version: v4.5.2
 > This file enables any AI agent to understand the full project and continue work immediately.
 
 ---
@@ -41,8 +41,8 @@ git push
 ## FILE STRUCTURE
 ```
 docs/
-├── index.html          ← MAIN APP (v4.3.6) — single file, vanilla JS
-├── words.json          ← ALL WORD DATA — 15 categories
+├── index.html          ← MAIN APP (v4.5.2) — single file, vanilla JS
+├── words.json          ← ALL WORD DATA — 17 categories
 ├── MASTER_PLAN.md      ← version history
 ├── vosk.js             ← Vosk speech recognition library (5.6MB, do not edit)
 ├── vosk-model-small-en-us-0.15.tar.gz  ← 40MB model (do not edit)
@@ -101,9 +101,9 @@ Pair matching uses image field to distinguish.
 - Media element cleared immediately on `showCard()` and `startGame()` to prevent stale content
 
 ### TTS timing
-- `startGame()`: fires silent warm-up speak, shows "GET READY... 🎯" for 1.5s before first card
-- `_playCard()`: speaks word 600ms after card shown
-- `startListening()`: fires 800ms after TTS result callback
+- `startGame()`: speaks subcategory label, shows "GET READY... 🎯", hides card until first word loads
+- `_playCard()`: speaks word 600ms after card shown, mic activates immediately after TTS completes
+- `startListening()`: fires immediately after TTS callback (no 800ms delay)
 - `navPrev/navNext`: 200ms delay before showCard()
 
 ### Known issues / Vosk quirks
@@ -184,7 +184,30 @@ Format: category/subcategory — ✅=has image, ❌=emoji only
 - living: all ❌
 - bathroom: all ❌
 
-### nature, seasons, clothes, family, transport, school — all ❌
+### nature
+- weather: ✅ snow, storm, cloudy, fog | ❌ others
+- plants: ✅ grass, bush, tree | ❌ others
+- landforms: ✅ forest, island, lake, valley, hills, ocean, sea | ❌ mountain, volcano, desert, canyon
+
+### space (new top-level category)
+- space: ✅ asteroid, galaxy, astronaut, comet | ❌ moon, star, sun, earth, rocket, telescope
+- solar: interactive map mode (tap planets) — solar_system.png with SVG hotspots
+
+### seasons
+- spring: ✅ spring, snowdrops | ❌ rainbow
+- summer: ✅ summer | ❌ others
+- fall: ✅ fall, acorn, leaves, harvest | ❌ wind, pumpkin
+- winter: ✅ winter, snowman, fireplace, skiing, skating | ❌ snow, ice, hot chocolate
+
+### clothes: ✅ coat, belt, tie, raincoat, sandals, swimsuit, sweater | ❌ others
+### transport: ✅ hot_air_balloon | ❌ others
+### home
+- bedroom: ✅ pillow, lamp, dresser, closet | ❌ bed, clock, door, window
+- kitchen: ✅ fridge, stove, cup, plate, fork, pot, bowl, pan | ❌ spoon, knife
+- living: ✅ table, tv, armchair, painting, couch | ❌ sofa, books, light
+- bathroom: ✅ towel | ❌ bathtub, soap, toothbrush, mirror
+
+### family, school — all ❌
 
 ---
 
@@ -218,6 +241,23 @@ pillow.png, lamp.png, dresser.png
 ## RECENT VERSION HISTORY
 | Version | Changes |
 |---------|---------|
+| v4.5.1 | Transport: hot air balloon image |
+| v4.5.0 | Clothes images (coat, tie, belt, raincoat, sandals, swimsuit, sweater), mic active fix |
+| v4.4.10 | Fix: mic faded during listening |
+| v4.4.9 | Seasons: fall/winter images + words, spring snowdrops, mic/layout fixes |
+| v4.4.8 | Fix: partial text height stable, mic shows listening immediately |
+| v4.4.7 | Spring/summer images, snowdrops, ocean+sea added to landforms |
+| v4.4.6 | Nature images (forest, island, lake), valley+hills added, asteroids cleanup |
+| v4.4.5 | Solar system pixel-perfect hotspots (from user annotation), comet+asteroids clickable |
+| v4.4.4 | Solar system hotspot radii match planet sizes exactly |
+| v4.4.3 | Solar system planet hotspot positions fine-tuned |
+| v4.4.2 | Solar system SVG hotspots fix planet tap accuracy |
+| v4.4.1 | Solar system fixes: hotspot coords, mic buttons, pinch-to-zoom |
+| v4.4.0 | Interactive solar system map — tap planets, free exploration mode |
+| v4.3.10 | Weather images: snow, storm, cloudy, fog |
+| v4.3.9 | Speak category name during GET READY, hide blank card; living room + bathroom updates |
+| v4.3.8 | Hide blank card during GET READY |
+| v4.3.7 | Kitchen images + bowl/pan added, bedroom closet |
 | v4.3.6 | home/bedroom images (pillow, lamp, dresser added) |
 | v4.3.5 | all organs images (heart, brain, lungs, stomach, liver, kidneys) |
 | v4.3.4 | body images, organs subcategory, hip→hips, stale image fixes, TTS timing |
@@ -232,8 +272,8 @@ pillow.png, lamp.png, dresser.png
 
 ## WORKING CONVENTIONS
 - User saves files locally to the correct directory themselves — agent does NOT provide cp commands
-- All changes accumulate in PENDING_CHANGES.md until user says "apply"
-- On apply: update MASTER_PLAN.md, bump version, present files
+- All changes accumulate in a pending list until user says "APC"
+- APC = Apply + Present all changed files + Show git/build commands
 - Version format: v4.X.Y — minor for new features, patch for fixes
 - Agent reads full index.html before making code changes
 - words.json edits done via Python script, never manually
