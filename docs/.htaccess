@@ -1,0 +1,12 @@
+<IfModule mod_headers.c>
+  Header set Cross-Origin-Opener-Policy "same-origin"
+  Header set Cross-Origin-Embedder-Policy "require-corp"
+  Header always set Cross-Origin-Opener-Policy "same-origin"
+  Header always set Cross-Origin-Embedder-Policy "require-corp"
+</IfModule>
+
+AddType application/octet-stream .gz
+AddType application/octet-stream .tar
+AddType application/javascript .js
+AddType application/json .json
+AddType text/html .html

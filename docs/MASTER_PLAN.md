@@ -1,6 +1,6 @@
 # ENGLISH FLASHCARDS 4 KIDS — MASTER PLAN
-**Version:** v4.5.5  
-**Last updated:** 2026-04-05  
+**Version:** v4.5.10  
+**Last updated:** 2026-04-08  
 **Repo:** https://github.com/mirceadaneliuc/audio-flashcards-4-kids  
 **Live web:** https://mirceadaneliuc.github.io/audio-flashcards-4-kids/  
 **APK ID:** com.elzorab.flashcards
@@ -175,6 +175,11 @@ git push
 
 | Version | Changes |
 |---------|---------|
+| v4.5.10 | UK flag favicon.ico added, favicon link in index.html |
+| v4.5.9 | Fix: Vosk model path absolute `/flashcards/vosk-model-small-en-us-0.15.tar.gz` |
+| v4.5.8 | Fix: Vosk model extension changed from `.tar` to `.tar.gz` for web hosting |
+| v4.5.7 | Added coi-serviceworker.js for COOP/COEP headers on cPanel (LiteSpeed) |
+| v4.5.6 | Fixed broken image references after optimization (PNG→JPG renames) |
 | v4.5.5 | Image optimization: 36 images reduced to under 100KB |
 | v4.5.4 | Fix: Vosk loading overlay non-blocking on web, better loading message for mobile |
 | v4.5.3 | School/transport images (submarine, eraser, principal, friend, gym, library, classroom, playground, glue), backpack rename, cafeteria removed |
