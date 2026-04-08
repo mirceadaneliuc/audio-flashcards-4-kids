@@ -3223,7 +3223,8 @@
               "AIR",
               "BAL",
               "LOON"
-            ]
+            ],
+            "img": "img/hot_air_balloon.png"
           }
         ]
       },
