@@ -21,7 +21,7 @@ The app speaks a word out loud. The child repeats it into the microphone. Built-
 | | Link |
 |---|---|
 | 🌐 **Try online (Chrome)** | https://systemaromania.site/flashcards |
-| 📱 **Download Android APK** | https://github.com/mirceadaneliuc/audio-flashcards-4-kids/releases/latest |
+| 📱 **Download Android APK** | https://github.com/mirceadaneliuc/audio-flashcards-4-kids/releases/download/v4.5.10/Flashcards4Kids.apk |
 
 > **Online version:** works best in Chrome or Edge. Speech recognition requires the Vosk model (~40MB download on first visit, then cached offline).
 > **Android APK:** install by enabling "Unknown sources" in Android settings. Works fully offline.
