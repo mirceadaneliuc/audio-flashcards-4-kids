@@ -2,7 +2,7 @@
 
 > An audio-first English vocabulary app for young non-English speaking children (ages 3–8). No reading required — just images, sound, and voice.
 
-![version](https://img.shields.io/badge/version-4.5.6-brightgreen) ![License](https://img.shields.io/badge/license-MIT-blue) ![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Android-orange)
+![version](https://img.shields.io/badge/version-4.5.22-blue) ![license](https://img.shields.io/badge/license-MIT-green) ![platform](https://img.shields.io/badge/platform-Web%20%7C%20Android-orange)
 
 ---
 
@@ -20,80 +20,65 @@ The app speaks a word out loud. The child repeats it into the microphone. Built-
 
 | | Link |
 |---|---|
-| 🌐 **Try online (Chrome)** | https://systemaromania.site/flashcards |
-| 📱 **Download Android APK** | https://github.com/mirceadaneliuc/audio-flashcards-4-kids/releases/download/v4.5.10/Flashcards4Kids.apk |
-
-> **Online version:** works best in Chrome or Edge. Speech recognition requires the Vosk model (~40MB download on first visit, then cached offline).
-> **Android APK:** install by enabling "Unknown sources" in Android settings. Works fully offline.
+| 🌐 **Web app** (Chrome/Edge) | [systemaromania.site/flashcards](https://systemaromania.site/flashcards) |
+| 📱 **Android APK** | [Download latest release](https://github.com/mirceadaneliuc/audio-flashcards-4-kids/releases/latest) |
 
 ---
 
-## 📚 Content — 378 words across 17 categories
+## 📚 Content
 
-| Category | Words | Subcategories |
-|:---------|------:|:--------------|
-| 🐾 Animals | 65 | Farm, Jungle, Woods, Pets, Birds, Sea, Insects |
-| 🍎 Food | 54 | Fruits, Vegetables, Dairy, Bakery, Drinks, Sweets |
-| 🔢 Numbers | 30 | 1–10, 11–20, Tens |
-| 🫀 Body | 28 | Face, Upper, Lower, Organs |
-| 🌿 Nature | 29 | Weather, Plants, Landforms |
-| 🏠 Home | 31 | Bedroom, Kitchen, Living Room, Bathroom |
-| 🚀 Space | 18 | Space flashcards + Interactive Solar System map |
-| 🍂 Seasons | 22 | Spring, Summer, Fall, Winter |
-| 👕 Clothes | 20 | — |
-| ❤️ Feelings | 10 | — |
-| 🌈 Colors | 11 | — |
-| 📏 Sizes | 12 | — |
-| 🔷 Shapes | 8 | — |
-| 👨‍👩‍👧 Family | 10 | Parents, Grandparents |
-| 🚗 Transport | 14 | Land, Air, Water |
-| 🎒 School | 16 | People, Places, Supplies |
+**378 English words** across **16 categories** and **49 subcategories**
+
+| | | | |
+|---|---|---|---|
+| 🐾 Animals — 65 | 🍎 Food — 54 | 🔢 Numbers — 30 | 🫀 Body — 28 |
+| 🌿 Nature — 29 | 🚀 Space — 18 | 🏠 Home — 31 | 🍂 Seasons — 22 |
+| 👕 Clothes — 20 | 🔷 Shapes — 8 | 📏 Sizes — 12 | ❤️ Feelings — 10 |
+| 🌈 Colors — 11 | 👨‍👩‍👧 Family — 10 | 🚗 Transport — 14 | 🎒 School — 16 |
 
 ---
 
-## ✨ Special features
+## ✨ Features
 
-- **Interactive Solar System** — tap planets on the map to learn their names, pinch to zoom
-- **Offline speech recognition** powered by [Vosk](https://alphacephei.com/vosk/) — works without internet after first load
-- **Progressive hint system** — slow replay → syllable breakdown → skip
-- **Stars, streaks & confetti** for motivation
-- **Hundreds of illustrations** for visual learning
-- **Version shown on splash screen**
+- 🎤 **Offline voice recognition** powered by [Vosk](https://alphacephei.com/vosk/) — works without internet after first load
+- 🔊 **Text-to-speech** speaks each word at natural pace
+- 🪐 **Interactive Solar System map** — tap planets to learn their names
+- 📱 **Fully responsive** — works on any screen size, portrait and landscape
+- 🌍 **Progressive hints** — slow replay → syllables → skip
+- ⭐ Stars, streaks and confetti for motivation
+- 🖼️ Hundreds of illustrations for visual learning
 
 ---
 
-## 🛠 Tech stack
+## 🛠️ Tech Stack
 
-- Vanilla JS + HTML5 — single file, no framework
+- Vanilla JS, single HTML file, no framework
 - [Vosk-browser](https://github.com/ccoreilly/vosk-browser) for offline speech recognition
 - [Capacitor](https://capacitorjs.com/) for Android APK packaging
-- Hosted on GitHub Pages + cPanel
+- Hosted on GitHub Pages + cPanel (LiteSpeed)
 
 ---
 
-## 🏗 Build (Android)
+## 📲 Android Installation
 
-```bash
-cd ~/Github/audio-flashcards-4-kids
-npx cap sync android && cd android
-./gradlew clean assembleDebug
-adb install -r app/build/outputs/apk/debug/app-debug.apk
-```
+1. Download `Flashcards4Kids.apk` from [Releases](https://github.com/mirceadaneliuc/audio-flashcards-4-kids/releases/latest)
+2. On your Android device: **Settings → Security → Allow unknown sources**
+3. Tap the downloaded file to install
+4. Launch **English Flashcards 4 Kids**
 
-**Release APK:**
-```bash
-./gradlew clean assembleRelease
-# Output: android/app/build/outputs/apk/release/app-release.apk
-```
+> Requires Android 7.0+. ~100MB storage (includes offline voice model). Microphone permission required.
 
 ---
 
-## ⭐ Support the project
+## 💬 Feedback & Suggestions
 
-If you find this useful, please give it a star — it helps a lot!
+Have a word idea, found a bug, or want a new category?
+
+💬 **WhatsApp:** https://tinyurl.com/58yku663
+📧 **Email:** onestopsolutions@duck.com
 
 ---
 
 ## 📄 License
 
-MIT — free to use, modify and distribute.
+MIT © [mirceadaneliuc](https://github.com/mirceadaneliuc)
