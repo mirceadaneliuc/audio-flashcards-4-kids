@@ -1,8 +1,9 @@
 # ENGLISH FLASHCARDS 4 KIDS — MASTER PLAN
-**Version:** v4.5.10  
-**Last updated:** 2026-04-08  
-**Repo:** https://github.com/mirceadaneliuc/audio-flashcards-4-kids  
-**Live web:** https://mirceadaneliuc.github.io/audio-flashcards-4-kids/  
+**Version:** v4.5.22
+**Last updated:** 2026-04-09
+**Repo:** https://github.com/mirceadaneliuc/audio-flashcards-4-kids
+**Live web (cPanel):** https://systemaromania.site/flashcards
+**Live web (GitHub Pages):** https://mirceadaneliuc.github.io/audio-flashcards-4-kids/
 **APK ID:** com.elzorab.flashcards
 
 ---
@@ -12,13 +13,15 @@
 ```
 audio-flashcards-4-kids/
 ├── docs/
-│   ├── index.html              ← main app (v4.3.0) — Vosk SR + two-level nav
-│   ├── words.json              ← 15 categories, sizes updated with images and opposites
-│   ├── test-vosk.html          ← Vosk speech test (WORKING, confirmed on tablet)
+│   ├── index.html              ← main app (v4.5.22) — Vosk SR + two-level nav
+│   ├── words.json              ← 17 categories, 378 words
+│   ├── coi-serviceworker.js    ← COOP/COEP header injector for cPanel/LiteSpeed
+│   ├── favicon.ico             ← UK flag favicon
+│   ├── SUPPORT.md              ← contact page (email + WhatsApp)
 │   ├── vosk.js                 ← vosk-browser library (5.6MB)
-│   ├── vosk-model-small-en-us-0.15.tar.gz  ← 40MB Vosk model (original)
+│   ├── vosk-model-small-en-us-0.15.tar.gz  ← 40MB Vosk model
 │   ├── MASTER_PLAN.md          ← this file
-│   └── config.js               ← HF token (gitignored)
+│   └── img/                    ← all images (PNG/JPG, all under 100KB)
 ├── android/
 │   ├── app/src/main/java/com/elzorab/flashcards/MainActivity.java
 │   │   └── COOP/COEP headers → enables SharedArrayBuffer for Vosk WASM
@@ -27,10 +30,16 @@ audio-flashcards-4-kids/
 └── package.json
 ```
 
-**Critical Android note:** The model is stored in APK assets as  
-`vosk-model-small-en-us-0.15.tar` (WITHOUT .gz — Android asset packager  
-decompresses .gz files automatically, making it 70MB uncompressed).  
-Code must reference `.tar` not `.tar.gz`.
+**Critical Android note:** The model is stored in APK assets as
+`vosk-model-small-en-us-0.15.tar` (WITHOUT .gz). Code auto-detects platform:
+- Android (native): loads `.tar` from assets
+- Web (cPanel): loads `/flashcards/vosk-model-small-en-us-0.15.tar.gz`
+
+**Web hosting note:** cPanel (LiteSpeed) requires TWO things for Vosk WASM:
+1. `.htaccess` with COOP/COEP headers (both `set` and `always set`)
+2. `coi-serviceworker.js` as the FIRST script in `<head>`
+
+**TTS note:** Native TTS does NOT work on iodéOS (privacy Android fork) — device limitation, not a bug. Works on all standard Android.
 
 ---
 
@@ -40,134 +49,88 @@ Code must reference `.tar` not `.tar.gz`.
 Splash → Category Menu → Subcategory Menu → Game → back to Subcategory Menu
 ```
 
-- **Splash screen:** tap to start, triggers TTS unlock + Vosk load in background
-- **Category Menu:** grid of 16 category cards with icon, label, word count
-- **Subcategory Menu:** grid of subcategory cards for selected category; ⬅️ back to categories
-- **Game:** audio flashcard loop; ⬅️ back to subcategory menu
-- **Finish:** confetti + trophy, auto-returns to subcategory menu after 3s
+---
+
+## GAME LAYOUT (v4.5.20+)
+
+- Top row (back + progress + stars) fixed at top of screen
+- Main card: image/emoji + word (auto-fit font) + syllables + wave
+- partial-text (heard word in quotes) below card
+- nav-row: ◀ [status text] ▶ below partial-text
+- Fixed side buttons: 🔊 left, 🎤 right
+- Landscape: smaller card via `@media(orientation:landscape)`
 
 ---
 
-## SPEECH RECOGNITION — VOSK-BROWSER ✅ CONFIRMED WORKING
+## SPEECH RECOGNITION — VOSK-BROWSER ✅
 
-**Decision:** Vosk-browser replaces native Android Speech Recognition.  
-Native Android SR failed on short single-syllable words (numbers).  
-Vosk tested on Lenovo TB311FU tablet with **100% accuracy** on all numbers  
-and all single-syllable words tested.
-
-**How it works in the APK:**
-1. `vosk.js` loaded via `<script src="vosk.js">`
-2. Model loaded at startup: `Vosk.createModel('vosk-model-small-en-us-0.15.tar')`
-3. COOP/COEP headers in `MainActivity.java` enable `SharedArrayBuffer` (required by WASM)
-4. Per-session `KaldiRecognizer` created with vocabulary grammar (only current deck words)
-5. `ScriptProcessorNode` feeds mic audio chunks to Vosk at 48kHz (Vosk auto-corrects to 16kHz)
-6. `result` event fires with final text → fuzzy-matched against target word
-7. `partialresult` event shows real-time "hearing" feedback
-8. 5-second timeout: if partial exists → evaluate it; if empty → count as miss
-
-**Known acceptable limitation:** "sheep" ↔ "ship" confusion (acoustically identical in Vosk small model)
-
-**MainActivity.java headers required:**
-```java
-response.setHeader("Cross-Origin-Opener-Policy", "same-origin");
-response.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
-```
-
----
-
-## GAME LOOP
-
-1. Card shown → TTS speaks word automatically at 88% rate
-2. Mic button enabled → child taps mic → Vosk listens (max 5s)
-3. Match evaluation via fuzzy Levenshtein similarity:
-   - 1–3 char words: threshold 0.60
-   - 4–5 char words: threshold 0.68
-   - 6+ char words: threshold 0.75
-4. **Correct:** +10 stars, confetti, streak counter, advance to next card
-5. **Miss 1:** replay word at 60% rate, try again
-6. **Miss 2:** speak syllables individually + full word, try again
-7. **Miss 3:** card pushed to end of deck ("try again later"), advance
+- Model loaded at startup, cached after first download
+- Per-card KaldiRecognizer with vocabulary grammar
+- sampleRate passed from AudioContext (no more mismatch warning)
+- 5s timeout (7s for words >6 chars)
+- Fuzzy Levenshtein matching: ≤3=0.60, ≤5=0.68, 6+=0.75
 
 ---
 
 ## WORD DATABASE — words.json
 
-**335 words / 16 categories / 60 subcategories**
+**378 words / 17 categories**
 
-| Category | Icon | Subcategories |
-|----------|------|---------------|
-| Animals | 🐾 | Farm, Wild, Pets, Birds, Sea, Insects |
-| Food | 🍎 | Fruits, Vegetables, Dairy, Bakery, Drinks, Sweets |
-| Colors | 🌈 | (single group) |
-| Numbers | 🔢 | 1–10, 11–20, Tens |
-| Shapes | 🔷 | (single group) |
-| Sizes | 📏 | (single group) |
-| Feelings | 💙 | (single group) |
-| Body | 🫀 | Face, Upper Body, Lower Body |
-| Home | 🏠 | Bedroom, Kitchen, Living Room, Bathroom |
-| Nature | 🌿 | Weather, Plants, Space, Solar System, Landforms |
-| Seasons | 🍂 | Spring, Summer, Fall, Winter |
-| Clothes | 👕 | (single group) |
-| Family | 👨‍👩‍👧 | (single group) |
-| Transport | 🚗 | (single group) |
-| School | 🎒 | (single group) |
+| Category | Icon | Words |
+|----------|------|------:|
+| Animals | 🐾 | 65 |
+| Food | 🍎 | 54 |
+| Colors | 🌈 | 11 |
+| Numbers | 🔢 | 30 |
+| Shapes | 🔷 | 8 |
+| Sizes | 📏 | 12 |
+| Feelings | ❤️ | 10 |
+| Body | 🫀 | 28 |
+| Home | 🏠 | 31 |
+| Nature | 🌿 | 29 |
+| Space | 🚀 | 18 |
+| Seasons | 🍂 | 22 |
+| Clothes | 👕 | 20 |
+| Family | 👨‍👩‍👧 | 10 |
+| Transport | 🚗 | 14 |
+| School | 🎒 | 16 |
 
-**Future categories approved:** Letters, Greetings, Time, Actions/Verbs, Health  
-**Special:** Solar System visual subcategory (planets on orbits) — planned separately
+**Number emojis replaced with plain digits** (1, 2, 3...) rendered as large blue styled text — fixes rectangle boxes on older Android.
 
 ---
 
 ## BUILD COMMANDS
 
 ```bash
-# Environment
-export CAPACITOR_ANDROID_STUDIO_PATH=/snap/android-studio/209/bin/studio.sh
-
-# Full build & deploy (ALWAYS use this — clean ensures all files are synced)
+# Git deploy
 cd ~/Github/audio-flashcards-4-kids
-npx cap sync android
-cd android
-./gradlew clean assembleDebug
-adb install -r app/build/outputs/apk/debug/app-debug.apk
-adb shell am start -n com.elzorab.flashcards/.MainActivity
-
-# Git commit
-cd ~/Github/audio-flashcards-4-kids
-git add docs/index.html docs/words.json docs/MASTER_PLAN.md
+git add docs/
 git commit -m "vX.X.X - description"
 git push
+
+# Debug APK
+cd ~/Github/audio-flashcards-4-kids
+npx cap sync android && cd android
+./gradlew clean assembleDebug
+adb install app/build/outputs/apk/debug/app-debug.apk
+
+# Release APK (signed)
+cd ~/Github/audio-flashcards-4-kids/android
+./gradlew clean assembleRelease
+# Output: android/app/build/outputs/apk/release/app-release.apk
+# Rename to Flashcards4Kids.apk before uploading to GitHub Releases
 ```
 
-> ⚠️ Never use `./gradlew assembleDebug` without `clean` — Capacitor caches old files and the tablet will run a stale version.
+> ⚠️ Always use `clean` — Capacitor caches old files.
 
 ---
 
 ## PENDING
 
-1. **[NEXT]** Fix `sampleRate` warning — pass `audioContext.sampleRate` to `KaldiRecognizer` instead of hardcoded `16000` (Vosk auto-corrects anyway, low priority)
-2. **[NEXT]** Fix Android status bar black bar overlapping app top
-3. **[PLANNED]** Solar System visual subcategory — planets on orbital paths
-4. **[PLANNED]** Signed release APK, app icon, splash screen
-5. **[PLANNED]** Add word categories: Letters, Greetings, Time, Actions/Verbs, Health
-6. **[PLANNED]** Migrate ScriptProcessorNode → AudioWorkletNode (currently deprecated but functional)
-
----
-
-## COMPLETED
-
-- ✅ v4.0.0 — Vosk-browser SR replaces native Android SR
-- ✅ v4.0.0 — Two-level category/subcategory navigation
-- ✅ v4.0.0 — All 335 words loaded dynamically from words.json
-- ✅ Vosk confirmed working on tablet (100% accuracy on numbers + all tested words)
-- ✅ COOP/COEP headers in MainActivity.java for SharedArrayBuffer
-- ✅ Model served from APK assets as `.tar` (not `.tar.gz`)
-- ✅ words.json — 335 words, 16 categories, 60 subcategories
-- ✅ 3-strike progressive hint system (replay → syllables → skip)
-- ✅ Native TTS via Capacitor plugin (TextToSpeech)
-- ✅ Fuzzy Levenshtein matching with per-word-length thresholds
-- ✅ Confetti, streak counter, star system
-- ✅ Inline fallback data if words.json fails to load
-- ✅ DTW approach tested and abandoned (voice-to-TTS mismatch)
+1. **[LOW]** Fix Android status bar black bar overlapping app top
+2. **[PLANNED]** Migrate ScriptProcessorNode → AudioWorkletNode
+3. **[PLANNED]** Add categories: Letters, Greetings, Time, Actions/Verbs, Health
+4. **[PLANNED]** Google Play Store publication ($25 one-time fee, keystore ready)
 
 ---
 
@@ -175,41 +138,30 @@ git push
 
 | Version | Changes |
 |---------|---------|
-| v4.5.10 | UK flag favicon.ico added, favicon link in index.html |
-| v4.5.9 | Fix: Vosk model path absolute `/flashcards/vosk-model-small-en-us-0.15.tar.gz` |
-| v4.5.8 | Fix: Vosk model extension changed from `.tar` to `.tar.gz` for web hosting |
-| v4.5.7 | Added coi-serviceworker.js for COOP/COEP headers on cPanel (LiteSpeed) |
-| v4.5.6 | Fixed broken image references after optimization (PNG→JPG renames) |
-| v4.5.5 | Image optimization: 36 images reduced to under 100KB |
-| v4.5.4 | Fix: Vosk loading overlay non-blocking on web, better loading message for mobile |
-| v4.5.3 | School/transport images (submarine, eraser, principal, friend, gym, library, classroom, playground, glue), backpack rename, cafeteria removed |
-| v4.5.2 | Version shown on splash screen, debug logs removed, production-ready |
-| v4.5.1 | Transport: hot air balloon image added |
-| v4.5.0 | Clothes images: coat, tie (new word), belt, raincoat, sandals, swimsuit, sweater; mic active fix |
-| v4.4.10 | Fix: mic button no longer faded during listening |
-| v4.4.9 | Seasons: fall (image, acorn, leaves, harvest); winter (image, snowman, fireplace, skiing, skating); spring snowdrops; fix mic/layout bugs |
-| v4.4.8 | Fix: partial text height stable (no arrow jump), mic shows listening immediately after TTS |
-| v4.4.7 | Seasons: spring image, snowdrops added, flower/rain/bird removed; summer image; landforms: ocean+sea+valley+hills added |
-| v4.4.6 | Nature images: forest, island, lake; new landforms: valley, hills; asteroids removed from space words |
-| v4.4.5 | Solar system: pixel-perfect hotspots from user annotation, comet + asteroids added as clickable |
-| v4.4.4 | Solar system: hotspot radii match exact planet sizes, no overlap |
-| v4.4.3 | Solar system: fine-tuned planet hotspot positions (venus, moon, earth, jupiter, mars, saturn) |
-| v4.4.2 | Solar system: SVG hotspots fix planet tap accuracy, zoom scales correctly with image |
-| v4.4.1 | Solar system fixes: corrected planet hotspots, mic/speaker buttons restored, pinch-to-zoom + double-tap reset |
-| v4.4.0 | Interactive solar system map — tap planets, TTS speaks name, Vosk listens, same 3-miss hint system, free exploration mode |
-| v4.3.10 | Nature/weather images: snow, storm; fog renamed to cloudy + image; fog added as separate word |
-| v4.3.9 | Speak category name during GET READY, hide blank card, first word plays correctly; living room (table img, book→books, tv img, remove phone, add armchair+painting+couch); bathroom (bath→bathtub, towel img) |
-| v4.3.8 | Hide blank card during GET READY — no empty flash on category start |
-| v4.3.7 | Kitchen images (fridge, pot, plate, cup, fork, stove), new words bowl+pan, bedroom closet added |
-| v4.3.6 | home/bedroom images (pillow, lamp, dresser) |
-| v4.3.5 | All organs images (heart, brain, lungs, stomach, liver, kidneys) |
-| v4.3.4 | Body images, organs subcategory, hip→hips, stale image fixes, TTS timing |
-| v4.3.3 | Insects icon 🐞, turtle in sea, body/face images, TTS warm-up fixes |
-| v4.3.2 | Feelings updates (emojis, images), global 2x image size, back button fix |
-| v4.3.1 | Long/short images, sizes skip subcategory screen, sizes 2x |
-| v4.3.0 | Pink fix, long word timeout, opposite pairs, shape/size images, fat/old/young |
-| v4.2.2 | AudioContext race condition fix, stale grammar on card transition |
-| v4.2.1 | Hotfix: closure bug causing wrong subcategory words |
-| v4.0.0 | Vosk-browser SR + two-level navigation + words.json 335 words |
-| v3.7.0 | Native Android SR (failed on short words) |
-| v1.5.0 | Web-only, fuzzy matching, 8 categories |
+| v4.5.22 | Word auto-fits font size to card width — no more mid-word breaks |
+| v4.5.21 | partial-text moved outside card, no longer clipped |
+| v4.5.20 | Top row fixed at screen top; arrows moved to nav-row below word; landscape mode |
+| v4.5.19 | Game card centered vertically |
+| v4.5.18 | Fix: SyntaxError from stray backslash |
+| v4.5.17 | Fix: initCapacitor runs early — splash tap instant |
+| v4.5.16 | Numbers render as large blue digits; sampleRate fix; AudioContext order fix |
+| v4.5.15 | TTS retry logic with delays before fallback |
+| v4.5.14 | TTS health check on init; responsive image size; word overflow fix |
+| v4.5.13 | Category cards smaller; version removed from topbar |
+| v4.5.12 | Full responsive layout with clamp() on all sizes |
+| v4.5.11 | Vosk auto-detects Android vs web model path |
+| v4.5.10 | UK flag favicon; cPanel web hosting fully working |
+| v4.5.9 | Fix: Vosk model absolute path for cPanel |
+| v4.5.8 | Fix: Vosk model .tar → .tar.gz for web |
+| v4.5.7 | coi-serviceworker.js for COOP/COEP on LiteSpeed |
+| v4.5.6 | Fixed broken image references after optimization |
+| v4.5.5 | Image optimization: 36 images under 100KB |
+| v4.5.4 | Vosk loading overlay non-blocking on web |
+| v4.5.3 | School/transport images |
+| v4.5.2 | Version on splash, debug logs removed |
+| v4.5.1 | Hot air balloon image |
+| v4.5.0 | Clothes images; mic active fix |
+| v4.4.0 | Interactive Solar System map |
+| v4.3.0 | Pink fix, opposite pairs, shape/size images |
+| v4.2.2 | AudioContext race condition fix |
+| v4.0.0 | Vosk-browser SR + two-level navigation |
