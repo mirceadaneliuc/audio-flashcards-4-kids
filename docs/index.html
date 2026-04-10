@@ -188,7 +188,7 @@ body{font-family:'Nunito',sans-serif;background:#FFF9F0;min-height:100dvh;displa
   </div>
   <div id="solar-status">TAP A PLANET!</div>
   <div id="solar-map-wrap">
-    <img id="solar-map-img" src="img/solar_system.png" alt="Solar System">
+    <img id="solar-map-img" src="img/solar_system.jpg" alt="Solar System">
     <svg id="solar-svg" viewBox="0 0 1920 1209" preserveAspectRatio="xMidYMid meet" style="position:absolute;inset:0;width:100%;height:100%;transform-origin:0 0;"></svg>
   </div>
   <div id="solar-feedback">
@@ -405,27 +405,7 @@ function evaluate(alts){
 async function initCapacitor(){
   if(window.Capacitor&&window.Capacitor.isNativePlatform()){
     const P=window.Capacitor.Plugins;
-    if(P.TextToSpeech){
-      // Wait for native bridge to be fully ready
-      await new Promise(r=>setTimeout(r,500));
-      try{
-        await P.TextToSpeech.speak({text:'.',lang:'en-US',rate:10,pitch:1,volume:0.001});
-        window._TTS=P.TextToSpeech;
-        console.log('Native TTS ready');
-      }catch(e){
-        console.warn('Native TTS failed, retrying once:',e.message);
-        // Retry once after another delay
-        await new Promise(r=>setTimeout(r,1000));
-        try{
-          await P.TextToSpeech.speak({text:'.',lang:'en-US',rate:10,pitch:1,volume:0.001});
-          window._TTS=P.TextToSpeech;
-          console.log('Native TTS ready (retry)');
-        }catch(e2){
-          console.warn('Native TTS unavailable, using browser TTS:',e2.message);
-          window._TTS=null;
-        }
-      }
-    }
+    if(P.TextToSpeech){window._TTS=P.TextToSpeech;console.log('Native TTS ready');}
   }
 }
 
